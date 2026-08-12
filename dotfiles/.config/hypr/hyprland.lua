@@ -312,7 +312,7 @@ hl.window_rule({
 	name = "float-kimi-web",
 	match = { class = "^(chrome-www\\.kimi\\.com__-Default)$" },
 	float = true,
-	size = "1200 800",
+	size = "1300 800",
 	center = true,
 	workspace = "special:kimi silent",
 })
