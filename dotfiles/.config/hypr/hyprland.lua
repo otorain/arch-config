@@ -289,6 +289,8 @@ end)
 hl.window_rule({ name = "float-swayimg", match = { class = "^(swayimg)$" }, float = true })
 hl.window_rule({ name = "float-pcmanfm", match = { class = "^(pcmanfm)$" }, float = true })
 hl.window_rule({ name = "float-pavucontrol", match = { class = "^(org.pulseaudio.pavucontrol)$" }, float = true })
+-- 截图标注工具 satty 保持浮动
+hl.window_rule({ name = "float-satty", match = { class = "^(com.gabm.satty)$" }, float = true })
 hl.window_rule({
 	name = "float-nautilus-archive",
 	match = { class = "^(org.gnome.Nautilus)$", title = "^(存档管理器)$" },
