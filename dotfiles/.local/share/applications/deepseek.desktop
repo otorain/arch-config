@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=DeepSeek
+Comment=DeepSeek AI 聊天
+Exec=google-chrome-stable --app="https://chat.deepseek.com"
+Icon=deepseek
+Keywords=deepseek;ai;chat;
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;

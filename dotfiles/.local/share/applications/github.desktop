@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=GitHub
+Comment=Git 代码托管
+Exec=google-chrome-stable --app="https://github.com"
+Icon=github
+Keywords=github;git;
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
