@@ -1,0 +1,6 @@
+# zathura 配置 — catppuccin mocha
+
+include catppuccin-mocha
+
+set font "CaskaydiaCove NF 16"
+set selection-clipboard "clipboard"

@@ -1,0 +1,6 @@
+{
+  "defaultProvider": "deepseek",
+  "packages": [
+    "npm:pi-mcp-adapter"
+  ]
+}

@@ -1,0 +1,48 @@
+# dunst 配置 — catppuccin mocha
+
+[global]
+font = Inter 12
+frame_width = 2
+corner_radius = 6
+origin = top-right
+offset = 10x40
+width = 320
+height = 100
+padding = 10
+horizontal_padding = 10
+text_icon_padding = 8
+separator_height = 2
+separator_color = frame
+notification_limit = 5
+follow = mouse
+dmenu = rofi -dmenu -p dunst:
+browser = xdg-open
+always_run_script = yes
+stack_duplicates = yes
+markup = full
+format = "<b>%s</b>\n%b"
+alignment = left
+word_wrap = yes
+icon_position = left
+min_icon_size = 32
+max_icon_size = 64
+
+# catppuccin mocha 配色
+frame_color = "#89b4fa"
+highlight = "#89b4fa"
+
+[urgency_low]
+timeout = 10
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[urgency_normal]
+timeout = 10
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[urgency_critical]
+timeout = 0
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+frame_color = "#fab387"

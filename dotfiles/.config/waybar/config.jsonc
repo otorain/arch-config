@@ -1,0 +1,74 @@
+// Waybar 配置
+// 笔记本请把 network.interface 改为 "wlo1"
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "spacing": 4,
+
+    "modules-left": ["hyprland/workspaces", "hyprland/window"],
+    "modules-center": [],
+    "modules-right": ["disk", "network", "cpu", "memory", "pulseaudio", "clock", "tray"],
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "on-click": "activate",
+        "sort-by-number": true
+    },
+
+    "hyprland/window": {
+        "max-length": 60,
+        "separate-outputs": true
+    },
+
+    // 磁盘空间（原 disk_space: path=/, 显示可用空间）
+    "disk": {
+        "path": "/",
+        "format": "<span></span> {free}",
+        "interval": 60,
+        "states": {
+            "warning": 80,
+            "critical": 90
+        }
+    },
+
+    // 网络
+    "network": {
+        "interface": "wlp6s0",
+        "format-wifi": "<span></span>  {ipaddr}",
+        "format-alt": "  {essid}  {bandwidthUpBytes}  {bandwidthDownBytes}",
+        "format-disconnected": "<span>󰤮</span> 离线",
+        "interval": 5
+    },
+
+    // CPU 负载
+    "cpu": {
+        "format": "<span></span>  {usage}%",
+        "interval": 1
+    },
+
+    // 内存（点击切换 swap）
+    "memory": {
+        "format": "<span>󰍛</span>  {used:0.1f}G/{total:0.1f}G",
+        "format-alt": "<span>󰾴</span> {swapUsed:0.1f}G/{swapTotal:0.1f}G",
+        "interval": 5
+    },
+
+    // 音量（点击打开 pavucontrol）
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "<span>󰝚</span> 静音",
+        "format-icons": ["<span></span>", "<span></span>", "<span></span>"],
+        "on-click": "pavucontrol"
+    },
+
+    // 时间（原 time: %a %Y.%m.%d %H:%M）
+    "clock": {
+        "format": "<span></span>  {:%a %Y.%m.%d %H:%M}",
+        "interval": 60
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}

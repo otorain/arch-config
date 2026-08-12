@@ -1,0 +1,11 @@
+@theme "catppuccin-default"
+
+@import "catppuccin-mocha"
+
+element {
+padding: 4px 2px;
+}
+
+element-icon {
+size: 1.1em;
+}

@@ -1,0 +1,21 @@
+[Added Associations]
+
+[Default Applications]
+application/pdf=org.pwmt.zathura.desktop
+image/avif=viewnior.desktop
+image/bmp=viewnior.desktop
+image/gif=viewnior.desktop
+image/heif=viewnior.desktop
+image/jpeg=viewnior.desktop
+image/png=viewnior.desktop
+image/svg+xml=viewnior.desktop
+image/tiff=viewnior.desktop
+image/webp=viewnior.desktop
+text/html=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+
+[Removed Associations]

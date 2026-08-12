@@ -1,0 +1,24 @@
+{
+  "vim_mode": true,
+  "base_keymap": "JetBrains",
+  "ui_font_size": 20,
+  "buffer_font_family": "CaskaydiaCove NFM",
+  "buffer_font_size": 17,
+  "theme": "Catppuccin Mocha",
+  "icon_theme": "Catppuccin Mocha",
+  "project_panel": {
+    "dock": "left"
+  },
+  "auto_install_extensions": {
+    "catppuccin": true,
+    "catppuccin-icons": true,
+    "dockerfile": true,
+    "emmet": true,
+    "lua": true,
+    "log": true,
+    "ruby": true,
+    "sql": true,
+    "toml": true,
+    "vue": true
+  }
+}

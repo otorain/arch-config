@@ -1,0 +1,7 @@
+# direnv 自定义布局
+layout_uv() {
+  watch_file pyproject.toml uv.lock
+  uv sync
+  export VIRTUAL_ENV="$PWD/.env"
+  PATH_add "$VIRTUAL_ENV/bin"
+}

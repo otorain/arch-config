@@ -1,0 +1,38 @@
+# === 浏览器 ===
+google-chrome
+
+# === JetBrains IDE ===
+pycharm
+rubymine
+
+# === 办公 / 词典 ===
+wps-office-cn
+goldendict-ng
+
+# === mpv 脚本（uosc / thumbfast / sponsorblock）===
+mpv-uosc
+mpv-thumbfast-git
+mpv-sponsorblock
+
+# === AI 编码工具 ===
+opencode-bin
+herdr-bin
+
+# === 输入法词库 ===
+rime-ice-git
+
+# === 开发工具 ===
+terraform-ls
+vscode-langservers-extracted
+prettierd
+vagrant
+
+# === 主题 ===
+colloid-catppuccin-gtk-theme-git
+catppuccin-cursors-mocha
+catppuccin-sddm-theme-mocha
+rofi-power-menu
+
+# === 其他 ===
+dropbox
+virtualbox-ext-oracle
