@@ -19,6 +19,7 @@ Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no autom
 ## Gotchas
 
 - Hyprland config is **Lua** (`dotfiles/.config/hypr/hyprland.lua`) — Hyprland 0.55+ dropped hyprlang. Do not create or edit a `hyprland.conf`.
+- `hypridle.conf` 里 dpms 命令必须用 Lua DSL 写法，旧语法 `hyprctl dispatch dpms off` 会在 0.55+ 报 Lua 解析错误（表现为「只锁屏不熄屏」）。正确写法：`hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })'`（enable 同理）。
 - Machine-specific hardcodes are intentional, don't "fix" them: monitor `DP-1` @ scale 1.25 (real-machine alternates `DP-2`/`eDP-1` are commented in the file), waybar `network.interface = "wlp6s0"` (laptop variant `wlo1` noted in comment), timezone `Asia/Shanghai`.
 - `install.sh` supports both `./install.sh` and `sudo ./install.sh` via `TARGET_USER="${SUDO_USER:-$USER}"` and the `as_user`/`as_user_home` helpers. Any stage that writes under `$TARGET_HOME` must use these helpers (and chown afterwards), or files end up root-owned.
 - The `themes` stage calls `gsettings` over a guessed `DBUS_SESSION_BUS_ADDRESS` — it can fail on a headless/tty run and only warns; that's expected.
