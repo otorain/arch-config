@@ -5,6 +5,9 @@ google-chrome
 pycharm
 rubymine
 
+# === 通讯 ===
+wechat-bin
+
 # === 办公 / 词典 ===
 wps-office-cn
 goldendict-ng
