@@ -66,6 +66,7 @@ hyprland
 hyprpaper
 hypridle
 hyprlock
+hyprpicker
 hyprpolkitagent
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk

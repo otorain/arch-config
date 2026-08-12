@@ -34,6 +34,7 @@ cd ~/arch-config
 - hyprpaper（壁纸）
 - rofi（应用 / 表情启动器）
 - grim + slurp + satty（截图标注）
+- hyprpicker（取色器）
 - wl-clipboard + cliphist（剪贴板）
 - dunst（通知）
 - nwg-look（GTK 外观设置）
@@ -63,6 +64,7 @@ cd ~/arch-config
 | `Super+F3` | 文件管理器（pcmanfm） |
 | `Super+T` | 选中文字查词典（goldendict） |
 | `Super+O` | 剪贴板历史（cliphist + rofi） |
+| `Super+C` | 取色器（hyprpicker，自动复制） |
 | `Super+P` | 区域截图（satty 标注） |
 | `Print` | 全屏截图 |
 | `Shift+Print` | 区域截图（无标注） |

@@ -178,6 +178,8 @@ hl.bind(mod .. " + F3", hl.dsp.exec_cmd("pcmanfm"))
 hl.bind(mod .. " + T", hl.dsp.exec_cmd('goldendict -m "$(wl-paste -p)"'))
 -- 剪贴板历史
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
+-- 取色器（-a 自动复制到剪贴板）
+hl.bind(mod .. " + C", hl.dsp.exec_cmd("hyprpicker -a"))
 
 -- --- 截图 ---
 hl.bind(
