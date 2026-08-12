@@ -33,6 +33,9 @@ hl.on("hyprland.start", function()
 	-- 自启: chrome + terminal
 	hl.exec_cmd("google-chrome-stable --hide-crash-restore-bubble", { workspace = "3 silent" })
 	hl.exec_cmd("kitty", { workspace = "2 silent" })
+
+	-- goldendict 常驻后台（托盘），Super+T 转发查询词给此实例，免冷启动
+	hl.exec_cmd("goldendict")
 end)
 
 -----------------
@@ -171,8 +174,8 @@ hl.bind(mod .. " + CTRL + F", hl.dsp.exec_cmd("firefox"))
 hl.bind(mod .. " + CTRL + R", hl.dsp.exec_cmd("rubymine"))
 hl.bind(mod .. " + CTRL + P", hl.dsp.exec_cmd("pycharm"))
 hl.bind(mod .. " + F3", hl.dsp.exec_cmd("pcmanfm"))
--- 选中文字查词典（xsel → wl-paste）
-hl.bind(mod .. " + T", hl.dsp.exec_cmd('goldendict -t "$(wl-paste -p)"'))
+-- 选中文字查词典（xsel → wl-paste）；-m 强制主窗口，转发给常驻实例
+hl.bind(mod .. " + T", hl.dsp.exec_cmd('goldendict -m "$(wl-paste -p)"'))
 -- 剪贴板历史
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 
