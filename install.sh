@@ -212,6 +212,11 @@ dotfiles() {
   cp -a "$SCRIPT_DIR/assets/colin-watts.jpg" "$TARGET_HOME/.config/hypr/wallpaper.jpg"
   chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config" "$TARGET_HOME/.local/share" \
     "$TARGET_HOME/.zshrc" "$TARGET_HOME/.pi" 2>/dev/null || true
+
+  # 刷新桌面项/图标缓存，网页应用 .desktop 即刻可搜
+  as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
+  as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
+
   ok "dotfiles 完成"
 }
 
