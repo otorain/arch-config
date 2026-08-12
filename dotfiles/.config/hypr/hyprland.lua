@@ -299,6 +299,24 @@ hl.window_rule({
 	workspace = "special:kimi silent",
 })
 
+-- 网页应用（app 模式，类名由 --app URL 推导，实测值见上）
+hl.window_rule({
+	name = "float-deepseek-web",
+	match = { class = "^(chrome-chat\\.deepseek\\.com__-Default)$" },
+	float = true,
+	size = "1200 800",
+	center = true,
+	workspace = "special:deepseek silent",
+})
+hl.window_rule({
+	name = "float-kimi-web",
+	match = { class = "^(chrome-www\\.kimi\\.com__-Default)$" },
+	float = true,
+	size = "1200 800",
+	center = true,
+	workspace = "special:kimi silent",
+})
+
 -- 抑制无焦点窗口的事件（默认推荐）
 hl.window_rule({
 	name = "suppress-maximize-events",
