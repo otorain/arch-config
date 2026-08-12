@@ -1,6 +1,6 @@
-# arch-config — Arch Linux (Hyprland) 桌面环境
+# arch-config — 自用 Arch Linux (Hyprland) 系统配置
 
-Arch Linux (Hyprland) 桌面环境初始化配置：安装脚本 + 配置文件一体，catppuccin-mocha（蓝色）主题。
+自用 Arch Linux (Hyprland) 桌面环境配置：安装脚本 + 配置文件一体，catppuccin-mocha（蓝色）主题。
 
 ## 使用
 
@@ -47,11 +47,57 @@ cd ~/arch-config
 3. **输入法**：重新登录后 fcitx5 自启，rime 首次会自动部署雾凇拼音（rime-ice）。想保留旧词频，复制旧系统 `~/.local/share/fcitx5/rime/*.userdb`
 4. **dropbox**：`hl.exec_cmd("dropbox")` 在 hyprland.lua 里被注释掉了，装好 AUR 包后按需取消注释
 5. **VirtualBox**：扩展包在 AUR `virtualbox-ext-oracle`；内核更新后如模块失效，执行 `sudo vboxreload`
-6. **goldendict-ng**：AUR 包名是 `goldendict-ng`，二进制是 `goldendict-ng`；`Super+T` 绑定用了 `wl-paste -p`（主选区）
+6. **goldendict-ng**：词典需手动放置，见 [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) 文档（词典文件可放 `~/.local/share/goldendict`，然后在设置里添加目录）
 
 ## 键位
 
-`Super+Return` 终端 · `Super+D` 应用启动器 · `Super+E` 窗口切换 · `Super+Shift+Q` 关闭窗口 · `Super+H/J/K/L` 焦点 · `Super+Shift+H/J/K/L` 移动窗口 · `Super+1..9` 工作区 · `Super+Shift+1..9` 移到工作区 · `Alt+Tab` 前一工作区 · `Super+F` 全屏 · `Super+Shift+Space` 浮动 · `Super+W` 标签组 · `Super+R` resize 模式 · `Super+P` 区域截图(satty 标注) · `Print` 全屏截图 · `Super+Ctrl+L` 锁屏 · `Super+0` 电源菜单 · `Super+M` 隐藏状态栏
+| 快捷键 | 功能 |
+| --- | --- |
+| `Super+Return` | 终端 |
+| `Super+D` | 应用启动器 |
+| `Super+E` | 表情选择 |
+| `Super+Ctrl+C` | 浏览器（Chrome） |
+| `Super+Ctrl+F` | Firefox |
+| `Super+Ctrl+R` | RubyMine |
+| `Super+Ctrl+P` | PyCharm |
+| `Super+F3` | 文件管理器（pcmanfm） |
+| `Super+T` | 选中文字查词典（goldendict） |
+| `Super+O` | 剪贴板历史（cliphist + rofi） |
+| `Super+P` | 区域截图（satty 标注） |
+| `Print` | 全屏截图 |
+| `Shift+Print` | 区域截图（无标注） |
+| `Super+Q` | DeepSeek scratchpad |
+| `Super+\`` | Kimi scratchpad |
+| `Super+Shift+Q` | 关闭窗口 |
+| `Super+F` | 全屏 |
+| `Super+Shift+Space` | 浮动 |
+| `Super+W` | 标签组 |
+| `Super+V` | 预置方向分屏（下） |
+| `Super+;` | 预置方向分屏（右） |
+| `Super+H/J/K/L` | 焦点（含方向键） |
+| `Super+Shift+H/J/K/L` | 移动窗口（含方向键） |
+| `Alt+Tab` | 前一工作区 |
+| `Super+Ctrl+←/→` | 相邻工作区 |
+| `Super+1..9` | 工作区 |
+| `Super+Shift+1..9` | 移到工作区 |
+| `Super+滚轮` | 切换工作区 |
+| `Super+鼠标左键` | 拖动窗口 |
+| `Super+鼠标右键` | 缩放窗口 |
+| `Super+R` | resize 模式（H/J/K/L 调整，Enter/Esc 退出） |
+| `Super+Ctrl+L` | 锁屏 |
+| `Super+0` | 电源菜单 |
+| `Super+Shift+E` | 退出 Hyprland |
+| `Super+M` | 隐藏/显示状态栏 |
+| `Super+Shift+D` | 重启 dunst |
+| `Super+Shift+C` | 重载配置 |
+| `XF86AudioRaiseVolume` | 音量 + |
+| `XF86AudioLowerVolume` | 音量 − |
+| `XF86AudioMute` | 静音 |
+| `XF86MonBrightnessUp` | 亮度 + |
+| `XF86MonBrightnessDown` | 亮度 − |
+| `XF86AudioPlay` | 播放/暂停 |
+| `XF86AudioNext` | 下一首 |
+| `XF86AudioPrev` | 上一首 |
 
 ## 可能装不上的包（脚本会警告跳过）
 
