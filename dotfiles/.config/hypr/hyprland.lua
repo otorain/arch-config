@@ -36,6 +36,18 @@ hl.on("hyprland.start", function()
 end)
 
 -----------------
+---- XWAYLAND ----
+-----------------
+
+-- XWayland 在分数缩放(1.25)下会被 compositor 拉伸导致模糊（Xorg 无法缩放）。
+-- 关闭 XWayland 缩放，由应用自己按 1.25 缩放（微信等 Qt 应用见其 .desktop 的 QT_SCALE_FACTOR）
+hl.config({
+	xwayland = {
+		force_zero_scaling = true,
+	},
+})
+
+-----------------
 ---- ENV --------
 -----------------
 
@@ -178,6 +190,8 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" ~/Pictures/screensh
 hl.bind(mod .. " + Q", hl.dsp.workspace.toggle_special("deepseek"))
 -- Kimi scratchpad
 hl.bind(mod .. " + grave", hl.dsp.workspace.toggle_special("kimi"))
+-- 微信 scratchpad（ALT + W 唤出）
+hl.bind(mod2 .. " + W", hl.dsp.workspace.toggle_special("wechat"))
 
 -- --- 窗口操作 ---
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
@@ -315,6 +329,14 @@ hl.window_rule({
 	size = "1300 800",
 	center = true,
 	workspace = "special:kimi silent",
+})
+
+-- 微信（XWayland）进 special:wechat scratchpad，由 ALT + W 唤出
+hl.window_rule({
+	name = "wechat-scratchpad",
+	match = { class = "^(wechat)$" },
+	float = true,
+	workspace = "special:wechat silent",
 })
 
 -- 抑制无焦点窗口的事件（默认推荐）

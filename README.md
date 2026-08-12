@@ -68,6 +68,7 @@ cd ~/arch-config
 | `Shift+Print` | 区域截图（无标注） |
 | `Super+Q` | DeepSeek scratchpad |
 | `Super+\`` | Kimi scratchpad |
+| `Alt+W` | 微信 scratchpad |
 | `Super+Shift+Q` | 关闭窗口 |
 | `Super+F` | 全屏 |
 | `Super+Shift+Space` | 浮动 |
@@ -131,7 +132,10 @@ AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-previ
     ├── .config/direnv/ # 含 layout_uv
     ├── .config/nvim/   # LazyVim 配置（init.lua + lua/config + lua/plugins）
     ├── .config/satty/ + .config/zathura/ + .config/pcmanfm/
+    ├── .config/zed/   # settings.json
     ├── .config/mimeapps.list + .config/user-dirs.{conf,dirs}
+    ├── .local/share/applications/ # 覆盖系统 .desktop（deepseek/github/gmail/kimi/wechat 等）
+    ├── .local/share/icons/ # PWA 图标（deepseek/github/gmail/kimi）
     └── .local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh
 ```
 
