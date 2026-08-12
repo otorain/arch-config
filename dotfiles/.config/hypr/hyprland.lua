@@ -286,7 +286,7 @@ end)
 -------------------
 
 -- 图片查看/词典等保持浮动（按需增删）
-hl.window_rule({ name = "float-viewnior", match = { class = "^(viewnior)$" }, float = true })
+hl.window_rule({ name = "float-swayimg", match = { class = "^(swayimg)$" }, float = true })
 hl.window_rule({ name = "float-pcmanfm", match = { class = "^(pcmanfm)$" }, float = true })
 hl.window_rule({ name = "float-pavucontrol", match = { class = "^(org.pulseaudio.pavucontrol)$" }, float = true })
 hl.window_rule({

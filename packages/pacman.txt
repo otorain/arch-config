@@ -155,6 +155,6 @@ obsidian
 firefox
 pcmanfm
 nfs-utils
-viewnior
+swayimg
 papirus-icon-theme
 zed
