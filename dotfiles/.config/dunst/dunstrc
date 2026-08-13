@@ -1,4 +1,4 @@
-# dunst 配置 — catppuccin mocha
+# dunst config — catppuccin mocha
 
 [global]
 font = Noto Sans 12
@@ -27,7 +27,7 @@ icon_position = left
 min_icon_size = 32
 max_icon_size = 64
 
-# catppuccin mocha 配色
+# catppuccin mocha palette
 frame_color = "#89b4fa"
 highlight = "#89b4fa"
 

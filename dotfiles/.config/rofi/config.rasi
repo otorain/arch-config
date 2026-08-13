@@ -10,5 +10,5 @@ configuration {
     yoffset: 0;
 }
 
-/* 主题文件在 ~/.local/share/rofi/themes/（catppuccin mocha + 尺寸覆盖） */
+/* Theme files live in ~/.local/share/rofi/themes/ (catppuccin mocha + size overrides) */
 @theme "custom"

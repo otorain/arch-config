@@ -1,5 +1,5 @@
-// Waybar 配置
-// 笔记本请把 network.interface 改为 "wlo1"
+// Waybar config
+// On laptops, change network.interface to "wlo1"
 {
     "layer": "top",
     "position": "top",
@@ -21,7 +21,7 @@
         "separate-outputs": true
     },
 
-    // 磁盘空间（原 disk_space: path=/, 显示可用空间）
+    // Disk space (was disk_space: path=/, shows free space)
     "disk": {
         "path": "/",
         "format": "<span></span> {free}",
@@ -32,7 +32,7 @@
         }
     },
 
-    // 网络
+    // Network
     "network": {
         "interface": "wlp6s0",
         "format-wifi": "<span></span>  {ipaddr}",
@@ -41,20 +41,20 @@
         "interval": 5
     },
 
-    // CPU 负载
+    // CPU load
     "cpu": {
         "format": "<span></span>  {usage}%",
         "interval": 1
     },
 
-    // 内存（点击切换 swap）
+    // Memory (click toggles swap)
     "memory": {
         "format": "<span>󰍛</span>  {used:0.1f}G/{total:0.1f}G",
         "format-alt": "<span>󰾴</span> {swapUsed:0.1f}G/{swapTotal:0.1f}G",
         "interval": 5
     },
 
-    // 音量（点击打开 pavucontrol）
+    // Volume (click opens pavucontrol)
     "pulseaudio": {
         "format": "{icon}  {volume}%",
         "format-muted": "<span>󰝚</span> 静音",
@@ -62,7 +62,7 @@
         "on-click": "pavucontrol"
     },
 
-    // 时间（原 time: %a %Y.%m.%d %H:%M）
+    // Clock (was time: %a %Y.%m.%d %H:%M)
     "clock": {
         "format": "<span></span>  {:%a %Y.%m.%d %H:%M}",
         "interval": 60

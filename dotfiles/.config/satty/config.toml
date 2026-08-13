@@ -1,8 +1,8 @@
-# satty 截图标注工具配置
+# satty screenshot annotation tool config
 [general]
-# 退出时复制到剪贴板
+# copy to clipboard on exit
 copy-command = "wl-copy"
-# 初始工具
+# initial tool
 initial-tool = "brush"
 output-filename = "~/Pictures/satty-%Y%m%d-%H%M%S.png"
 save-after-copy = true
