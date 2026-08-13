@@ -12,6 +12,7 @@ bzip2
 pbzip2
 man-db
 man-pages
+btrfs-progs
 
 # === 系统服务 ===
 networkmanager
