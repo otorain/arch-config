@@ -1,5 +1,7 @@
 [English](README.md) | [中文](README.zh.md)
 
+![arch-config screenshot](assets/screenshot.png)
+
 # arch-config — personal Arch Linux (Hyprland) system config
 
 Personal Arch Linux (Hyprland) desktop environment config: install script + config files in one repo, catppuccin-mocha (blue) theme.
@@ -117,7 +119,8 @@ AUR package names change over time. If the official repo version of `zed` doesn'
 │   ├── pacman.txt      # official repos (one package per line, # comments)
 │   └── aur.txt         # AUR
 ├── assets/
-│   └── colin-watts.jpg # SDDM / desktop wallpaper
+│   ├── colin-watts.jpg # SDDM / desktop wallpaper
+│   └── screenshot.png  # README cover image
 └── dotfiles/           # mirrored onto ~ as-is (existing files are overwritten)
     ├── .zshrc
     ├── .pi/agent/      # pi-coding-agent config

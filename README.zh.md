@@ -1,5 +1,7 @@
 [English](README.md) | [中文](README.zh.md)
 
+![arch-config 截图](assets/screenshot.png)
+
 # arch-config — 自用 Arch Linux (Hyprland) 系统配置
 
 自用 Arch Linux (Hyprland) 桌面环境配置：安装脚本 + 配置文件一体，catppuccin-mocha（蓝色）主题。
@@ -117,7 +119,8 @@ AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-previ
 │   ├── pacman.txt      # 官方仓库（每行一包，# 注释）
 │   └── aur.txt         # AUR
 ├── assets/
-│   └── colin-watts.jpg # SDDM / 桌面壁纸
+│   ├── colin-watts.jpg # SDDM / 桌面壁纸
+│   └── screenshot.png  # README 封面图
 └── dotfiles/           # 原样映射到 ~（已有文件直接覆盖）
     ├── .zshrc
     ├── .pi/agent/      # pi-coding-agent 配置
