@@ -20,6 +20,7 @@ mpv-sponsorblock
 # === AI 编码工具 ===
 opencode-bin
 herdr-bin
+kimi-code
 
 # === 输入法词库 ===
 rime-ice-git
