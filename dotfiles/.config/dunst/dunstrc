@@ -1,7 +1,7 @@
 # dunst 配置 — catppuccin mocha
 
 [global]
-font = Inter 12
+font = Noto Sans 12
 frame_width = 2
 corner_radius = 6
 origin = top-right

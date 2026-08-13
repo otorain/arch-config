@@ -8,5 +8,5 @@ output-filename = "~/Pictures/satty-%Y%m%d-%H%M%S.png"
 save-after-copy = true
 
 [font]
-family = "Inter"
+family = "Noto Sans"
 style = "Regular"

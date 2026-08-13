@@ -211,7 +211,7 @@ dotfiles() {
   # 壁纸
   cp -a "$SCRIPT_DIR/assets/colin-watts.jpg" "$TARGET_HOME/.config/hypr/wallpaper.jpg"
   chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config" "$TARGET_HOME/.local/share" \
-    "$TARGET_HOME/.zshrc" "$TARGET_HOME/.pi" 2>/dev/null || true
+    "$TARGET_HOME/.zshrc" "$TARGET_HOME/.pi" "$TARGET_HOME/.gtkrc-2.0" 2>/dev/null || true
 
   # 刷新桌面项/图标缓存，网页应用 .desktop 即刻可搜
   as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
@@ -265,7 +265,9 @@ themes() {
       gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' || warn "gsettings icon-theme 失败"
     as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
       gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || warn "gsettings color-scheme 失败"
-    ok "gsettings: Colloid-Dark-Catppuccin / Papirus-Dark / prefer-dark"
+    as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
+      gsettings set org.gnome.desktop.interface font-name 'Noto Sans 12' || warn "gsettings font-name 失败"
+    ok "gsettings: Colloid-Dark-Catppuccin / Papirus-Dark / prefer-dark / Noto Sans"
   fi
 
   # 刷新字体/图标缓存

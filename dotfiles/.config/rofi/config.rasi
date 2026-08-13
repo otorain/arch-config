@@ -1,5 +1,5 @@
 configuration {
-    font: "Inter 12";
+    font: "Noto Sans 12";
     terminal: "kitty";
     location: 0;
     show-icons: true;
