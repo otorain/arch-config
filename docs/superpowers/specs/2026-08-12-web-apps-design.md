@@ -1,32 +1,32 @@
-# 网页应用随系统部署（web-apps）设计
+# Web Apps Deployed with the System (web-apps) Design
 
-日期：2026-08-12
-状态：已确认
+Date: 2026-08-12
+Status: confirmed
 
-## 背景与目标
+## Background and goals
 
-把若干网页（DeepSeek、Kimi、Gmail、GitHub）作为独立应用安装，且**随系统安装脚本可复现部署**。
+Install several web pages (DeepSeek, Kimi, Gmail, GitHub) as standalone apps, **reproducibly deployed with the system install script**.
 
-现状问题：DeepSeek / Kimi 目前是交互式安装的真实 Chrome PWA（`--app-id=` + Chrome profile 内
-`Web Applications/Manifest Resources/<appid>`），数据存在 Chrome 内部存储，重装系统即丢失，
-不可复现。hyprland.lua 中已有针对旧 PWA 的窗口规则（`chrome-<appid>-Default` 类名）。
+Current problem: DeepSeek / Kimi are real Chrome PWAs installed interactively (`--app-id=` + the
+`Web Applications/Manifest Resources/<appid>` inside the Chrome profile); their data lives in Chrome's internal storage, is lost on a system reinstall,
+and is not reproducible. hyprland.lua already has window rules for the old PWAs (`chrome-<appid>-Default` class names).
 
-## 机制决策
+## Mechanism decision
 
-采用**声明式 app 模式**（A 方案）：
+Adopt the **declarative app mode** (option A):
 
-- 在 `dotfiles/.local/share/applications/` 放 `.desktop` 文件，`Exec=google-chrome-stable --app="URL"`。
-- 不依赖 Chrome profile 内部数据，升级不怕碎，随 dotfiles 阶段 1:1 部署即完成安装。
-- 共享主 Chrome 会话（Gmail/GitHub 登录态随浏览器）。
-- 已被否决：复制真实 PWA profile 数据（依赖 Chrome 内部格式，易碎）。
+- Put `.desktop` files in `dotfiles/.local/share/applications/` with `Exec=google-chrome-stable --app="URL"`.
+- No dependency on Chrome profile internals — Chrome upgrades can't break it; a 1:1 deploy via the dotfiles stage completes the install.
+- Shares the main Chrome session (Gmail/GitHub stay logged in with the browser).
+- Rejected: copying real PWA profile data (depends on Chrome's internal format, fragile).
 
-### 窗口类名说明
+### Window class name notes
 
-`--app=URL` 窗口类名由 URL 推导（如 `chrome-<url>-Default`），`--class` / `StartupWMClass`
-在 Wayland 下被 Chrome 忽略（Chromium issue 441482388）。因此窗口规则的类名必须在实现时
-逐站实测（`hyprctl clients -j`），写成锚定正则。
+`--app=URL` window class names are derived from the URL (e.g. `chrome-<url>-Default`); `--class` / `StartupWMClass`
+are ignored by Chrome under Wayland (Chromium issue 441482388). So the class names in the window rules must be measured per site during implementation
+(`hyprctl clients -j`) and written as anchored regexes.
 
-## 新增文件
+## New files
 
 ```
 dotfiles/.local/share/applications/
@@ -35,13 +35,13 @@ dotfiles/.local/share/icons/hicolor/256x256/apps/
   deepseek.png  kimi.png  gmail.png  github.png
 ```
 
-`.desktop` 模板（4 个文件同构）：
+`.desktop` template (all 4 files are isomorphic):
 
 ```ini
 [Desktop Entry]
 Version=1.0
 Name=DeepSeek
-Comment=DeepSeek AI 聊天
+Comment=DeepSeek AI Chat
 Exec=google-chrome-stable --app="https://chat.deepseek.com"
 Icon=deepseek
 Keywords=deepseek;ai;chat;
@@ -50,24 +50,24 @@ Type=Application
 Categories=Network;WebBrowser;
 ```
 
-- `StartupWMClass` 不写（无效，见上）。
-- `Icon=` 用图标名，走 FDO 图标主题查找；图标放 `hicolor/256x256/apps/`（尺寸子目录必需）。
-- 不用绝对路径 Icon（会把家目录硬编码进 `.desktop`）。
+- `StartupWMClass` is omitted (ineffective, see above).
+- `Icon=` uses the icon name, resolved via the FDO icon theme lookup; icons go in `hicolor/256x256/apps/` (the size subdirectory is required).
+- Don't use an absolute-path `Icon` (it would hardcode the home directory into the `.desktop` file).
 
-应用清单（URL 实现时复核）：
+App list (URLs to be re-checked at implementation time):
 
-| 应用    | URL                        | Name  | Keywords |
+| App     | URL                        | Name  | Keywords |
 |---------|----------------------------|-------|----------|
 | DeepSeek| https://chat.deepseek.com   | DeepSeek | deepseek;ai;chat; |
 | Kimi    | https://www.kimi.com        | Kimi  | kimi;ai;chat; |
 | Gmail   | https://mail.google.com     | Gmail | gmail;mail; |
 | GitHub  | https://github.com          | GitHub | github;git; |
 
-图标来源：各站点 favicon，转 PNG（256x256）提交进仓库。
+Icon source: each site's favicon, converted to PNG (256x256) and committed to the repo.
 
-## hyprland.lua 改动
+## hyprland.lua changes
 
-DeepSeek / Kimi 各新增一条窗口规则（保留 scratchpad 行为）：
+Add one window rule each for DeepSeek / Kimi (keeping the scratchpad behavior):
 
 ```lua
 hl.window_rule({
@@ -80,30 +80,30 @@ hl.window_rule({
 })
 ```
 
-- 类名以实测为准（上例仅作预期格式）。
-- 旧的 `chrome-<appid>-Default` 规则保留（本机旧 PWA 不清理）。
-- Gmail / GitHub 为普通窗口，不加窗口规则、不加快捷键。
-- 快捷键（mod+Q / mod+grave）不变。
+- Class names follow the measured values (the example above is only the expected format).
+- The old `chrome-<appid>-Default` rules stay (the old PWAs on this machine are not cleaned up).
+- Gmail / GitHub are ordinary windows: no window rules, no keybinds.
+- Keybinds (mod+Q / mod+grave) unchanged.
 
-## install.sh 改动
+## install.sh changes
 
-不新增阶段。在 `dotfiles` 阶段尾部追加（幂等）：
+No new stage. Append at the end of the `dotfiles` stage (idempotent):
 
 ```bash
 as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
 as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
 ```
 
-dotfiles 阶段已有 `find . -type f` 全量拷贝并 chown `~/.local/share`，无需其他改动。
+The `dotfiles` stage already copies everything via `find . -type f` and chowns `~/.local/share`; no other changes needed.
 
-## 验证
+## Verification
 
-- `shellcheck install.sh`、`luac -p dotfiles/.config/hypr/hyprland.lua`
-- 逐站启动一次，`hyprctl clients -j` 实测类名并核对窗口规则
-- DeepSeek / Kimi 落入 special 工作区且浮动
-- rofi（mod+D）可搜到 4 个应用
+- `shellcheck install.sh`, `luac -p dotfiles/.config/hypr/hyprland.lua`
+- Launch each site once, measure class names with `hyprctl clients -j`, and check the window rules
+- DeepSeek / Kimi land in the special workspace and float
+- rofi (mod+D) can find the 4 apps
 
-## 已知状态（已确认不处理）
+## Known status (confirmed out of scope)
 
-- 本机旧交互式 PWA 不清理，短期内 rofi 里 DeepSeek / Kimi 有重复项属预期；全新安装无此问题。
-- Gmail / GitHub 普通窗口，无特殊行为。
+- The old interactive PWAs on this machine are not cleaned up; duplicate DeepSeek / Kimi entries in rofi are expected in the short term. A fresh install has no such problem.
+- Gmail / GitHub are ordinary windows, no special behavior.
