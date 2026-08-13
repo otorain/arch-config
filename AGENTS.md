@@ -15,6 +15,7 @@ Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no autom
 - `dotfiles/` — mirrored 1:1 onto `$HOME` (including dotfiles, via `find . -type f`); pre-existing files are overwritten without backup. Adding a file here = deployed to `~`.
 - `dotfiles/.config/nvim/` — LazyVim starter 结构：`lua/config/` 放全局配置，`lua/plugins/` 每文件一个插件 spec。插件本体不进 dotfiles，首次启动 lazy.nvim 自动拉取；`lazy-lock.json` 要随配置更新。
 - `assets/colin-watts.jpg` — one wallpaper used twice: SDDM theme background and `~/.config/hypr/wallpaper.jpg` (referenced by `hyprpaper.conf`).
+- README 为中英双份：`README.md` 英文（GitHub 首页）、`README.zh.md` 中文，改动需同步两份。
 
 ## Gotchas
 
