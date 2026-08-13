@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=wechat
 Name[zh_CN]=微信
-# 覆盖系统级 desktop：XWayland 下 1.25 分数缩放需应用侧缩放，否则模糊
+# Override the system-level desktop entry: under XWayland with 1.25 fractional scaling, the app must scale itself or it looks blurry
 Exec=env QT_SCALE_FACTOR=1.25 /opt/wechat/wechat %U
 StartupNotify=true
 Terminal=false
