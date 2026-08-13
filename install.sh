@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Arch Linux (Hyprland) 环境安装脚本
+# Arch Linux (Hyprland) environment setup script
 #
-# 用法:
-#   ./install.sh              # 全部阶段
-#   ./install.sh --only pacman,aur,dotfiles   # 只跑指定阶段
+# Usage:
+#   ./install.sh              # run all stages
+#   ./install.sh --only pacman,aur,dotfiles   # run only specified stages
 #
-# 阶段: preflight → pacman → yay → aur → system → services
+# Stages: preflight → pacman → yay → aur → system → services
 #       → user → dotfiles → themes → mpv → post
 #
-# 幂等，可重复运行；已有配置直接覆盖，不备份
+# Idempotent; existing configs are overwritten without backup
 
 set -euo pipefail
 
@@ -16,7 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_USER="${SUDO_USER:-$USER}"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
 
-# --- 输出 ---
+# --- output ---
 info() { printf '\033[1;34m==>\033[0m \033[1m%s\033[0m\n' "$*"; }
 ok() { printf '\033[1;32m  ✓\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m  !\033[0m %s\n' "$*"; }
@@ -25,14 +25,14 @@ die() {
   exit 1
 }
 
-# --- 阶段选择 ---
+# --- stage selection ---
 ONLY=""
 if [[ "${1:-}" == "--only" ]]; then
   ONLY="${2:?用法: --only stage1,stage2}"
 fi
 should_run() { [[ -z "$ONLY" ]] || [[ ",$ONLY," == *",$1,"* ]]; }
 
-as_user() { # 以目标用户身份运行（处理 sudo 场景）
+as_user() { # run as target user (handles sudo case)
   if [[ "$USER" == "$TARGET_USER" && -z "${SUDO_USER:-}" ]]; then
     "$@"
   else
@@ -42,11 +42,11 @@ as_user() { # 以目标用户身份运行（处理 sudo 场景）
 
 as_user_home() { as_user env HOME="$TARGET_HOME" "$@"; }
 
-read_packages() { # 读取包清单，去掉注释和空行
+read_packages() { # read package list, strip comments and blank lines
   grep -vE '^\s*(#|$)' "$SCRIPT_DIR/packages/$1"
 }
 
-# ========== 阶段 ==========
+# ========== stages ==========
 
 preflight() {
   info "预检"
@@ -102,10 +102,10 @@ aur_pkgs() {
 system_config() {
   info "写入系统配置"
 
-  # 时区
+  # timezone
   sudo timedatectl set-timezone Asia/Shanghai
 
-  # locale：生成 en_US.UTF-8 + zh_CN.UTF-8，默认中文界面、英文终端报错
+  # locale: generate en_US.UTF-8 + zh_CN.UTF-8; default Chinese UI, English terminal messages
   sudo sed -i -E 's/^#(en_US.UTF-8 UTF-8)/\1/; s/^#(zh_CN.UTF-8 UTF-8)/\1/' /etc/locale.gen
   sudo locale-gen
   sudo tee /etc/locale.conf >/dev/null <<'EOF'
@@ -120,12 +120,12 @@ zram-size = ram / 2
 compression-algorithm = zstd
 EOF
 
-  # SSH 加固
+  # SSH hardening
   sudo tee /etc/ssh/sshd_config.d/99-hardening.conf >/dev/null <<'EOF'
 PermitRootLogin no
 EOF
 
-  # SDDM catppuccin 主题 + 壁纸（AUR 包提供 catppuccin-mocha-<accent> 变体）
+  # SDDM catppuccin theme + wallpaper (AUR packages provide catppuccin-mocha-<accent> variants)
   local sddm_theme=""
   for d in /usr/share/sddm/themes/catppuccin-mocha-blue /usr/share/sddm/themes/catppuccin-mocha-*; do
     [[ -d "$d" ]] && sddm_theme="$d" && break
@@ -133,7 +133,7 @@ EOF
   if [[ -n "$sddm_theme" ]]; then
     sudo cp "$SCRIPT_DIR/assets/colin-watts.jpg" \
       "$sddm_theme/backgrounds/wallpaper.jpg"
-    # 主题背景指向壁纸
+    # point theme background at wallpaper
     if [[ -f "$sddm_theme/theme.conf" ]]; then
       sudo sed -i -E 's|^Background=.*|Background="backgrounds/wallpaper.jpg"|; s|^background=.*|background="backgrounds/wallpaper.jpg"|' \
         "$sddm_theme/theme.conf"
@@ -171,18 +171,18 @@ services() {
     sudo systemctl enable --now "$u" &>/dev/null && ok "$u" || warn "启用失败: $u"
   done
 
-  # 用户级音频服务
+  # user-level audio services
   as_user systemctl --user enable --now pipewire pipewire-pulse wireplumber &>/dev/null || true
   ok "用户音频服务"
 }
 
 user_setup() {
   info "用户配置"
-  # 用户组
+  # user groups
   sudo usermod -aG wheel,docker,vboxusers,libvirt "$TARGET_USER"
   ok "用户组: wheel docker vboxusers libvirt"
 
-  # 默认 shell → zsh
+  # default shell → zsh
   if [[ "$(getent passwd "$TARGET_USER" | cut -d: -f7)" != */zsh ]]; then
     as_user chsh -s /usr/bin/zsh || sudo chsh -s /usr/bin/zsh "$TARGET_USER"
   fi
@@ -194,7 +194,7 @@ user_setup() {
   fi
   ok "oh-my-zsh"
 
-  # npm 全局目录（免 sudo），供 codex / pi-coding-agent 使用
+  # npm global prefix (no sudo), used by codex / pi-coding-agent
   as_user_home npm config set prefix "$TARGET_HOME/.local" 2>/dev/null || true
   ok "npm prefix = ~/.local"
 }
@@ -208,12 +208,12 @@ dotfiles() {
     mkdir -p "$(dirname "$dest")"
     cp -a "$src" "$dest"
   done
-  # 壁纸
+  # wallpaper
   cp -a "$SCRIPT_DIR/assets/colin-watts.jpg" "$TARGET_HOME/.config/hypr/wallpaper.jpg"
   chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config" "$TARGET_HOME/.local/share" \
     "$TARGET_HOME/.zshrc" "$TARGET_HOME/.pi" "$TARGET_HOME/.gtkrc-2.0" 2>/dev/null || true
 
-  # 刷新桌面项/图标缓存，网页应用 .desktop 即刻可搜
+  # refresh desktop entry/icon caches so web-app .desktop files are searchable immediately
   as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
   as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
 
@@ -223,7 +223,7 @@ dotfiles() {
 themes() {
   info "安装主题"
 
-  # fcitx5 catppuccin 主题
+  # fcitx5 catppuccin theme
   if [[ ! -d "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue" ]]; then
     local tmp
     tmp="$(mktemp -d)"
@@ -231,7 +231,7 @@ themes() {
     mkdir -p "$TARGET_HOME/.local/share/fcitx5/themes"
     cp -r "$tmp/fcitx5/src/catppuccin-mocha-blue" \
       "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue"
-    # 圆角
+    # rounded corners
     (cd "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue" &&
       bash "$tmp/fcitx5/enable-rounded.sh" 2>/dev/null) || true
     rm -rf "$tmp"
@@ -239,7 +239,7 @@ themes() {
   fi
   ok "fcitx5 主题"
 
-  # GTK4 / Libadwaita 链接
+  # GTK4 / Libadwaita links
   local gtk_theme=""
   for d in "$TARGET_HOME/.themes/Colloid-Dark-Catppuccin" /usr/share/themes/Colloid-Dark-Catppuccin; do
     [[ -d "$d" ]] && gtk_theme="$d" && break
@@ -254,7 +254,7 @@ themes() {
     warn "未找到 Colloid-Dark-Catppuccin 主题，GTK4 链接跳过"
   fi
 
-  # GTK 深色偏好写入 gsettings（portal 优先于 settings.ini，GTK3/4 与 Chrome 都读它）
+  # write GTK dark preference to gsettings (portal takes precedence over settings.ini; GTK3/4 and Chrome all read it)
   local uid bus
   uid="$(id -u "$TARGET_USER")"
   bus="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$uid/bus}"
@@ -270,7 +270,7 @@ themes() {
     ok "gsettings: Colloid-Dark-Catppuccin / Papirus-Dark / prefer-dark / Noto Sans"
   fi
 
-  # 刷新字体/图标缓存
+  # refresh font/icon caches
   fc-cache -f &>/dev/null || true
   ok "主题完成"
 }
@@ -291,14 +291,14 @@ mpv_scripts() {
 post() {
   info "收尾"
 
-  # npm 全局工具（codex CLI、pi-coding-agent）
+  # npm global tools (codex CLI, pi-coding-agent)
   as_user_home npm i -g @openai/codex @mariozechner/pi-coding-agent ||
     warn "npm 全局安装失败，可稍后手动: npm i -g @openai/codex @mariozechner/pi-coding-agent"
 
-  # rustup 默认工具链
+  # rustup default toolchain
   as_user_home rustup default stable || warn "rustup default stable 失败"
 
-  # try-cli 实验目录管理
+  # try-cli experiment directory manager
   if [[ ! -d "$TARGET_HOME/.local/share/try-cli" ]]; then
     as_user_home git clone --depth 1 https://github.com/tobi/try.git \
       "$TARGET_HOME/.local/share/try-cli" ||
@@ -314,17 +314,17 @@ EOF
   fi
   ok "try-cli"
 
-  # xdg 用户目录
+  # xdg user directories
   as_user_home xdg-user-dirs-update || true
   mkdir -p "$TARGET_HOME/Projects" "$TARGET_HOME/Pictures/mpv" "$TARGET_HOME/src/tries"
 
-  # bat 主题缓存（catppuccin 由系统包提供则跳过）
+  # bat theme cache (skipped if catppuccin comes from a system package)
   as_user_home bat cache --build &>/dev/null || true
 
   ok "完成"
 }
 
-# ========== 主流程 ==========
+# ========== main flow ==========
 
 main() {
   should_run preflight && preflight
