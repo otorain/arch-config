@@ -57,3 +57,11 @@ Convert all docs and code comments in this repo to English. Commit messages stay
 
 - `shellcheck install.sh` passes
 - `luac -p dotfiles/.config/hypr/hyprland.lua` passes
+
+## Amendments
+
+Later on 2026-08-13 the keep-list was narrowed:
+
+- install.sh user-facing output strings (info/ok/warn/die/echo messages) translated to English.
+- Remaining Chinese inside code blocks of `docs/superpowers/plans/2026-08-12-web-apps.md` and `docs/superpowers/specs/2026-08-12-web-apps-design.md` translated to English (samples no longer byte-match git history / shipped .desktop files; accepted).
+- `AGENTS.md` convention now reads: UI text stays Chinese (desktop entry names/comments, waybar labels, hyprlock placeholder); everything else — comments, docs, install.sh output — is English.

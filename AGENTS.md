@@ -26,4 +26,4 @@ Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no autom
 - The `themes` stage calls `gsettings` over a guessed `DBUS_SESSION_BUS_ADDRESS` — it can fail on a headless/tty run and only warns; that's expected.
 - `~/.local/bin/try` wraps a git clone of `tobi/try` (Ruby). The AUR package named `try` is a different tool — don't swap it in.
 - Everything themes to catppuccin-mocha (blue accent): kitty, rofi, dunst, waybar, GTK (Colloid-Dark-Catppuccin), Qt (kvantum), cursors, SDDM, git-delta, zsh syntax highlighting. New config should match.
-- User-facing UI text stays Chinese (desktop entry names/comments, waybar labels, hyprlock placeholder), and install.sh output strings (info/ok/warn/die/echo messages). Only comments/docs are English.
+- User-facing UI text stays Chinese (desktop entry names/comments, waybar labels, hyprlock placeholder). Everything else — comments, docs, and install.sh output strings (info/ok/warn/die/echo messages) — is English.
