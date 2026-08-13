@@ -39,7 +39,7 @@ fi
 [[ -f ~/.local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh ]] && \
   source ~/.local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
-# try — tries things in isolated directories (git clone in ~/.local/bin)
+# try — tries things in isolated directories (git clone in ~/.local/share/try-cli; wrapper in ~/.local/bin)
 (( $+commands[try] )) && eval "$(command try init ~/src/tries)"
 
 # yazi: cd into the directory on exit

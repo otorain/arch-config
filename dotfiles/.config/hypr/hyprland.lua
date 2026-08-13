@@ -65,7 +65,7 @@ hl.env("QT_IM_MODULE", "fcitx")
 hl.env("XMODIFIERS", "@im=fcitx")
 hl.env("GLFW_IM_MODULE", "ibus")
 
--- Qt on wayland + gtk3 platform theme (replaces the old qt.platformTheme gtk3 + kvantum)
+-- Qt on wayland + gtk3 platform theme (corresponds to the original qt.platformTheme gtk3 + kvantum)
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QT_QPA_PLATFORMTHEME", "gtk3")
 hl.env("QT_STYLE_OVERRIDE", "kvantum")

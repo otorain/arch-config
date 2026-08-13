@@ -298,7 +298,7 @@ post() {
   # rustup default toolchain
   as_user_home rustup default stable || warn "rustup default stable 失败"
 
-  # try-cli experiment directory manager
+  # try-cli: manage experimental directories
   if [[ ! -d "$TARGET_HOME/.local/share/try-cli" ]]; then
     as_user_home git clone --depth 1 https://github.com/tobi/try.git \
       "$TARGET_HOME/.local/share/try-cli" ||
