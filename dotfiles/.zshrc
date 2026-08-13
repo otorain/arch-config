@@ -26,6 +26,7 @@ setopt NO_HIST_FIND_NO_DUPS NO_HIST_IGNORE_ALL_DUPS NO_HIST_SAVE_NO_DUPS
 # === 别名 ===
 alias lg=lazygit
 alias zed=zeditor
+alias open=xdg-open
 
 # === 工具集成 ===
 eval "$(zoxide init zsh)"
