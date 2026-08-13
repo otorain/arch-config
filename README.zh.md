@@ -73,7 +73,7 @@ cd ~/arch-config
 | `Print` | 全屏截图 |
 | `Shift+Print` | 区域截图（无标注） |
 | `Super+Q` | DeepSeek scratchpad |
-| `Super+\`` | Kimi scratchpad |
+| ``Super+` `` | Kimi scratchpad |
 | `Alt+W` | 微信 scratchpad |
 | `Super+Shift+Q` | 关闭窗口 |
 | `Super+F` | 全屏 |
