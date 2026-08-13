@@ -40,7 +40,7 @@ fi
   source ~/.local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
 # try — 实验目录管理（AUR: try）
-command -v try &>/dev/null && eval "$(try init ~/src/tries)"
+(( $+commands[try] )) && eval "$(command try init ~/src/tries)"
 
 # yazi: 退出时 cd 到所在目录
 function y() {
