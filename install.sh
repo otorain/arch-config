@@ -28,7 +28,7 @@ die() {
 # --- stage selection ---
 ONLY=""
 if [[ "${1:-}" == "--only" ]]; then
-  ONLY="${2:?用法: --only stage1,stage2}"
+  ONLY="${2:?usage: --only stage1,stage2}"
 fi
 should_run() { [[ -z "$ONLY" ]] || [[ ",$ONLY," == *",$1,"* ]]; }
 
@@ -49,26 +49,26 @@ read_packages() { # read package list, strip comments and blank lines
 # ========== stages ==========
 
 preflight() {
-  info "预检"
-  [[ -f /etc/arch-release ]] || die "此脚本只支持 Arch Linux"
-  [[ "$TARGET_USER" != "root" ]] || die "请以普通用户运行（不要直接用 root）"
-  command -v sudo >/dev/null || die "需要 sudo"
-  ping -c1 -W3 archlinux.org &>/dev/null || die "无网络连接"
-  ok "Arch Linux, 用户 $TARGET_USER, HOME=$TARGET_HOME"
+  info "Preflight"
+  [[ -f /etc/arch-release ]] || die "this script only supports Arch Linux"
+  [[ "$TARGET_USER" != "root" ]] || die "run as a normal user (not directly as root)"
+  command -v sudo >/dev/null || die "sudo is required"
+  ping -c1 -W3 archlinux.org &>/dev/null || die "no network connection"
+  ok "Arch Linux, user $TARGET_USER, HOME=$TARGET_HOME"
 }
 
 pacman_pkgs() {
-  info "安装官方仓库软件包"
+  info "installing official repo packages"
   local pkgs=()
   mapfile -t pkgs < <(read_packages pacman.txt)
   sudo pacman -S --needed --noconfirm "${pkgs[@]}"
-  ok "pacman 完成"
+  ok "pacman done"
 }
 
 install_yay() {
-  info "安装 yay"
+  info "installing yay"
   if command -v yay &>/dev/null; then
-    ok "yay 已存在"
+    ok "yay already installed"
     return
   fi
   local tmp
@@ -76,31 +76,31 @@ install_yay() {
   git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
   (cd "$tmp/yay-bin" && makepkg -si --noconfirm)
   rm -rf "$tmp"
-  ok "yay 安装完成"
+  ok "yay installed"
 }
 
 aur_pkgs() {
-  info "安装 AUR 软件包（探测失败的会跳过）"
+  info "installing AUR packages (unresolvable ones are skipped)"
   local failed=()
   while read -r pkg; do
     if yay -Si "$pkg" &>/dev/null; then
       yay -S --needed --noconfirm "$pkg" || {
-        warn "安装失败: $pkg"
+        warn "install failed: $pkg"
         failed+=("$pkg")
       }
     else
-      warn "AUR 中不存在（跳过）: $pkg"
+      warn "not in AUR (skipped): $pkg"
       failed+=("$pkg")
     fi
   done < <(read_packages aur.txt)
   if ((${#failed[@]})); then
-    warn "以下包未成功安装，请手工处理: ${failed[*]}"
+    warn "these packages failed to install, handle manually: ${failed[*]}"
   fi
-  ok "AUR 阶段完成"
+  ok "AUR stage done"
 }
 
 system_config() {
-  info "写入系统配置"
+  info "writing system config"
 
   # timezone
   sudo timedatectl set-timezone Asia/Shanghai
@@ -143,16 +143,16 @@ EOF
 [Theme]
 Current=$(basename "$sddm_theme")
 EOF
-    ok "SDDM 主题已配置: $(basename "$sddm_theme")"
+    ok "SDDM theme configured: $(basename "$sddm_theme")"
   else
-    warn "未找到 catppuccin-mocha SDDM 主题目录，跳过（AUR 包未装？）"
+    warn "catppuccin-mocha SDDM theme dir not found, skipping (AUR package not installed?)"
   fi
 
-  ok "系统配置完成"
+  ok "system config done"
 }
 
 services() {
-  info "启用 systemd 服务"
+  info "enabling systemd services"
   local sys_units=(
     NetworkManager
     bluetooth
@@ -168,19 +168,19 @@ services() {
     sddm
   )
   for u in "${sys_units[@]}"; do
-    sudo systemctl enable --now "$u" &>/dev/null && ok "$u" || warn "启用失败: $u"
+    sudo systemctl enable --now "$u" &>/dev/null && ok "$u" || warn "enable failed: $u"
   done
 
   # user-level audio services
   as_user systemctl --user enable --now pipewire pipewire-pulse wireplumber &>/dev/null || true
-  ok "用户音频服务"
+  ok "user audio services"
 }
 
 user_setup() {
-  info "用户配置"
+  info "user setup"
   # user groups
   sudo usermod -aG wheel,docker,vboxusers,libvirt "$TARGET_USER"
-  ok "用户组: wheel docker vboxusers libvirt"
+  ok "user groups: wheel docker vboxusers libvirt"
 
   # default shell → zsh
   if [[ "$(getent passwd "$TARGET_USER" | cut -d: -f7)" != */zsh ]]; then
@@ -200,7 +200,7 @@ user_setup() {
 }
 
 dotfiles() {
-  info "复制配置文件（已有文件直接覆盖）"
+  info "copying dotfiles (existing files overwritten)"
   (cd "$SCRIPT_DIR/dotfiles" && find . -type f) | while read -r f; do
     local_rel="${f#./}"
     src="$SCRIPT_DIR/dotfiles/$local_rel"
@@ -217,11 +217,11 @@ dotfiles() {
   as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
   as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
 
-  ok "dotfiles 完成"
+  ok "dotfiles done"
 }
 
 themes() {
-  info "安装主题"
+  info "installing themes"
 
   # fcitx5 catppuccin theme
   if [[ ! -d "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue" ]]; then
@@ -237,7 +237,7 @@ themes() {
     rm -rf "$tmp"
     chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.local/share/fcitx5"
   fi
-  ok "fcitx5 主题"
+  ok "fcitx5 theme"
 
   # GTK4 / Libadwaita links
   local gtk_theme=""
@@ -249,9 +249,9 @@ themes() {
     for f in assets gtk.css gtk-dark.css; do
       ln -sfn "$gtk_theme/gtk-4.0/$f" "$TARGET_HOME/.config/gtk-4.0/$f"
     done
-    ok "GTK4 主题链接 → $gtk_theme"
+    ok "GTK4 theme links → $gtk_theme"
   else
-    warn "未找到 Colloid-Dark-Catppuccin 主题，GTK4 链接跳过"
+    warn "Colloid-Dark-Catppuccin theme not found, skipping GTK4 links"
   fi
 
   # write GTK dark preference to gsettings (portal takes precedence over settings.ini; GTK3/4 and Chrome all read it)
@@ -260,23 +260,23 @@ themes() {
   bus="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$uid/bus}"
   if [[ -n "$gtk_theme" ]] || [[ -d /usr/share/themes/Colloid-Dark-Catppuccin ]]; then
     as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
-      gsettings set org.gnome.desktop.interface gtk-theme 'Colloid-Dark-Catppuccin' || warn "gsettings gtk-theme 失败"
+      gsettings set org.gnome.desktop.interface gtk-theme 'Colloid-Dark-Catppuccin' || warn "gsettings gtk-theme failed"
     as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
-      gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' || warn "gsettings icon-theme 失败"
+      gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' || warn "gsettings icon-theme failed"
     as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
-      gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || warn "gsettings color-scheme 失败"
+      gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || warn "gsettings color-scheme failed"
     as_user_home env DBUS_SESSION_BUS_ADDRESS="$bus" \
-      gsettings set org.gnome.desktop.interface font-name 'Noto Sans 12' || warn "gsettings font-name 失败"
+      gsettings set org.gnome.desktop.interface font-name 'Noto Sans 12' || warn "gsettings font-name failed"
     ok "gsettings: Colloid-Dark-Catppuccin / Papirus-Dark / prefer-dark / Noto Sans"
   fi
 
   # refresh font/icon caches
   fc-cache -f &>/dev/null || true
-  ok "主题完成"
+  ok "themes done"
 }
 
 mpv_scripts() {
-  info "配置 mpv 脚本（uosc / thumbfast / sponsorblock）"
+  info "setting up mpv scripts (uosc / thumbfast / sponsorblock)"
   mkdir -p "$TARGET_HOME/.config/mpv/scripts"
   local linked=0
   for s in /usr/share/mpv/scripts/*; do
@@ -285,24 +285,24 @@ mpv_scripts() {
     linked=$((linked + 1))
   done
   chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.config/mpv"
-  ok "链接了 $linked 个 mpv 脚本"
+  ok "linked $linked mpv scripts"
 }
 
 post() {
-  info "收尾"
+  info "post-install"
 
   # npm global tools (codex CLI, pi-coding-agent)
   as_user_home npm i -g @openai/codex @mariozechner/pi-coding-agent ||
-    warn "npm 全局安装失败，可稍后手动: npm i -g @openai/codex @mariozechner/pi-coding-agent"
+    warn "npm global install failed, do it manually later: npm i -g @openai/codex @mariozechner/pi-coding-agent"
 
   # rustup default toolchain
-  as_user_home rustup default stable || warn "rustup default stable 失败"
+  as_user_home rustup default stable || warn "rustup default stable failed"
 
   # try-cli: manage experimental directories
   if [[ ! -d "$TARGET_HOME/.local/share/try-cli" ]]; then
     as_user_home git clone --depth 1 https://github.com/tobi/try.git \
       "$TARGET_HOME/.local/share/try-cli" ||
-      warn "try-cli 克隆失败，可稍后手动安装: https://github.com/tobi/try"
+      warn "try-cli clone failed, install manually later: https://github.com/tobi/try"
   fi
   if [[ -d "$TARGET_HOME/.local/share/try-cli" && ! -x "$TARGET_HOME/.local/bin/try" ]]; then
     as_user_home mkdir -p "$TARGET_HOME/.local/bin"
@@ -321,7 +321,7 @@ EOF
   # bat theme cache (skipped if catppuccin comes from a system package)
   as_user_home bat cache --build &>/dev/null || true
 
-  ok "完成"
+  ok "done"
 }
 
 # ========== main flow ==========
@@ -340,9 +340,9 @@ main() {
   should_run post && post
 
   echo
-  info "全部完成！"
-  echo "  1. 重启或重新登录使 zsh / 用户组生效"
-  echo "  2. 显示器名称/缩放请编辑 ~/.config/hypr/hyprland.lua 顶部的 hl.monitor 行（hyprctl monitors 查看）"
+  info "All done!"
+  echo "  1. reboot or re-login to apply zsh / user groups"
+  echo "  2. for monitor name/scale, edit the hl.monitor line at the top of ~/.config/hypr/hyprland.lua (check with hyprctl monitors)"
 }
 
 main "$@"
