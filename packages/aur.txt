@@ -1,42 +1,42 @@
-# === 浏览器 ===
+# === Browsers ===
 google-chrome
 
 # === JetBrains IDE ===
 pycharm
 rubymine
 
-# === 通讯 ===
+# === Messaging ===
 wechat-bin
 
-# === 办公 / 词典 ===
+# === Office / Dictionaries ===
 wps-office-cn
 goldendict-ng
 
-# === mpv 脚本（uosc / thumbfast / sponsorblock）===
+# === mpv scripts (uosc / thumbfast / sponsorblock) ===
 mpv-uosc
 mpv-thumbfast-git
 mpv-sponsorblock
 
-# === AI 编码工具 ===
+# === AI coding tools ===
 opencode-bin
 herdr-bin
 kimi-code
 
-# === 输入法词库 ===
+# === IME dictionaries ===
 rime-ice-git
 
-# === 开发工具 ===
+# === Dev tools ===
 terraform-ls
 vscode-langservers-extracted
 prettierd
 vagrant
 
-# === 主题 ===
+# === Themes ===
 colloid-catppuccin-gtk-theme-git
 catppuccin-cursors-mocha
 catppuccin-sddm-theme-mocha
 rofi-power-menu
 
-# === 其他 ===
+# === Misc ===
 dropbox
 virtualbox-ext-oracle

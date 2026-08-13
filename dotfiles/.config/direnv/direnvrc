@@ -1,4 +1,4 @@
-# direnv 自定义布局
+# direnv custom layouts
 layout_uv() {
   watch_file pyproject.toml uv.lock
   uv sync

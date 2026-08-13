@@ -17,6 +17,6 @@
 	features = catppuccin-mocha
 	line-numbers = true
 
-# catppuccin 主题（本仓库 dotfiles 自带）
+# catppuccin theme (ships with this repo's dotfiles)
 [include]
 	path = ~/.config/git/catppuccin.gitconfig
