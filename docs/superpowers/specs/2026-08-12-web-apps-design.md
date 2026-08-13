@@ -41,7 +41,7 @@ dotfiles/.local/share/icons/hicolor/256x256/apps/
 [Desktop Entry]
 Version=1.0
 Name=DeepSeek
-Comment=DeepSeek AI Chat
+Comment=DeepSeek AI 聊天
 Exec=google-chrome-stable --app="https://chat.deepseek.com"
 Icon=deepseek
 Keywords=deepseek;ai;chat;
