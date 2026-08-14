@@ -74,7 +74,6 @@ Stage order: `preflight → pacman → yay → aur → system → services → u
 | `Shift+Print` | Region screenshot (no annotation) |
 | `Super+Q` | DeepSeek scratchpad |
 | ``Super+` `` | Kimi scratchpad |
-| `Alt+W` | WeChat scratchpad |
 | `Super+Shift+Q` | Close window |
 | `Super+F` | Fullscreen |
 | `Super+Shift+Space` | Toggle floating |

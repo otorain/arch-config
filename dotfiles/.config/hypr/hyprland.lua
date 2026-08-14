@@ -195,8 +195,6 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" ~/Pictures/screensh
 hl.bind(mod .. " + Q", hl.dsp.workspace.toggle_special("deepseek"))
 -- Kimi scratchpad
 hl.bind(mod .. " + grave", hl.dsp.workspace.toggle_special("kimi"))
--- WeChat scratchpad (brought up with ALT + W)
-hl.bind(mod2 .. " + W", hl.dsp.workspace.toggle_special("wechat"))
 
 -- --- Window operations ---
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
@@ -338,12 +336,12 @@ hl.window_rule({
 	workspace = "special:kimi silent",
 })
 
--- WeChat (XWayland) goes into the special:wechat scratchpad, brought up with ALT + W
+-- WeChat (XWayland) floats on the current workspace; not in a special workspace,
+-- because Hyprland fails to render the fcitx5 candidate popup on special workspaces
 hl.window_rule({
-	name = "wechat-scratchpad",
+	name = "float-wechat",
 	match = { class = "^(wechat)$" },
 	float = true,
-	workspace = "special:wechat silent",
 })
 
 -- Suppress events from unfocused windows (recommended default)
