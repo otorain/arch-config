@@ -7,6 +7,7 @@ Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no autom
 - `shellcheck install.sh` and `luac -p dotfiles/.config/hypr/hyprland.lua` are the only static checks (tools are in `packages/pacman.txt`).
 - Do NOT run `stylua` on `hyprland.lua` — default stylua (tabs) would reformat the whole file; existing style is 4-space indent with aligned `=`.
 - NEVER run `./install.sh` on the machine you're working on — it mutates system state (pacman, systemd, `/etc`, `$HOME`). It only runs on Arch, as a non-root user with sudo.
+- NEVER copy dotfiles directly into `$HOME` or edit live config files under `~/.config` to "apply" a change — the running system is only updated via `install.sh` (e.g. `./install.sh --only dotfiles`). Edit the file under `dotfiles/` (or the relevant source), then deploy with install.sh.
 
 ## Layout
 
