@@ -179,7 +179,49 @@ hl.bind(mod .. " + T", hl.dsp.exec_cmd('goldendict -m "$(wl-paste -p)"'))
 -- Clipboard history
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 -- Color picker (-a auto-copies to the clipboard)
-hl.bind(mod .. " + C", hl.dsp.exec_cmd("hyprpicker -a"))
+hl.bind(mod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprpicker -a"))
+
+-- --- Universal clipboard (Super+C/V/X = copy/paste/cut, terminal-aware) ---
+-- Inject explicit Ctrl/Shift chords into the focused window. The down/up split
+-- (50ms timer) works around Hyprland's send_shortcut stuck-key bug (#14099).
+local function send_shortcut_once(mods, key)
+	return function()
+		hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "down" }))
+		hl.timer(function()
+			hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "up" }))
+		end, { timeout = 50, type = "oneshot" })
+	end
+end
+
+local TERMINAL_CLASSES = { "kitty", "alacritty", "foot", "wezterm", "ghostty", "gnome-terminal", "konsole", "xfce4-terminal" }
+
+local function active_window_is_terminal()
+	local window = hl.get_active_window()
+	if not window then
+		return false
+	end
+	local class = (window.class or ""):lower()
+	for _, c in ipairs(TERMINAL_CLASSES) do
+		if class:find(c, 1, true) then
+			return true
+		end
+	end
+	return false
+end
+
+local function universal_clipboard_shortcut(default_mods, default_key, terminal_mods, terminal_key)
+	return function()
+		if active_window_is_terminal() then
+			send_shortcut_once(terminal_mods, terminal_key)()
+		else
+			send_shortcut_once(default_mods, default_key)()
+		end
+	end
+end
+
+hl.bind(mod .. " + C", universal_clipboard_shortcut("CTRL", "C", "CTRL + SHIFT", "C"), { description = "Universal copy" })
+hl.bind(mod .. " + V", universal_clipboard_shortcut("CTRL", "V", "CTRL + SHIFT", "V"), { description = "Universal paste" })
+hl.bind(mod .. " + X", send_shortcut_once("CTRL", "X"), { description = "Universal cut" })
 
 -- --- Screenshot ---
 hl.bind(
@@ -201,7 +243,7 @@ hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen())
 hl.bind(mod .. " + SHIFT + Space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + W", hl.dsp.group.toggle()) -- tabbed group layout
-hl.bind(mod .. " + V", hl.dsp.layout("preselect d")) -- old split v (dwindle preselect direction)
+hl.bind(mod .. " + SHIFT + V", hl.dsp.layout("preselect d")) -- old split v (dwindle preselect direction)
 hl.bind(mod .. " + semicolon", hl.dsp.layout("preselect r")) -- old split h
 
 -- --- Focus / move windows (hjkl + arrow keys) ---
