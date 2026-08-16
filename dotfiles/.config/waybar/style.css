@@ -59,7 +59,7 @@ window#waybar {
     color: @subtext1;
 }
 
-#disk, #network, #cpu, #memory, #pulseaudio, #clock, #tray {
+#disk, #network, #cpu, #memory, #pulseaudio, #clock, #tray, #custom-weather {
     padding: 0 8px;
 }
 
@@ -73,6 +73,14 @@ window#waybar {
 #pulseaudio { color: @teal; }
 #pulseaudio.muted { color: @overlay1; }
 #clock { color: @blue; }
+
+#custom-weather { color: @sky; }
+#custom-weather.sunny { color: @yellow; }
+#custom-weather.rainy { color: @sapphire; }
+#custom-weather.stormy { color: @mauve; }
+#custom-weather.snowy { color: @text; }
+#custom-weather.foggy { color: @overlay1; }
+#custom-weather.unknown { color: @red; }
 
 #tray > .passive {
     -gtk-icon-effect: dim;

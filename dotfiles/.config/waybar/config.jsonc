@@ -7,8 +7,8 @@
     "spacing": 4,
 
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
-    "modules-center": [],
-    "modules-right": ["disk", "network", "cpu", "memory", "pulseaudio", "clock", "tray"],
+    "modules-center": ["clock", "custom/weather"],
+    "modules-right": ["disk", "network", "cpu", "memory", "pulseaudio", "tray"],
 
     "hyprland/workspaces": {
         "format": "{name}",
@@ -64,8 +64,20 @@
 
     // Clock (was time: %a %Y.%m.%d %H:%M)
     "clock": {
-        "format": "<span></span>  {:%a %Y.%m.%d %H:%M}",
+        "format": "{:L%A %Y.%m.%d %H:%M}",
+        "locale": "zh_CN.UTF-8",
         "interval": 60
+    },
+
+    // Weather (Amap; key in ~/.config/weather/amap-key).
+    // Click toggles a popup below the bar listing all cities; picking one
+    // switches the default city.
+    "custom/weather": {
+        "exec": "~/.local/bin/weather.py",
+        "interval": 900,
+        "return-type": "json",
+        "tooltip": false,
+        "on-click": "~/.local/bin/weather.py --popup"
     },
 
     "tray": {

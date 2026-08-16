@@ -68,6 +68,7 @@ hypridle
 hyprlock
 hyprpicker
 hyprpolkitagent
+gtk-layer-shell
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 waybar

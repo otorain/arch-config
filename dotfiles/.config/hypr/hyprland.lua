@@ -344,6 +344,10 @@ hl.window_rule({
 	float = true,
 })
 
+-- The weather popup (weather.py --popup) is a gtk-layer-shell surface, not an
+-- xdg toplevel, so no window_rule applies to it. Position, rounding, and
+-- "click outside to close" are all handled inside weather.py.
+
 -- Suppress events from unfocused windows (recommended default)
 hl.window_rule({
 	name = "suppress-maximize-events",
