@@ -53,6 +53,7 @@ Stage order: `preflight → pacman → yay → aur → system → services → u
 4. **dropbox**: `hl.exec_cmd("dropbox")` is commented out in hyprland.lua; uncomment it after installing the AUR package
 5. **VirtualBox**: extension pack in AUR `virtualbox-ext-oracle`; if modules break after a kernel update, run `sudo vboxreload`
 6. **goldendict-ng**: dictionaries must be placed manually, see the [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) docs (put dictionary files under `~/.local/share/goldendict`, then add the directory in settings). Autostarts in the tray at login; `Super+T` forwards the query through single-instance IPC, avoiding cold start
+7. **git**: on the first dotfiles run you're asked for `user.name`/`user.email`, saved to `~/.config/git/config` — that file is yours and is never overwritten on re-runs. Shared settings (delta, catppuccin theme) live in `~/.config/git/custom`, which is managed by dotfiles; don't edit it
 
 ## Keybindings
 
@@ -129,7 +130,7 @@ AUR package names change over time. If the official repo version of `zed` doesn'
     ├── .config/rofi/ + .local/share/rofi/themes/
     ├── .config/dunst/  # includes mocha colors
     ├── .config/mpv/    # uosc/thumbfast/sponsorblock provided by AUR
-    ├── .config/git/    # delta + catppuccin
+    ├── .config/git/    # custom = delta + catppuccin (included by user-owned ~/.config/git/config)
     ├── .config/fcitx5/ # fcitx5 config (profile/classicui/rime.conf)
     ├── .local/share/fcitx5/rime/ # rime-ice default.custom.yaml
     ├── .config/atuin/  # includes catppuccin theme

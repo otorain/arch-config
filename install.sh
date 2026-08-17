@@ -217,6 +217,39 @@ dotfiles() {
   as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
   as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
 
+  # git identity: ~/.config/git/config is user-owned (generated once, never overwritten);
+  # it includes ~/.config/git/custom, which is managed by dotfiles (delta + catppuccin)
+  local git_config="$TARGET_HOME/.config/git/config"
+  if [[ -f "$git_config" ]]; then
+    if ! grep -q 'config/git/custom' "$git_config"; then
+      # shellcheck disable=SC2088 # tilde is literal text for the git config include path
+      warn "~/.config/git/config lacks the include of ~/.config/git/custom; add: [include] path = ~/.config/git/custom"
+    fi
+    ok "git config already exists (left untouched)"
+  else
+    local git_name="" git_email=""
+    if [[ -t 0 ]]; then
+      read -rp "  git user.name: " git_name
+      read -rp "  git user.email: " git_email
+    fi
+    {
+      if [[ -n "$git_name" || -n "$git_email" ]]; then
+        echo "[user]"
+        [[ -z "$git_name" ]] || printf '\tname = %s\n' "$git_name"
+        [[ -z "$git_email" ]] || printf '\temail = %s\n' "$git_email"
+        echo
+      fi
+      echo "# shared settings managed by dotfiles (delta, catppuccin theme) - do not edit"
+      echo "[include]"
+      printf '\tpath = ~/.config/git/custom\n'
+    } | as_user_home tee "$git_config" >/dev/null
+    if [[ -n "$git_name" && -n "$git_email" ]]; then
+      ok "git identity saved to ~/.config/git/config"
+    else
+      warn "created ~/.config/git/config without [user]; add user.name/user.email manually"
+    fi
+  fi
+
   ok "dotfiles done"
 }
 

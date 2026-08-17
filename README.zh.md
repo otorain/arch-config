@@ -53,6 +53,7 @@ cd ~/arch-config
 4. **dropbox**：`hl.exec_cmd("dropbox")` 在 hyprland.lua 里被注释掉了，装好 AUR 包后按需取消注释
 5. **VirtualBox**：扩展包在 AUR `virtualbox-ext-oracle`；内核更新后如模块失效，执行 `sudo vboxreload`
 6. **goldendict-ng**：词典需手动放置，见 [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) 文档（词典文件可放 `~/.local/share/goldendict`，然后在设置里添加目录）。登录自启常驻托盘，`Super+T` 通过单实例 IPC 转发查询词，免冷启动
+7. **git**：首次运行 dotfiles 阶段时会交互询问 `user.name`/`user.email`，保存在 `~/.config/git/config`——该文件归你所有，重跑安装不会覆盖。共享配置（delta、catppuccin 主题）在 `~/.config/git/custom`，由 dotfiles 管理，请勿手动修改
 
 ## 键位
 
@@ -129,7 +130,7 @@ AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-previ
     ├── .config/rofi/ + .local/share/rofi/themes/
     ├── .config/dunst/  # 含 mocha 配色
     ├── .config/mpv/    # uosc/thumbfast/sponsorblock 由 AUR 提供
-    ├── .config/git/    # delta + catppuccin
+    ├── .config/git/    # custom = delta + catppuccin（被用户自有的 ~/.config/git/config include）
     ├── .config/fcitx5/ # fcitx5 配置（profile/classicui/rime.conf）
     ├── .local/share/fcitx5/rime/ # 雾凇拼音 default.custom.yaml
     ├── .config/atuin/  # 含 catppuccin 主题

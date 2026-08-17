@@ -13,7 +13,7 @@ Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no autom
 
 - `install.sh` — single entrypoint, idempotent stages: `preflight → pacman → yay → aur → system → services → user → dotfiles → themes → mpv → post`. `--only stage1,stage2` runs a subset. Adding a stage means touching 3 places: the function, `main()`, and the header comment.
 - `packages/{pacman,aur}.txt` — one package per line, `#` comments. The AUR stage probes `yay -Si` and skips missing packages with a warning instead of failing.
-- `dotfiles/` — mirrored 1:1 onto `$HOME` (including dotfiles, via `find . -type f`); pre-existing files are overwritten without backup. Adding a file here = deployed to `~`.
+- `dotfiles/` — mirrored 1:1 onto `$HOME` (including dotfiles, via `find . -type f`); pre-existing files are overwritten without backup. Adding a file here = deployed to `~`. Exception: `~/.config/git/config` is user-owned — the dotfiles stage generates it once (interactive `user.name`/`user.email` prompt) and never overwrites it; it includes the dotfiles-managed `~/.config/git/custom` (delta + catppuccin).
 - `dotfiles/.config/nvim/` — LazyVim starter structure: `lua/config/` holds global config, `lua/plugins/` one plugin spec per file. Plugin bodies are not committed to dotfiles; lazy.nvim pulls them on first launch; `lazy-lock.json` must be updated along with config.
 - `assets/colin-watts.jpg` — one wallpaper used twice: SDDM theme background and `~/.config/hypr/wallpaper.jpg` (referenced by `hyprpaper.conf`).
 - README is dual-language: `README.md` English (GitHub homepage), `README.zh.md` Chinese mirror. Keep both in sync; do not translate the zh mirror away.
