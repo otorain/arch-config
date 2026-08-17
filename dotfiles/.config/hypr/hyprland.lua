@@ -142,6 +142,8 @@ hl.config({
 
 	dwindle = { preserve_split = true },
 
+	scrolling = { column_width = 0.75 },
+
 	misc = {
 		force_default_wallpaper = 0,
 		disable_hyprland_logo = true,
@@ -245,6 +247,13 @@ hl.bind(mod .. " + SHIFT + Space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + W", hl.dsp.group.toggle()) -- tabbed group layout
 hl.bind(mod .. " + SHIFT + V", hl.dsp.layout("preselect d")) -- old split v (dwindle preselect direction)
 hl.bind(mod .. " + semicolon", hl.dsp.layout("preselect r")) -- old split h
+hl.bind(mod .. " + SHIFT + S", function()
+	if hl.get_config("general:layout") == "scrolling" then
+		hl.config({ general = { layout = "dwindle" } })
+	else
+		hl.config({ general = { layout = "scrolling" } })
+	end
+end) -- toggle scrolling / dwindle layout
 
 -- --- Focus / move windows (hjkl + arrow keys) ---
 local dirs = { H = "l", J = "d", K = "u", L = "r", Left = "l", Down = "d", Up = "u", Right = "r" }
