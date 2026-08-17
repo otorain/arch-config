@@ -310,6 +310,69 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
+-- --- Resize active window with = / - ---
+-- dwindle's resize moves the shared split edge; whether a positive delta
+-- grows or shrinks the focused window depends on which side of the split
+-- it sits on, and geometry alone cannot tell (nested splits are ambiguous).
+-- So we probe: dispatch a tiny resize, read the actual size change to learn
+-- the sign, then correct to the requested step. All three dispatches run
+-- synchronously inside one callback, so no intermediate state is rendered.
+-- Floating windows resize right/down, no probe needed.
+local RESIZE_STEP = 30
+local RESIZE_PROBE = 8
+
+local function resize_axis(d, horizontal)
+	hl.dispatch(hl.dsp.window.resize({ x = horizontal and d or 0, y = (not horizontal) and d or 0, relative = true }))
+end
+
+local function resize_step(grow, horizontal)
+	return function()
+		local win = hl.get_active_window()
+		if not win then
+			return
+		end
+		if win.floating then
+			resize_axis(grow and RESIZE_STEP or -RESIZE_STEP, horizontal)
+			return
+		end
+
+		local function axis()
+			return horizontal and win.size.x or win.size.y
+		end
+
+		local old = axis()
+
+		resize_axis(RESIZE_PROBE, horizontal)
+		local d = axis() - old
+
+		if d == RESIZE_PROBE then
+			-- positive delta grows this window
+			resize_axis(grow and (RESIZE_STEP - RESIZE_PROBE) or -(RESIZE_STEP + RESIZE_PROBE), horizontal)
+		elseif d == -RESIZE_PROBE then
+			-- positive delta shrinks this window
+			resize_axis(grow and -(RESIZE_STEP + RESIZE_PROBE) or (RESIZE_STEP - RESIZE_PROBE), horizontal)
+		else
+			-- no change: either this axis has no split, or the window is
+			-- already at its maximum size; probe the other direction
+			resize_axis(-RESIZE_PROBE, horizontal)
+			local d2 = axis() - old
+			if d2 == 0 then
+				return -- no split on this axis
+			end
+			if grow then
+				resize_axis(RESIZE_PROBE, horizontal) -- restore; cannot grow further
+			else
+				resize_axis(-(RESIZE_STEP - RESIZE_PROBE), horizontal) -- finish the shrink
+			end
+		end
+	end
+end
+
+hl.bind(mod .. " + equal", resize_step(true, true), { repeating = true }) -- wider
+hl.bind(mod .. " + minus", resize_step(false, true), { repeating = true }) -- narrower
+hl.bind(mod .. " + SHIFT + equal", resize_step(true, false), { repeating = true }) -- taller
+hl.bind(mod .. " + SHIFT + minus", resize_step(false, false), { repeating = true }) -- shorter
+
 -- --- Resize mode ---
 hl.bind(mod .. " + R", hl.dsp.submap("resize"))
 hl.define_submap("resize", function()
