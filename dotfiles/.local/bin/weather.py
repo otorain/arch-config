@@ -323,10 +323,18 @@ def build_window(data, mon, px):
     default_city = data.get("default", "baoan") if data else ""
     cities = data.get("cities", []) if data else []
 
+    # Hand cursor over rows ("pointer" is the css name, "hand2" the legacy
+    # X name; silently no-op if the theme lacks both).
+    display = win.get_display()
+    hand = (Gdk.Cursor.new_from_name(display, "pointer")
+            or Gdk.Cursor.new_from_name(display, "hand2"))
+
     if not cities:
         btn = Gtk.Button(label="天气获取失败（网络或 key 问题）")
         btn.get_style_context().add_class("city-row")
         btn.connect("clicked", lambda *a: Gtk.main_quit())
+        btn.connect("enter-notify-event", on_row_enter, hand)
+        btn.connect("leave-notify-event", on_row_leave)
         card.pack_start(btn, False, False, 0)
     else:
         for city in cities:
@@ -335,21 +343,28 @@ def build_window(data, mon, px):
             btn.get_style_context().add_class("city-row")
             if cid == default_city:
                 btn.get_style_context().add_class("active")
+            # Two columns: "icon city" on the left, "weather temp" on the
+            # right. Icon and name sit in a nested box with pixel spacing —
+            # a literal space collapses next to NerdFont PUA glyphs.
             h = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+            who = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
             icon_lbl = Gtk.Label(label=city.get("icon", ""))
             icon_lbl.get_style_context().add_class("city-name")
-            name = Gtk.Label(label=city.get("name", cid))
+            name = Gtk.Label(label=city.get("name", cid), xalign=0)
             name.get_style_context().add_class("city-name")
+            who.pack_start(icon_lbl, False, False, 0)
+            who.pack_start(name, True, True, 0)
             wx = Gtk.Label(xalign=1)
             wx.get_style_context().add_class("city-wx")
             weather = city.get("weather")
             temp = city.get("temp")
             wx.set_text(f"{weather} {temp}\u00b0C" if weather and temp else "获取失败")
-            h.pack_start(icon_lbl, False, False, 0)
-            h.pack_start(name, True, True, 0)
+            h.pack_start(who, True, True, 0)
             h.pack_start(wx, False, False, 0)
             btn.add(h)
             btn.connect("clicked", lambda *a, c=cid: (switch_city(c), Gtk.main_quit()))
+            btn.connect("enter-notify-event", on_row_enter, hand)
+            btn.connect("leave-notify-event", on_row_leave)
             card.pack_start(btn, False, False, 0)
 
     # Dropdown placement: flush under the bar, horizontally centered on the
@@ -383,6 +398,14 @@ def on_click_outside(win, event, card):
         return False
     dismiss()
     return True
+
+
+def on_row_enter(widget, _event, hand):
+    widget.get_window().set_cursor(hand)
+
+
+def on_row_leave(widget, _event):
+    widget.get_window().set_cursor(None)  # back to default
 
 
 def on_key(win, event):
