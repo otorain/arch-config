@@ -195,7 +195,8 @@ local function send_shortcut_once(mods, key)
 	end
 end
 
-local TERMINAL_CLASSES = { "kitty", "alacritty", "foot", "wezterm", "ghostty", "gnome-terminal", "konsole", "xfce4-terminal" }
+local TERMINAL_CLASSES =
+	{ "kitty", "alacritty", "foot", "wezterm", "ghostty", "gnome-terminal", "konsole", "xfce4-terminal" }
 
 local function active_window_is_terminal()
 	local window = hl.get_active_window()
@@ -221,8 +222,16 @@ local function universal_clipboard_shortcut(default_mods, default_key, terminal_
 	end
 end
 
-hl.bind(mod .. " + C", universal_clipboard_shortcut("CTRL", "C", "CTRL + SHIFT", "C"), { description = "Universal copy" })
-hl.bind(mod .. " + V", universal_clipboard_shortcut("CTRL", "V", "CTRL + SHIFT", "V"), { description = "Universal paste" })
+hl.bind(
+	mod .. " + C",
+	universal_clipboard_shortcut("CTRL", "C", "CTRL + SHIFT", "C"),
+	{ description = "Universal copy" }
+)
+hl.bind(
+	mod .. " + V",
+	universal_clipboard_shortcut("CTRL", "V", "CTRL + SHIFT", "V"),
+	{ description = "Universal paste" }
+)
 hl.bind(mod .. " + X", send_shortcut_once("CTRL", "X"), { description = "Universal cut" })
 
 -- --- Screenshot ---
