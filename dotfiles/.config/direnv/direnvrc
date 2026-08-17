@@ -2,6 +2,6 @@
 layout_uv() {
   watch_file pyproject.toml uv.lock
   uv sync
-  export VIRTUAL_ENV="$PWD/.env"
+  export VIRTUAL_ENV="$PWD/.venv"
   PATH_add "$VIRTUAL_ENV/bin"
 }
