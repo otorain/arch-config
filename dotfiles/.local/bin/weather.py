@@ -92,8 +92,8 @@ CLASSES = [
 
 # popup styling — catppuccin mocha, matching the bar. The window is a
 # fullscreen transparent layer-shell surface (the outside-click catcher);
-# the visible popup is #weather-content, a dropdown card hanging flush below
-# the bar (square top corners, rounded bottom corners).
+# the visible popup is #weather-content, a rounded dropdown card hanging
+# flush below the bar.
 BAR_HEIGHT = 36  # matches waybar "height"; the card hangs flush below the bar
 MIN_WIDTH = 240
 SIDE_GAP = 6     # minimum distance to the screen's left/right edge
@@ -104,8 +104,11 @@ window#weather-popup {
 #weather-content {
   background-color: #1e1e2e;
   color: #cdd6f4;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   padding: 5px;
+  /* echo Hyprland decoration:shadow, but lighter - CSS blur has no
+     render_power falloff, so full strength looks heavier than the compositor's */
+  box-shadow: 0 0 14px rgba(26, 26, 26, 0.55);
 }
 #weather-content button.city-row {
   border: none;
