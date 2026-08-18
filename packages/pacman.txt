@@ -69,6 +69,7 @@ hyprlock
 hyprpicker
 hyprpolkitagent
 gtk-layer-shell
+gtk4-layer-shell
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 waybar
@@ -86,6 +87,7 @@ qt5ct
 qt6ct
 nwg-look
 sddm
+python-gobject
 
 # === Input method (fcitx5 + rime) ===
 fcitx5

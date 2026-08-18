@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# Waybar weather module — Amap (Gaode) live weather + GTK3 popup.
+# Waybar weather module — Amap (Gaode) live weather + GTK4 popup.
 #
 # Reads the API key from ~/.config/weather/amap-key (one line).
 # The module shows one city; clicking toggles a popup below the bar listing
 # all cities. Picking a city switches the default (SIGUSR2 reloads waybar so
 # the new city shows immediately). The popup is a fullscreen transparent
-# gtk-layer-shell surface: it closes on city pick, Escape, a click outside
+# gtk4-layer-shell surface: it closes on city pick, Escape, a click outside
 # the card, or a second module click (pidfile toggle).
 #
 # Commands:
@@ -20,17 +20,43 @@ import sys
 import time
 import urllib.request
 
+# gtk4-layer-shell must be loaded before libwayland-client (pulled in by
+# libgtk-4); PyGObject's dlopen order can't guarantee that, and a late-loaded
+# lib silently degrades the popup to a plain tiled toplevel ("Failed to
+# initialize layer surface"). Re-exec once with LD_PRELOAD so the layer-shell
+# lib loads first. https://github.com/wmww/gtk4-layer-shell/blob/main/linking.md
+_LS_LIB = "/usr/lib/libgtk4-layer-shell.so"
+if "--popup" in sys.argv and os.path.exists(_LS_LIB) \
+        and "libgtk4-layer-shell" not in os.environ.get("LD_PRELOAD", ""):
+    os.environ["LD_PRELOAD"] = ":".join(
+        filter(None, [_LS_LIB, os.environ.get("LD_PRELOAD", "")]))
+    os.execv(sys.executable, [sys.executable, os.path.abspath(__file__), *sys.argv[1:]])
+
 import gi
 
-gi.require_version("Gtk", "3.0")
-gi.require_version("Gdk", "3.0")
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gdk", "4.0")
 from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
 try:
-    gi.require_version("GtkLayerShell", "0.1")
-    from gi.repository import GtkLayerShell  # noqa: E402
-except (ValueError, ImportError):  # gtk-layer-shell not installed
-    GtkLayerShell = None
+    gi.require_version("Gtk4LayerShell", "1.0")
+    from gi.repository import Gtk4LayerShell  # noqa: E402
+except (ValueError, ImportError):  # gtk4-layer-shell not installed
+    Gtk4LayerShell = None
+
+# waybar exposes no module geometry of its own; waybar_geom finds the weather
+# label via the AT-SPI tree (see that file). Missing -> [] -> monitor-center.
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from waybar_geom import find_module_extents, popup_margins  # noqa: E402
+except ImportError:
+    find_module_extents = popup_margins = None
+
+
+def find_weather_extents():
+    if find_module_extents is None:
+        return []
+    return find_module_extents("°C")
 
 CACHE_DIR = os.path.expanduser(os.environ.get("XDG_CACHE_HOME") or "~/.cache") + "/weather"
 KEY_FILE = os.path.expanduser(os.environ.get("XDG_CONFIG_HOME") or "~/.config") + "/weather/amap-key"
@@ -97,7 +123,7 @@ CLASSES = [
 BAR_HEIGHT = 36  # matches waybar "height"; the card hangs flush below the bar
 MIN_WIDTH = 240
 SIDE_GAP = 6     # minimum distance to the screen's left/right edge
-CSS = b"""
+CSS = """
 window#weather-popup {
   background-color: transparent;
 }
@@ -106,16 +132,13 @@ window#weather-popup {
   color: #cdd6f4;
   border-radius: 8px;
   padding: 5px;
-  /* echo Hyprland decoration:shadow, but lighter - CSS blur has no
-     render_power falloff, so full strength looks heavier than the compositor's */
-  box-shadow: 0 0 14px rgba(26, 26, 26, 0.55);
+  /* subtle shadow - a wide CSS blur reads heavier than the compositor's */
+  box-shadow: 0 0 6px rgba(26, 26, 26, 0.55);
 }
 #weather-content button.city-row {
   border: none;
   outline-style: none;
   box-shadow: none;
-  text-shadow: none;
-  -gtk-icon-shadow: none;
   background: transparent;
   border-radius: 6px;
   min-width: 0;
@@ -284,39 +307,50 @@ def ensure_data():
     return read_cache()
 
 
-def build_window(data, mon, px):
+def find_monitor_at(display, px, py):
+    """Monitor containing (px, py); the first monitor as fallback (GTK4 has
+    no primary-monitor concept)."""
+    if display is None:
+        return None
+    monitors = display.get_monitors()
+    for i in range(monitors.get_n_items()):
+        m = monitors.get_item(i)
+        g = m.get_geometry()
+        if g.x <= px < g.x + g.width and g.y <= py < g.y + g.height:
+            return m
+    return monitors.get_item(0) if monitors.get_n_items() > 0 else None
+
+
+def build_window(app, data, mon, exts, px):
     # The popup is a fullscreen, transparent layer-shell surface; the visible
-    # card (#weather-content) hangs flush below the bar, centered on the click
-    # point. The click always lands on the weather module, so centering there
-    # anchors the dropdown to the module as closely as possible — waybar
-    # exposes no module geometry. Any click outside the card is caught by the
-    # surface itself and dismisses the popup (see on_click_outside). Plain
-    # toplevels cannot do "click outside to close" on Wayland — they never
-    # see clicks on other surfaces.
-    win = Gtk.Window(title="weather-popup")
+    # card (#weather-content) hangs flush below the bar, centered on the
+    # weather module (AT-SPI geometry from waybar_geom), else on the monitor.
+    # Any click outside the card is caught by the surface itself and dismisses
+    # the popup (see on_click_outside). Plain toplevels cannot do "click
+    # outside to close" on Wayland — they never see clicks on other surfaces.
+    win = Gtk.Window(application=app, title="weather-popup")
     win.set_name("weather-popup")
 
-    GtkLayerShell.init_for_window(win)
-    GtkLayerShell.set_layer(win, GtkLayerShell.Layer.TOP)
-    GtkLayerShell.set_namespace(win, "weather-popup")
-    GtkLayerShell.set_keyboard_mode(win, GtkLayerShell.KeyboardMode.EXCLUSIVE)
-    GtkLayerShell.set_exclusive_zone(win, -1)  # overlay, never shifts the bar
-    for edge in (GtkLayerShell.Edge.TOP, GtkLayerShell.Edge.BOTTOM,
-                 GtkLayerShell.Edge.LEFT, GtkLayerShell.Edge.RIGHT):
-        GtkLayerShell.set_anchor(win, edge, True)
+    Gtk4LayerShell.init_for_window(win)
+    Gtk4LayerShell.set_layer(win, Gtk4LayerShell.Layer.TOP)
+    Gtk4LayerShell.set_namespace(win, "weather-popup")
+    Gtk4LayerShell.set_keyboard_mode(win, Gtk4LayerShell.KeyboardMode.EXCLUSIVE)
+    Gtk4LayerShell.set_exclusive_zone(win, -1)  # overlay, never shifts the bar
+    for edge in (Gtk4LayerShell.Edge.TOP, Gtk4LayerShell.Edge.BOTTOM,
+                 Gtk4LayerShell.Edge.LEFT, Gtk4LayerShell.Edge.RIGHT):
+        Gtk4LayerShell.set_anchor(win, edge, True)
     if mon is not None:
-        GtkLayerShell.set_monitor(win, mon)
-
-    # RGBA visual keeps the fullscreen background actually transparent.
-    screen = Gdk.Screen.get_default()
-    visual = screen.get_rgba_visual()
-    if visual is not None:
-        win.set_visual(visual)
+        Gtk4LayerShell.set_monitor(win, mon)
 
     provider = Gtk.CssProvider()
-    provider.load_from_data(CSS)
-    Gtk.StyleContext.add_provider_for_screen(
-        screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    provider.load_from_string(CSS)
+    # PRIORITY_USER (800), not APPLICATION (600): the GTK theme is symlinked
+    # into ~/.config/gtk-4.0/gtk.css, which GTK loads at USER priority — an
+    # APPLICATION-priority provider loses to the theme's opaque
+    # `.background { background-color: @window_bg_color }` and the popup
+    # becomes an opaque fullscreen surface that hides the desktop.
+    Gtk.StyleContext.add_provider_for_display(
+        win.get_display(), provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
     card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
     card.set_name("weather-content")
@@ -325,17 +359,15 @@ def build_window(data, mon, px):
 
     # Hand cursor over rows ("pointer" is the css name, "hand2" the legacy
     # X name; silently no-op if the theme lacks both).
-    display = win.get_display()
-    hand = (Gdk.Cursor.new_from_name(display, "pointer")
-            or Gdk.Cursor.new_from_name(display, "hand2"))
+    hand = (Gdk.Cursor.new_from_name("pointer", None)
+            or Gdk.Cursor.new_from_name("hand2", None))
 
     if not cities:
         btn = Gtk.Button(label="天气获取失败（网络或 key 问题）")
         btn.get_style_context().add_class("city-row")
-        btn.connect("clicked", lambda *a: Gtk.main_quit())
-        btn.connect("enter-notify-event", on_row_enter, hand)
-        btn.connect("leave-notify-event", on_row_leave)
-        card.pack_start(btn, False, False, 0)
+        btn.set_cursor(hand)
+        btn.connect("clicked", lambda *a: win.close())
+        card.append(btn)
     else:
         for city in cities:
             cid = city.get("id", "")
@@ -348,78 +380,84 @@ def build_window(data, mon, px):
             # a literal space collapses next to NerdFont PUA glyphs.
             h = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
             who = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            who.set_hexpand(True)
             icon_lbl = Gtk.Label(label=city.get("icon", ""))
             icon_lbl.get_style_context().add_class("city-name")
             name = Gtk.Label(label=city.get("name", cid), xalign=0)
             name.get_style_context().add_class("city-name")
-            who.pack_start(icon_lbl, False, False, 0)
-            who.pack_start(name, True, True, 0)
+            name.set_hexpand(True)
+            who.append(icon_lbl)
+            who.append(name)
             wx = Gtk.Label(xalign=1)
             wx.get_style_context().add_class("city-wx")
             weather = city.get("weather")
             temp = city.get("temp")
-            wx.set_text(f"{weather} {temp}\u00b0C" if weather and temp else "获取失败")
-            h.pack_start(who, True, True, 0)
-            h.pack_start(wx, False, False, 0)
-            btn.add(h)
-            btn.connect("clicked", lambda *a, c=cid: (switch_city(c), Gtk.main_quit()))
-            btn.connect("enter-notify-event", on_row_enter, hand)
-            btn.connect("leave-notify-event", on_row_leave)
-            card.pack_start(btn, False, False, 0)
+            wx.set_text(f"{weather} {temp}°C" if weather and temp else "获取失败")
+            h.append(who)
+            h.append(wx)
+            btn.set_child(h)
+            btn.set_cursor(hand)
+            btn.connect("clicked", lambda *a, c=cid: (switch_city(c), win.close()))
+            card.append(btn)
 
-    # Dropdown placement: flush under the bar, horizontally centered on the
-    # click point, clamped to the monitor edges.
+    # Dropdown placement: flush under the bar, centered on the weather module
+    # (AT-SPI geometry), else on the monitor; clamped to the monitor edges.
     card.set_size_request(MIN_WIDTH, -1)
     card.set_halign(Gtk.Align.START)
     card.set_valign(Gtk.Align.START)
-    card.set_margin_top(BAR_HEIGHT)
-    width = max(card.get_preferred_width().natural_width, MIN_WIDTH)
-    mx = px - width // 2
+    width = max(card.measure(Gtk.Orientation.HORIZONTAL, -1)[1], MIN_WIDTH)
+    geo_t = None
     if mon is not None:
-        geo = mon.get_geometry()
-        mx = min(max(mx - geo.x, SIDE_GAP), max(geo.width - width - SIDE_GAP, SIDE_GAP))
+        g = mon.get_geometry()
+        geo_t = (g.x, g.y, g.width, g.height)
+    if popup_margins is not None:
+        mx, mt = popup_margins(width, exts, geo_t, px, BAR_HEIGHT, SIDE_GAP)
+    elif geo_t is not None:  # waybar_geom missing: monitor center
+        mx = min(max((geo_t[2] - width) // 2, SIDE_GAP),
+                 max(geo_t[2] - width - SIDE_GAP, SIDE_GAP))
+        mt = BAR_HEIGHT
+    else:
+        mx, mt = px - width // 2, BAR_HEIGHT
     card.set_margin_start(mx)
+    card.set_margin_top(mt)
 
-    win.add(card)
-    return win, card
+    win.set_child(card)
+
+    # Clicking outside the card or Escape dismisses the popup; moving the
+    # mouse away does nothing (no focus-out handler).
+    click = Gtk.GestureClick()
+    click.connect("pressed", on_click_outside, win, card)
+    win.add_controller(click)
+    key = Gtk.EventControllerKey()
+    key.connect("key-pressed", on_key, win)
+    win.add_controller(key)
+    return win
 
 
-def dismiss(*_):
-    Gtk.main_quit()
-    return False
-
-
-def on_click_outside(win, event, card):
+def on_click_outside(_gesture, _n_press, x, y, win, card):
     # The surface fills the whole output, so every click reaches us; dismiss
     # only when it lands outside the card (clicks inside go to the row
-    # buttons or harmlessly hit padding).
-    a = card.get_allocation()
-    if a.x <= event.x < a.x + a.width and a.y <= event.y < a.y + a.height:
-        return False
-    dismiss()
-    return True
+    # buttons or harmlessly hit padding). Gesture coordinates are relative
+    # to the window, matching compute_bounds' coordinate space.
+    ok, b = card.compute_bounds(win)
+    if ok and b.origin.x <= x < b.origin.x + b.size.width \
+            and b.origin.y <= y < b.origin.y + b.size.height:
+        return
+    win.close()
 
 
-def on_row_enter(widget, _event, hand):
-    widget.get_window().set_cursor(hand)
-
-
-def on_row_leave(widget, _event):
-    widget.get_window().set_cursor(None)  # back to default
-
-
-def on_key(win, event):
-    if event.keyval == Gdk.KEY_Escape:
-        return dismiss()
+def on_key(_ctrl, keyval, _keycode, _state, win):
+    if keyval == Gdk.KEY_Escape:
+        win.close()
+        return True
     return False
 
 
 def run_popup():
     GLib.set_prgname("weather-popup")
-    Gdk.set_program_class("weather-popup")
     os.makedirs(CACHE_DIR, exist_ok=True)
-    if GtkLayerShell is None:
-        print("weather.py --popup requires gtk-layer-shell", file=sys.stderr)
+    if Gtk4LayerShell is None:
+        print("weather.py --popup requires gtk4-layer-shell", file=sys.stderr)
         return
 
     # Toggle: a second click on the module closes an already-open popup.
@@ -435,8 +473,8 @@ def run_popup():
 
     data = ensure_data()
 
-    # Dropdown hangs below the bar, centered on the pointer's x, on the
-    # pointer's monitor.
+    # The pointer position only picks WHICH monitor's bar was clicked; the
+    # card's horizontal anchor comes from the module's geometry (AT-SPI).
     px = py = 0
     try:
         cursor = json.loads(subprocess.check_output(["hyprctl", "-j", "cursorpos"]).decode())
@@ -444,13 +482,15 @@ def run_popup():
         py = int(cursor.get("y", 0))
     except Exception:
         pass
-    display = Gdk.Display.get_default()
-    mon = None
-    if display is not None:
-        mon = display.get_monitor_at_point(px, py) or display.get_primary_monitor()
 
-    win, card = build_window(data, mon, px)
-    win.show_all()
+    app = Gtk.Application(application_id="weather.popup")
+
+    def on_activate(app):
+        mon = find_monitor_at(Gdk.Display.get_default(), px, py)
+        win = build_window(app, data, mon, find_weather_extents(), px)
+        win.present()
+
+    app.connect("activate", on_activate)
 
     try:
         with open(PID_FILE, "w", encoding="utf-8") as f:
@@ -458,12 +498,7 @@ def run_popup():
     except OSError:
         pass
 
-    # Clicking outside the card or Escape dismisses the popup; moving the
-    # mouse away does nothing (no focus-out handler).
-    win.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
-    win.connect("button-press-event", on_click_outside, card)
-    win.connect("key-press-event", on_key)
-    Gtk.main()
+    app.run(None)
 
     try:
         os.remove(PID_FILE)
