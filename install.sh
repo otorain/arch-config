@@ -217,6 +217,10 @@ dotfiles() {
   as_user_home update-desktop-database "$TARGET_HOME/.local/share/applications" 2>/dev/null || true
   as_user_home gtk-update-icon-cache -f "$TARGET_HOME/.local/share/icons/hicolor" 2>/dev/null || true
 
+  # reload a running waybar so config/module changes apply immediately
+  # (no-op on fresh installs where waybar isn't running yet)
+  as_user pkill -SIGUSR2 -x waybar 2>/dev/null || true
+
   # git identity: ~/.config/git/config is user-owned (generated once, never overwritten);
   # it includes ~/.config/git/custom, which is managed by dotfiles (delta + catppuccin)
   local git_config="$TARGET_HOME/.config/git/config"
