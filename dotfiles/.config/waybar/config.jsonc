@@ -10,6 +10,10 @@
     "modules-center": ["clock", "custom/weather"],
     "modules-right": ["disk", "network", "cpu", "memory", "pulseaudio", "tray"],
 
+    // NOTE: clicking a workspace does nothing on waybar 0.15.0 + Hyprland 0.55+.
+    // The module hardcodes the legacy `dispatch workspace N` IPC call (config
+    // on-click is ignored for workspace buttons), which Hyprland 0.55+ rejects.
+    // Fixed upstream; resolves itself with the waybar 0.16 release.
     "hyprland/workspaces": {
         "format": "{name}",
         "on-click": "activate",
