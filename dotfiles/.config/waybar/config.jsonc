@@ -63,10 +63,14 @@
     },
 
     // Clock (was time: %a %Y.%m.%d %H:%M)
+    // Click toggles the lunar calendar popup (gtk4-layer-shell, like weather).
+    // Tooltip off: the default one renders as an empty box with this format.
     "clock": {
         "format": "{:L%A %Y.%m.%d %H:%M}",
         "locale": "zh_CN.UTF-8",
-        "interval": 60
+        "interval": 60,
+        "tooltip": false,
+        "on-click": "~/.local/bin/calendar.py"
     },
 
     // Weather (Amap; key in ~/.config/weather/amap-key).
