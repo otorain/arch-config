@@ -55,6 +55,23 @@ cd ~/arch-config
 6. **goldendict-ng**：词典需手动放置，见 [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) 文档（词典文件可放 `~/.local/share/goldendict`，然后在设置里添加目录）。登录自启常驻托盘，`Super+T` 通过单实例 IPC 转发查询词，免冷启动
 7. **git**：首次运行 dotfiles 阶段时会交互询问 `user.name`/`user.email`，保存在 `~/.config/git/config`——该文件归你所有，重跑安装不会覆盖。共享配置（delta、catppuccin 主题）在 `~/.config/git/custom`，由 dotfiles 管理，请勿手动修改
 
+## dsh web（DeepSeek Harness）
+
+`dsh web` 在 <http://127.0.0.1:3080> 提供 DeepSeek Harness 编码代理的浏览器界面。`post` 阶段会全局安装 CLI（`npm i -g @deepseek-ai/dsh`，落在 `~/.local/bin/dsh`），并启用用户服务（`dotfiles/.config/systemd/user/dsh-web.service`），登录即自启：
+
+```bash
+systemctl --user status dsh-web        # 状态
+journalctl --user -u dsh-web -f        # 跟踪日志
+systemctl --user restart dsh-web       # 重启
+```
+
+- **端口**：默认绑定 127.0.0.1:3080（`--host 0.0.0.0` 被设计上拒绝）。改端口：编辑 `~/.config/systemd/user/dsh-web.service` 的 `ExecStart=... dsh web --port 8080`，然后 `systemctl --user daemon-reload && systemctl --user restart dsh-web`
+- **API 密钥**：放 `~/.dsh/.env`（如 `DEEPSEEK_API_KEY=...`）——launcher 会自动加载；不要把密钥写进 unit 文件
+- **升级**：`npm i -g @deepseek-ai/dsh@latest && systemctl --user restart dsh-web`
+- **npm ≥ 12** 默认拦截安装脚本，`npm i -g` 会警告 koffi/node-pty 等——dsh 仍可正常工作（原生预编译随包自带，或按需现场编译）。想执行这些脚本：`npm i -g --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs @deepseek-ai/dsh`
+- **端口被占用**：若还有旧的 `npx @deepseek-ai/dsh web` 实例在跑，先停掉（`pkill -f "dsh web"`），再 `systemctl --user reset-failed dsh-web && systemctl --user restart dsh-web`
+- **只铺配置**：若只跑 `./install.sh --only dotfiles`，unit 文件会部署但不会启用——手动执行一次 `systemctl --user enable --now dsh-web`
+
 ## 键位
 
 | 快捷键 | 功能 |
@@ -115,6 +132,7 @@ AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-previ
 ```
 .
 ├── install.sh          # 主脚本（幂等，支持 --only）
+├── scripts/            # 独立的临时安装脚本（yay、oh-my-zsh、fcitx5 主题、try-cli）
 ├── packages/
 │   ├── pacman.txt      # 官方仓库（每行一包，# 注释）
 │   └── aur.txt         # AUR
@@ -131,6 +149,7 @@ AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-previ
     ├── .config/dunst/  # 含 mocha 配色
     ├── .config/mpv/    # uosc/thumbfast/sponsorblock 由 AUR 提供
     ├── .config/git/    # custom = delta + catppuccin（被用户自有的 ~/.config/git/config include）
+    ├── .config/systemd/user/ # dsh-web.service — DeepSeek Harness 网页端用户服务（post 阶段启用）
     ├── .config/fcitx5/ # fcitx5 配置（profile/classicui/rime.conf）
     ├── .local/share/fcitx5/rime/ # 雾凇拼音 default.custom.yaml
     ├── .config/atuin/  # 含 catppuccin 主题

@@ -55,6 +55,23 @@ Stage order: `preflight → pacman → yay → aur → system → services → u
 6. **goldendict-ng**: dictionaries must be placed manually, see the [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) docs (put dictionary files under `~/.local/share/goldendict`, then add the directory in settings). Autostarts in the tray at login; `Super+T` forwards the query through single-instance IPC, avoiding cold start
 7. **git**: on the first dotfiles run you're asked for `user.name`/`user.email`, saved to `~/.config/git/config` — that file is yours and is never overwritten on re-runs. Shared settings (delta, catppuccin theme) live in `~/.config/git/custom`, which is managed by dotfiles; don't edit it
 
+## dsh web (DeepSeek Harness)
+
+`dsh web` serves the DeepSeek Harness coding-agent browser UI at <http://127.0.0.1:3080>. The `post` stage installs the CLI globally (`npm i -g @deepseek-ai/dsh`, lands in `~/.local/bin/dsh`) and enables it as a user service (`dotfiles/.config/systemd/user/dsh-web.service`), so it starts at login:
+
+```bash
+systemctl --user status dsh-web        # status
+journalctl --user -u dsh-web -f        # follow logs
+systemctl --user restart dsh-web       # restart
+```
+
+- **Port**: binds 127.0.0.1:3080 by default (`--host 0.0.0.0` is intentionally rejected). To change it, edit `ExecStart=... dsh web --port 8080` in `~/.config/systemd/user/dsh-web.service`, then `systemctl --user daemon-reload && systemctl --user restart dsh-web`
+- **API keys**: put them in `~/.dsh/.env` (e.g. `DEEPSEEK_API_KEY=...`) — the launcher loads it automatically; keep secrets out of the unit file
+- **Upgrade**: `npm i -g @deepseek-ai/dsh@latest && systemctl --user restart dsh-web`
+- **npm ≥ 12** blocks install scripts by default, so `npm i -g` warns about koffi/node-pty/… — dsh still works (native prebuilds ship with the packages, or compile on demand). To run the scripts anyway: `npm i -g --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs @deepseek-ai/dsh`
+- **Port already in use**: if an old `npx @deepseek-ai/dsh web` instance is still running, stop it first (`pkill -f "dsh web"`), then `systemctl --user reset-failed dsh-web && systemctl --user restart dsh-web`
+- **Config-only deploys**: if you run `./install.sh --only dotfiles`, the unit is deployed but not enabled — enable once manually: `systemctl --user enable --now dsh-web`
+
 ## Keybindings
 
 | Shortcut | Action |
@@ -115,6 +132,7 @@ AUR package names change over time. If the official repo version of `zed` doesn'
 ```
 .
 ├── install.sh          # main script (idempotent, supports --only)
+├── scripts/            # standalone ad-hoc installs (yay, oh-my-zsh, fcitx5 theme, try-cli)
 ├── packages/
 │   ├── pacman.txt      # official repos (one package per line, # comments)
 │   └── aur.txt         # AUR
@@ -131,6 +149,7 @@ AUR package names change over time. If the official repo version of `zed` doesn'
     ├── .config/dunst/  # includes mocha colors
     ├── .config/mpv/    # uosc/thumbfast/sponsorblock provided by AUR
     ├── .config/git/    # custom = delta + catppuccin (included by user-owned ~/.config/git/config)
+    ├── .config/systemd/user/ # dsh-web.service — DeepSeek Harness web UI user service (enabled in the post stage)
     ├── .config/fcitx5/ # fcitx5 config (profile/classicui/rime.conf)
     ├── .local/share/fcitx5/rime/ # rime-ice default.custom.yaml
     ├── .config/atuin/  # includes catppuccin theme

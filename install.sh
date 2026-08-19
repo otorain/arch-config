@@ -9,6 +9,9 @@
 #       → user → dotfiles → themes → mpv → post
 #
 # Idempotent; existing configs are overwritten without backup
+#
+# Ad-hoc script-based installs (yay bootstrap, oh-my-zsh, fcitx5 theme,
+# try-cli) live in scripts/ as standalone scripts invoked by the stages above.
 
 set -euo pipefail
 
@@ -66,17 +69,7 @@ pacman_pkgs() {
 }
 
 install_yay() {
-  info "installing yay"
-  if command -v yay &>/dev/null; then
-    ok "yay already installed"
-    return
-  fi
-  local tmp
-  tmp="$(mktemp -d)"
-  git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
-  (cd "$tmp/yay-bin" && makepkg -si --noconfirm)
-  rm -rf "$tmp"
-  ok "yay installed"
+  bash "$SCRIPT_DIR/scripts/install-yay.sh"
 }
 
 aur_pkgs() {
@@ -168,7 +161,11 @@ services() {
     sddm
   )
   for u in "${sys_units[@]}"; do
-    sudo systemctl enable --now "$u" &>/dev/null && ok "$u" || warn "enable failed: $u"
+    if sudo systemctl enable --now "$u" &>/dev/null; then
+      ok "$u"
+    else
+      warn "enable failed: $u"
+    fi
   done
 
   # user-level audio services
@@ -189,10 +186,7 @@ user_setup() {
   ok "shell = zsh"
 
   # oh-my-zsh
-  if [[ ! -d "$TARGET_HOME/.oh-my-zsh" ]]; then
-    as_user_home git clone --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "$TARGET_HOME/.oh-my-zsh"
-  fi
-  ok "oh-my-zsh"
+  as_user_home bash "$SCRIPT_DIR/scripts/install-oh-my-zsh.sh"
 
   # npm global prefix (no sudo), used by codex / pi-coding-agent
   as_user_home npm config set prefix "$TARGET_HOME/.local" 2>/dev/null || true
@@ -261,20 +255,7 @@ themes() {
   info "installing themes"
 
   # fcitx5 catppuccin theme
-  if [[ ! -d "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue" ]]; then
-    local tmp
-    tmp="$(mktemp -d)"
-    git clone --depth 1 https://github.com/catppuccin/fcitx5.git "$tmp/fcitx5"
-    mkdir -p "$TARGET_HOME/.local/share/fcitx5/themes"
-    cp -r "$tmp/fcitx5/src/catppuccin-mocha-blue" \
-      "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue"
-    # rounded corners
-    (cd "$TARGET_HOME/.local/share/fcitx5/themes/catppuccin-mocha-blue" &&
-      bash "$tmp/fcitx5/enable-rounded.sh" 2>/dev/null) || true
-    rm -rf "$tmp"
-    chown -R "$TARGET_USER:$TARGET_USER" "$TARGET_HOME/.local/share/fcitx5"
-  fi
-  ok "fcitx5 theme"
+  bash "$SCRIPT_DIR/scripts/install-fcitx5-theme.sh"
 
   # GTK4 / Libadwaita links
   local gtk_theme=""
@@ -328,28 +309,31 @@ mpv_scripts() {
 post() {
   info "post-install"
 
-  # npm global tools (codex CLI, pi-coding-agent)
-  as_user_home npm i -g @openai/codex @mariozechner/pi-coding-agent ||
-    warn "npm global install failed, do it manually later: npm i -g @openai/codex @mariozechner/pi-coding-agent"
+  # npm global tools (codex CLI, pi-coding-agent, dsh)
+  as_user_home npm i -g @openai/codex @mariozechner/pi-coding-agent @deepseek-ai/dsh ||
+    warn "npm global install failed, do it manually later: npm i -g @openai/codex @mariozechner/pi-coding-agent @deepseek-ai/dsh"
+
+  # dsh web (DeepSeek Harness): enable the user service deployed by the dotfiles stage
+  # so the browser UI starts at login. Needs the npm install above; may fail on a
+  # headless/tty run with no user manager (systemctl --user can't connect) — that's ok.
+  if [[ -f "$TARGET_HOME/.config/systemd/user/dsh-web.service" ]]; then
+    local uid
+    uid="$(id -u "$TARGET_USER")"
+    as_user_home env XDG_RUNTIME_DIR="/run/user/$uid" systemctl --user daemon-reload
+    if as_user_home env XDG_RUNTIME_DIR="/run/user/$uid" systemctl --user enable --now dsh-web.service; then
+      ok "dsh web user service enabled"
+    else
+      warn "dsh web service failed to start — check: journalctl --user -u dsh-web -e"
+    fi
+  else
+    warn "dsh-web.service not found (dotfiles stage not run?); skipping user service enable"
+  fi
 
   # rustup default toolchain
   as_user_home rustup default stable || warn "rustup default stable failed"
 
   # try-cli: manage experimental directories
-  if [[ ! -d "$TARGET_HOME/.local/share/try-cli" ]]; then
-    as_user_home git clone --depth 1 https://github.com/tobi/try.git \
-      "$TARGET_HOME/.local/share/try-cli" ||
-      warn "try-cli clone failed, install manually later: https://github.com/tobi/try"
-  fi
-  if [[ -d "$TARGET_HOME/.local/share/try-cli" && ! -x "$TARGET_HOME/.local/bin/try" ]]; then
-    as_user_home mkdir -p "$TARGET_HOME/.local/bin"
-    as_user_home tee "$TARGET_HOME/.local/bin/try" >/dev/null <<'EOF'
-#!/bin/sh
-exec ruby "$HOME/.local/share/try-cli/try.rb" "$@"
-EOF
-    as_user chmod +x "$TARGET_HOME/.local/bin/try"
-  fi
-  ok "try-cli"
+  as_user_home bash "$SCRIPT_DIR/scripts/install-try-cli.sh"
 
   # xdg user directories
   as_user_home xdg-user-dirs-update || true

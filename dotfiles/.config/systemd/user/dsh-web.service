@@ -1,0 +1,15 @@
+[Unit]
+Description=DeepSeek Harness Web UI
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+ExecStart=%h/.local/bin/dsh web
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
+
