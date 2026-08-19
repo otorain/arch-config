@@ -13,7 +13,7 @@
   when: gitconfig.stat.exists
   block:
     - name: Check include of ~/.config/git/custom
-      ansible.builtin.command: "grep -q config/git/custom {{ home }}/.config/git/config"
+      ansible.builtin.command: "grep -q config/git/custom \"{{ home }}/.config/git/config\""
       register: git_include
       changed_when: false
       failed_when: false
@@ -40,17 +40,13 @@
       ansible.builtin.copy:
         dest: "{{ home }}/.config/git/config"
         content: |
-          {% if git_name.user_input or git_email.user_input %}
+          {%- if git_name.user_input or git_email.user_input -%}
           [user]
-          {% if git_name.user_input %}
-          	name = {{ git_name.user_input }}
-          {% endif %}
-          {% if git_email.user_input %}
-          	email = {{ git_email.user_input }}
+          {% if git_name.user_input %}	name = {{ git_name.user_input }}
+          {% endif %}{% if git_email.user_input %}	email = {{ git_email.user_input }}
           {% endif %}
 
-          {% endif %}
-          # shared settings managed by dotfiles (delta, catppuccin theme) - do not edit
+          {% endif %}# shared settings managed by dotfiles (delta, catppuccin theme) - do not edit
           [include]
           	path = ~/.config/git/custom
 
