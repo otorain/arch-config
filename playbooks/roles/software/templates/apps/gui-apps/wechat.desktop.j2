@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=wechat
 Name[zh_CN]=微信
-# Override the system-level desktop entry: under XWayland with 1.25 fractional scaling, the app must scale itself or it looks blurry
-Exec=env QT_SCALE_FACTOR=1.25 /opt/wechat/wechat %U
+# Override the system-level desktop entry: under XWayland with 1.25 fractional scaling, the app must scale itself or it looks blurry -- scale comes from host_vars
+Exec=env QT_SCALE_FACTOR={{ scale }} /opt/wechat/wechat %U
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/icons/hicolor/256x256/apps/wechat.png

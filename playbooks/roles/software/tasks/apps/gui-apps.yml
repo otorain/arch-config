@@ -1,1 +1,11 @@
 ---
+- name: Deploy wechat desktop override (QT_SCALE_FACTOR from host_vars)
+  ansible.builtin.template:
+    src: apps/gui-apps/wechat.desktop.j2
+    dest: "{{ home }}/.local/share/applications/wechat.desktop"
+  notify: Update desktop database
+
+- name: Deploy native GUI app configs (pcmanfm, zathura, mimeapps)
+  ansible.builtin.copy:
+    src: apps/gui-apps/
+    dest: "{{ home }}/"

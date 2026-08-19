@@ -1,1 +1,8 @@
 ---
+- name: Deploy Chrome web apps (.desktop + hicolor icons)
+  ansible.builtin.copy:
+    src: apps/web-apps/
+    dest: "{{ home }}/"
+  notify:
+    - Update desktop database
+    - Update icon cache
