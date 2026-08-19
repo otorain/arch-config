@@ -92,6 +92,13 @@
       tags: nvim
   tags: nvim
 
+- name: "App: pcmanfm"
+  ansible.builtin.include_tasks:
+    file: pcmanfm.yml
+    apply:
+      tags: pcmanfm
+  tags: pcmanfm
+
 - name: "App: waybar"
   ansible.builtin.include_tasks:
     file: waybar.yml
@@ -105,6 +112,13 @@
     apply:
       tags: web-apps
   tags: web-apps
+
+- name: "App: zathura"
+  ansible.builtin.include_tasks:
+    file: zathura.yml
+    apply:
+      tags: zathura
+  tags: zathura
 
 - name: "App: zsh"
   ansible.builtin.include_tasks:

@@ -1,0 +1,5 @@
+---
+- name: Deploy zathura config
+  ansible.builtin.copy:
+    src: zathura/
+    dest: "{{ home }}/.config/zathura/"

@@ -5,17 +5,7 @@
     dest: "{{ home }}/.local/share/applications/wechat.desktop"
   notify: Update desktop database
 
-- name: Deploy pcmanfm config
-  ansible.builtin.copy:
-    src: gui-apps/pcmanfm/
-    dest: "{{ home }}/.config/pcmanfm/"
-
-- name: Deploy zathura config
-  ansible.builtin.copy:
-    src: gui-apps/zathura/
-    dest: "{{ home }}/.config/zathura/"
-
-- name: Deploy mimeapps.list
+- name: Deploy mimeapps.list (default applications for mime types)
   ansible.builtin.copy:
     src: gui-apps/mimeapps.list
     dest: "{{ home }}/.config/mimeapps.list"
