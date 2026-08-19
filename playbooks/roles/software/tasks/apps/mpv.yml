@@ -1,1 +1,18 @@
 ---
+- name: Deploy mpv config
+  ansible.builtin.copy:
+    src: apps/mpv/
+    dest: "{{ home }}/"
+
+- name: Ensure mpv scripts dir
+  ansible.builtin.file:
+    path: "{{ home }}/.config/mpv/scripts"
+    state: directory
+
+- name: Link system mpv scripts (uosc / thumbfast / sponsorblock)
+  ansible.builtin.file:
+    src: "{{ item }}"
+    dest: "{{ home }}/.config/mpv/scripts/{{ item | basename }}"
+    state: link
+    force: true
+  loop: "{{ query('ansible.builtin.fileglob', '/usr/share/mpv/scripts/*') }}"
