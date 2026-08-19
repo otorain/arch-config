@@ -6,10 +6,11 @@
     depth: 1
     update: false
 
-- name: Deploy zshrc skeleton
+- name: Deploy zshrc skeleton (once; never overwrite — user owns it after first deploy)
   ansible.builtin.copy:
     src: zsh/zshrc
     dest: "{{ home }}/.zshrc"
+    force: false
 
 - name: Deploy zsh conf.d fragments
   ansible.builtin.copy:
