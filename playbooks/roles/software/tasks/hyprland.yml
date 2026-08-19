@@ -1,32 +1,32 @@
 ---
 - name: Deploy hyprland.lua (rendered from host_vars)
   ansible.builtin.template:
-    src: apps/hyprland/hyprland.lua.j2
+    src: hyprland/hyprland.lua.j2
     dest: "{{ home }}/.config/hypr/hyprland.lua"
 
 - name: Deploy hypr configs (hyprpaper/idle/lock)
   ansible.builtin.copy:
-    src: apps/hyprland/hypr/
+    src: hyprland/hypr/
     dest: "{{ home }}/.config/hypr/"
 
 - name: Deploy dunst config
   ansible.builtin.copy:
-    src: apps/hyprland/dunst/
+    src: hyprland/dunst/
     dest: "{{ home }}/.config/dunst/"
 
 - name: Deploy rofi config
   ansible.builtin.copy:
-    src: apps/hyprland/rofi/
+    src: hyprland/rofi/
     dest: "{{ home }}/.config/rofi/"
 
 - name: Deploy satty config
   ansible.builtin.copy:
-    src: apps/hyprland/satty/
+    src: hyprland/satty/
     dest: "{{ home }}/.config/satty/"
 
 - name: Deploy rofi themes
   ansible.builtin.copy:
-    src: apps/hyprland/rofi-themes/
+    src: hyprland/rofi-themes/
     dest: "{{ home }}/.local/share/rofi/themes/"
 
 - name: Deploy wallpaper

@@ -1,8 +1,8 @@
 ---
-# All AUR packages (replaces packages/aur.txt). Requires yay (apps/yay.yml).
+# All AUR packages (replaces packages/aur.txt). Requires yay (yay.yml).
 # Per-package probe + warn-and-continue so one bad package never fails the run.
 - name: Install AUR packages
-  ansible.builtin.include_tasks: apps/_aur_one.yml
+  ansible.builtin.include_tasks: _aur_one.yml
   loop:
     # === Browsers ===
     - google-chrome

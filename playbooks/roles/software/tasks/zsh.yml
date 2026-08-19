@@ -8,15 +8,15 @@
 
 - name: Deploy zshrc skeleton
   ansible.builtin.copy:
-    src: apps/zsh/zshrc
+    src: zsh/zshrc
     dest: "{{ home }}/.zshrc"
 
 - name: Deploy zsh conf.d fragments
   ansible.builtin.copy:
-    src: apps/zsh/conf.d/
+    src: zsh/conf.d/
     dest: "{{ home }}/.config/zsh/conf.d/"
 
 - name: Deploy zsh syntax highlighting theme
   ansible.builtin.copy:
-    src: apps/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
+    src: zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
     dest: "{{ home }}/.local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh"

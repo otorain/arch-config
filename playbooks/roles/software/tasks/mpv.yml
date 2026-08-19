@@ -1,7 +1,7 @@
 ---
 - name: Deploy mpv config
   ansible.builtin.copy:
-    src: apps/mpv/
+    src: mpv/
     dest: "{{ home }}/.config/mpv/"
 
 - name: Ensure mpv scripts dir

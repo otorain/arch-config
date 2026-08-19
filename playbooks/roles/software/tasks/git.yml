@@ -1,7 +1,7 @@
 ---
 - name: Deploy git shared config (delta + catppuccin, included by ~/.config/git/config)
   ansible.builtin.copy:
-    src: apps/git/
+    src: git/
     dest: "{{ home }}/.config/git/"
 
 - name: Check for existing git identity file

@@ -1,15 +1,15 @@
 ---
 - name: Deploy fcitx5 conf snippets
   ansible.builtin.copy:
-    src: apps/fcitx5/conf/
+    src: fcitx5/conf/
     dest: "{{ home }}/.config/fcitx5/conf/"
 
 - name: Deploy fcitx5 profile
   ansible.builtin.copy:
-    src: apps/fcitx5/profile
+    src: fcitx5/profile
     dest: "{{ home }}/.config/fcitx5/profile"
 
 - name: Deploy fcitx5 rime data
   ansible.builtin.copy:
-    src: apps/fcitx5/rime/
+    src: fcitx5/rime/
     dest: "{{ home }}/.local/share/fcitx5/rime/"

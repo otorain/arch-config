@@ -1,7 +1,7 @@
 ---
 - name: Deploy Chrome web app desktop entries
   ansible.builtin.copy:
-    src: apps/web-apps/applications/
+    src: web-apps/applications/
     dest: "{{ home }}/.local/share/applications/"
   notify:
     - Update desktop database
@@ -9,7 +9,7 @@
 
 - name: Deploy Chrome web app icons
   ansible.builtin.copy:
-    src: apps/web-apps/icons/
+    src: web-apps/icons/
     dest: "{{ home }}/.local/share/icons/"
   notify:
     - Update desktop database

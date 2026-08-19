@@ -10,105 +10,105 @@
 # keyword it is rejected ("conflicting action statements", core 2.21).
 - name: Packages (official repos)
   ansible.builtin.include_tasks:
-    file: apps/_pacman.yml
+    file: _pacman.yml
     apply:
       tags: packages
   tags: packages
 
 - name: yay bootstrap
   ansible.builtin.include_tasks:
-    file: apps/yay.yml
+    file: yay.yml
     apply:
       tags: [yay, aur]
   tags: [yay, aur]
 
 - name: Packages (AUR)
   ansible.builtin.include_tasks:
-    file: apps/_aur.yml
+    file: _aur.yml
     apply:
       tags: aur
   tags: aur
 
 - name: "App: cli-tools"
   ansible.builtin.include_tasks:
-    file: apps/cli-tools.yml
+    file: cli-tools.yml
     apply:
       tags: cli-tools
   tags: cli-tools
 
 - name: "App: dev"
   ansible.builtin.include_tasks:
-    file: apps/dev.yml
+    file: dev.yml
     apply:
       tags: dev
   tags: dev
 
 - name: "App: fcitx5"
   ansible.builtin.include_tasks:
-    file: apps/fcitx5.yml
+    file: fcitx5.yml
     apply:
       tags: fcitx5
   tags: fcitx5
 
 - name: "App: git"
   ansible.builtin.include_tasks:
-    file: apps/git.yml
+    file: git.yml
     apply:
       tags: git
   tags: git
 
 - name: "App: gui-apps"
   ansible.builtin.include_tasks:
-    file: apps/gui-apps.yml
+    file: gui-apps.yml
     apply:
       tags: gui-apps
   tags: gui-apps
 
 - name: "App: hyprland"
   ansible.builtin.include_tasks:
-    file: apps/hyprland.yml
+    file: hyprland.yml
     apply:
       tags: hyprland
   tags: hyprland
 
 - name: "App: kitty"
   ansible.builtin.include_tasks:
-    file: apps/kitty.yml
+    file: kitty.yml
     apply:
       tags: kitty
   tags: kitty
 
 - name: "App: mpv"
   ansible.builtin.include_tasks:
-    file: apps/mpv.yml
+    file: mpv.yml
     apply:
       tags: mpv
   tags: mpv
 
 - name: "App: nvim"
   ansible.builtin.include_tasks:
-    file: apps/nvim.yml
+    file: nvim.yml
     apply:
       tags: nvim
   tags: nvim
 
 - name: "App: waybar"
   ansible.builtin.include_tasks:
-    file: apps/waybar.yml
+    file: waybar.yml
     apply:
       tags: waybar
   tags: waybar
 
 - name: "App: web-apps"
   ansible.builtin.include_tasks:
-    file: apps/web-apps.yml
+    file: web-apps.yml
     apply:
       tags: web-apps
   tags: web-apps
 
 - name: "App: zsh"
   ansible.builtin.include_tasks:
-    file: apps/zsh.yml
+    file: zsh.yml
     apply:
       tags: zsh
   tags: zsh
