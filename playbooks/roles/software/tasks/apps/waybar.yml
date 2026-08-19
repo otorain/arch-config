@@ -1,1 +1,13 @@
 ---
+- name: Deploy waybar config (rendered from host_vars)
+  ansible.builtin.template:
+    src: apps/waybar/config.jsonc.j2
+    dest: "{{ home }}/.config/waybar/config.jsonc"
+  notify: Reload waybar
+
+- name: Deploy waybar style + popup scripts (weather.py / calendar.py / waybar_geom.py)
+  ansible.builtin.copy:
+    src: apps/waybar/
+    dest: "{{ home }}/"
+    mode: preserve
+  notify: Reload waybar
