@@ -1,0 +1,11 @@
+---
+home: "{{ ansible_env.HOME }}"
+uid: "{{ ansible_user_uid }}"
+timezone: Asia/Shanghai
+gtk_theme: Colloid-Dark-Catppuccin
+icon_theme: Papirus-Dark
+gtk_font: Noto Sans 12
+npm_globals:
+  - "@openai/codex"
+  - "@mariozechner/pi-coding-agent"
+  - "@deepseek-ai/dsh"

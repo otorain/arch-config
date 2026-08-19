@@ -1,0 +1,9 @@
+---
+- name: Arch Linux desktop setup
+  hosts: desktop
+  gather_facts: true
+  roles:
+    - { role: base, tags: base }
+    - { role: software, tags: software }
+    - { role: settings, tags: settings }
+    - { role: services, tags: services }

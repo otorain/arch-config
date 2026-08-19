@@ -1,0 +1,4 @@
+---
+monitor: DP-1
+scale: "1.25"
+net_interface: wlp6s0
