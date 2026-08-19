@@ -99,13 +99,6 @@
       tags: gmail
   tags: gmail
 
-- name: "App: gui-apps"
-  ansible.builtin.include_tasks:
-    file: gui-apps.yml
-    apply:
-      tags: gui-apps
-  tags: gui-apps
-
 - name: "App: hypridle"
   ansible.builtin.include_tasks:
     file: hypridle.yml
@@ -147,6 +140,13 @@
     apply:
       tags: kitty
   tags: kitty
+
+- name: "App: mimeapps"
+  ansible.builtin.include_tasks:
+    file: mimeapps.yml
+    apply:
+      tags: mimeapps
+  tags: mimeapps
 
 - name: "App: mpv"
   ansible.builtin.include_tasks:
@@ -203,6 +203,13 @@
     apply:
       tags: waybar
   tags: waybar
+
+- name: "App: wechat"
+  ansible.builtin.include_tasks:
+    file: wechat.yml
+    apply:
+      tags: wechat
+  tags: wechat
 
 - name: "App: zathura"
   ansible.builtin.include_tasks:

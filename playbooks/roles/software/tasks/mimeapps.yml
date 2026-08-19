@@ -1,0 +1,5 @@
+---
+- name: Deploy mimeapps.list (default applications for mime types)
+  ansible.builtin.copy:
+    src: mimeapps/mimeapps.list
+    dest: "{{ home }}/.config/mimeapps.list"
