@@ -106,19 +106,19 @@
       tags: gui-apps
   tags: gui-apps
 
-- name: "App: hyprland"
-  ansible.builtin.include_tasks:
-    file: hyprland.yml
-    apply:
-      tags: hyprland
-  tags: hyprland
-
 - name: "App: hypridle"
   ansible.builtin.include_tasks:
     file: hypridle.yml
     apply:
       tags: hypridle
   tags: hypridle
+
+- name: "App: hyprland"
+  ansible.builtin.include_tasks:
+    file: hyprland.yml
+    apply:
+      tags: hyprland
+  tags: hyprland
 
 - name: "App: hyprlock"
   ansible.builtin.include_tasks:

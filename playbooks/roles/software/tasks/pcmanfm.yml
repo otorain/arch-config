@@ -1,5 +1,5 @@
 ---
 - name: Deploy pcmanfm config
   ansible.builtin.copy:
-    src: pcmanfm/
-    dest: "{{ home }}/.config/pcmanfm/"
+    src: pcmanfm/pcmanfm.conf
+    dest: "{{ home }}/.config/pcmanfm/default/pcmanfm.conf"
