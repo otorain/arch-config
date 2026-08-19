@@ -1,1 +1,60 @@
 ---
+- name: Deploy git shared config (delta + catppuccin, included by ~/.config/git/config)
+  ansible.builtin.copy:
+    src: apps/git/
+    dest: "{{ home }}/"
+
+- name: Check for existing git identity file
+  ansible.builtin.stat:
+    path: "{{ home }}/.config/git/config"
+  register: gitconfig
+
+- name: Verify existing git config includes the dotfiles-managed file
+  when: gitconfig.stat.exists
+  block:
+    - name: Check include of ~/.config/git/custom
+      ansible.builtin.command: "grep -q config/git/custom {{ home }}/.config/git/config"
+      register: git_include
+      changed_when: false
+      failed_when: false
+
+    - name: Warn if include missing
+      ansible.builtin.debug:
+        msg: "~/.config/git/config lacks the include of ~/.config/git/custom; add: [include] path = ~/.config/git/custom"
+      when: git_include.rc != 0
+
+- name: Create git identity (one-time)
+  when: not gitconfig.stat.exists
+  block:
+    - name: Prompt git user.name
+      ansible.builtin.pause:
+        prompt: "git user.name (leave empty to skip)"
+      register: git_name
+
+    - name: Prompt git user.email
+      ansible.builtin.pause:
+        prompt: "git user.email (leave empty to skip)"
+      register: git_email
+
+    - name: Write ~/.config/git/config
+      ansible.builtin.copy:
+        dest: "{{ home }}/.config/git/config"
+        content: |
+          {% if git_name.user_input or git_email.user_input %}
+          [user]
+          {% if git_name.user_input %}
+          	name = {{ git_name.user_input }}
+          {% endif %}
+          {% if git_email.user_input %}
+          	email = {{ git_email.user_input }}
+          {% endif %}
+
+          {% endif %}
+          # shared settings managed by dotfiles (delta, catppuccin theme) - do not edit
+          [include]
+          	path = ~/.config/git/custom
+
+    - name: Warn if identity left empty
+      ansible.builtin.debug:
+        msg: "created ~/.config/git/config without [user]; add user.name/user.email manually"
+      when: not git_name.user_input or not git_email.user_input
