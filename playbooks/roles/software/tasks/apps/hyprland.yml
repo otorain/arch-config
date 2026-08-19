@@ -1,1 +1,15 @@
 ---
+- name: Deploy hyprland.lua (rendered from host_vars)
+  ansible.builtin.template:
+    src: apps/hyprland/hyprland.lua.j2
+    dest: "{{ home }}/.config/hypr/hyprland.lua"
+
+- name: Deploy hypr ecosystem configs (hyprpaper/idle/lock, dunst, rofi, satty)
+  ansible.builtin.copy:
+    src: apps/hyprland/
+    dest: "{{ home }}/"
+
+- name: Deploy wallpaper
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../assets/colin-watts.jpg"
+    dest: "{{ home }}/.config/hypr/wallpaper.jpg"
