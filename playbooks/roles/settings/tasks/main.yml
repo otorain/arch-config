@@ -1,1 +1,138 @@
 ---
+# fcitx5 catppuccin theme (cloned from GitHub; skipped when already present)
+- name: Check fcitx5 theme dir
+  ansible.builtin.stat:
+    path: "{{ home }}/.local/share/fcitx5/themes/catppuccin-mocha-blue"
+  register: fcitx5_theme
+
+- name: Install fcitx5 catppuccin theme
+  when: not fcitx5_theme.stat.exists
+  block:
+    - name: Create temp dir
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: .fcitx5-theme
+      register: fcitx5_tmp
+
+    - name: Clone catppuccin/fcitx5
+      ansible.builtin.git:
+        repo: https://github.com/catppuccin/fcitx5.git
+        dest: "{{ fcitx5_tmp.path }}/fcitx5"
+        depth: 1
+
+    - name: Copy catppuccin-mocha-blue theme
+      ansible.builtin.copy:
+        src: "{{ fcitx5_tmp.path }}/fcitx5/src/catppuccin-mocha-blue"
+        dest: "{{ home }}/.local/share/fcitx5/themes/catppuccin-mocha-blue"
+        remote_src: true
+
+    - name: Enable rounded corners
+      ansible.builtin.command: "bash {{ fcitx5_tmp.path }}/fcitx5/enable-rounded.sh"
+      args:
+        chdir: "{{ home }}/.local/share/fcitx5/themes/catppuccin-mocha-blue"
+      failed_when: false
+
+    - name: Clean up
+      ansible.builtin.file:
+        path: "{{ fcitx5_tmp.path }}"
+        state: absent
+
+# GTK / Qt static config files
+- name: Deploy GTK/Kvantum/fontconfig files
+  ansible.builtin.copy:
+    src: files/
+    dest: "{{ home }}/"
+  notify: Refresh font cache
+
+# GTK4 / Libadwaita theme links
+- name: Locate Colloid theme
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ home }}/.themes/Colloid-Dark-Catppuccin"
+    - /usr/share/themes/Colloid-Dark-Catppuccin
+  register: colloid_dirs
+
+- name: Resolve Colloid theme path
+  ansible.builtin.set_fact:
+    colloid_theme: "{{ item.item }}"
+  loop: "{{ colloid_dirs.results }}"
+  when: item.stat.exists
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Warn if Colloid theme missing
+  ansible.builtin.debug:
+    msg: "Colloid-Dark-Catppuccin theme not found, skipping GTK4 links (AUR package not installed?)"
+  when: colloid_theme is not defined
+
+- name: Link GTK4 theme into ~/.config/gtk-4.0
+  when: colloid_theme is defined
+  ansible.builtin.file:
+    src: "{{ colloid_theme }}/gtk-4.0/{{ item }}"
+    dest: "{{ home }}/.config/gtk-4.0/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - assets
+    - gtk.css
+    - gtk-dark.css
+
+# gsettings (portal takes precedence over settings.ini); may fail on headless runs — warn only
+- name: Apply GNOME interface settings
+  ansible.builtin.command: "gsettings set org.gnome.desktop.interface {{ item.key }} '{{ item.value }}'"
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ uid }}/bus"
+  loop:
+    - { key: gtk-theme, value: "{{ gtk_theme }}" }
+    - { key: icon-theme, value: "{{ icon_theme }}" }
+    - { key: color-scheme, value: prefer-dark }
+    - { key: font-name, value: "{{ gtk_font }}" }
+  changed_when: false
+  failed_when: false
+  when: colloid_theme is defined
+
+# SDDM catppuccin theme + wallpaper
+- name: Locate SDDM catppuccin theme
+  become: true
+  ansible.builtin.find:
+    paths: /usr/share/sddm/themes
+    patterns: "catppuccin-mocha-*"
+    file_type: directory
+  register: sddm_themes
+
+- name: Warn if SDDM theme missing
+  ansible.builtin.debug:
+    msg: "catppuccin-mocha SDDM theme dir not found, skipping (AUR package not installed?)"
+  when: sddm_themes.matched == 0
+
+- name: Configure SDDM theme
+  when: sddm_themes.matched > 0
+  block:
+    - name: Prefer catppuccin-mocha-blue when present
+      ansible.builtin.set_fact:
+        sddm_theme: "{{ (sddm_themes.files | selectattr('path', 'search', 'catppuccin-mocha-blue$') | list | first).path
+                        if (sddm_themes.files | selectattr('path', 'search', 'catppuccin-mocha-blue$') | list | length) > 0
+                        else sddm_themes.files[0].path }}"
+
+    - name: Copy wallpaper into SDDM theme
+      become: true
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../assets/colin-watts.jpg"
+        dest: "{{ sddm_theme }}/backgrounds/wallpaper.jpg"
+
+    - name: Point theme background at wallpaper
+      become: true
+      ansible.builtin.replace:
+        path: "{{ sddm_theme }}/theme.conf"
+        regexp: "^(?i)background=.*"
+        replace: 'Background="backgrounds/wallpaper.jpg"'
+
+    - name: Write /etc/sddm.conf.d/10-theme.conf
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/sddm.conf.d/10-theme.conf
+        content: |
+          [Theme]
+          Current={{ sddm_theme | basename }}
+        mode: "0644"
