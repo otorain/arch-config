@@ -9,7 +9,6 @@
 -- Monitor/scale come from playbooks/inventory/host_vars/<host>.yml
 hl.monitor({ output = "{{ monitor }}", mode = "preferred", position = "0x0", scale = {{ scale }} })
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
--- hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x1440", scale = 1.25 })
 
 -----------------
 ---- AUTOSTART --
