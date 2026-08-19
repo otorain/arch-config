@@ -3,62 +3,112 @@
 # yay needs base-devel + git from _pacman; _aur needs the yay binary.
 # App files below may be ordered freely; each deploys config only
 # (packages live in _pacman.yml / _aur.yml).
+# Every include pairs outer `tags:` (selects the include task itself)
+# with module-arg `apply: tags:` (propagates to the included tasks) —
+# plain `tags:` on a dynamic include_tasks does NOT reach inner tasks.
+# Note: `apply` must be nested in the module args; as a task-level
+# keyword it is rejected ("conflicting action statements", core 2.21).
 - name: Packages (official repos)
-  ansible.builtin.include_tasks: apps/_pacman.yml
+  ansible.builtin.include_tasks:
+    file: apps/_pacman.yml
+    apply:
+      tags: packages
   tags: packages
 
 - name: yay bootstrap
-  ansible.builtin.include_tasks: apps/yay.yml
+  ansible.builtin.include_tasks:
+    file: apps/yay.yml
+    apply:
+      tags: [yay, aur]
   tags: [yay, aur]
 
 - name: Packages (AUR)
-  ansible.builtin.include_tasks: apps/_aur.yml
+  ansible.builtin.include_tasks:
+    file: apps/_aur.yml
+    apply:
+      tags: aur
   tags: aur
 
 - name: "App: cli-tools"
-  ansible.builtin.include_tasks: apps/cli-tools.yml
+  ansible.builtin.include_tasks:
+    file: apps/cli-tools.yml
+    apply:
+      tags: cli-tools
   tags: cli-tools
 
 - name: "App: dev"
-  ansible.builtin.include_tasks: apps/dev.yml
+  ansible.builtin.include_tasks:
+    file: apps/dev.yml
+    apply:
+      tags: dev
   tags: dev
 
 - name: "App: fcitx5"
-  ansible.builtin.include_tasks: apps/fcitx5.yml
+  ansible.builtin.include_tasks:
+    file: apps/fcitx5.yml
+    apply:
+      tags: fcitx5
   tags: fcitx5
 
 - name: "App: git"
-  ansible.builtin.include_tasks: apps/git.yml
+  ansible.builtin.include_tasks:
+    file: apps/git.yml
+    apply:
+      tags: git
   tags: git
 
 - name: "App: gui-apps"
-  ansible.builtin.include_tasks: apps/gui-apps.yml
+  ansible.builtin.include_tasks:
+    file: apps/gui-apps.yml
+    apply:
+      tags: gui-apps
   tags: gui-apps
 
 - name: "App: hyprland"
-  ansible.builtin.include_tasks: apps/hyprland.yml
+  ansible.builtin.include_tasks:
+    file: apps/hyprland.yml
+    apply:
+      tags: hyprland
   tags: hyprland
 
 - name: "App: kitty"
-  ansible.builtin.include_tasks: apps/kitty.yml
+  ansible.builtin.include_tasks:
+    file: apps/kitty.yml
+    apply:
+      tags: kitty
   tags: kitty
 
 - name: "App: mpv"
-  ansible.builtin.include_tasks: apps/mpv.yml
+  ansible.builtin.include_tasks:
+    file: apps/mpv.yml
+    apply:
+      tags: mpv
   tags: mpv
 
 - name: "App: nvim"
-  ansible.builtin.include_tasks: apps/nvim.yml
+  ansible.builtin.include_tasks:
+    file: apps/nvim.yml
+    apply:
+      tags: nvim
   tags: nvim
 
 - name: "App: waybar"
-  ansible.builtin.include_tasks: apps/waybar.yml
+  ansible.builtin.include_tasks:
+    file: apps/waybar.yml
+    apply:
+      tags: waybar
   tags: waybar
 
 - name: "App: web-apps"
-  ansible.builtin.include_tasks: apps/web-apps.yml
+  ansible.builtin.include_tasks:
+    file: apps/web-apps.yml
+    apply:
+      tags: web-apps
   tags: web-apps
 
 - name: "App: zsh"
-  ansible.builtin.include_tasks: apps/zsh.yml
+  ansible.builtin.include_tasks:
+    file: apps/zsh.yml
+    apply:
+      tags: zsh
   tags: zsh
