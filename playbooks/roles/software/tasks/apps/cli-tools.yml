@@ -1,1 +1,5 @@
 ---
+- name: Deploy cli-tools files (atuin/direnv config, zsh fragments)
+  ansible.builtin.copy:
+    src: apps/cli-tools/
+    dest: "{{ home }}/"
