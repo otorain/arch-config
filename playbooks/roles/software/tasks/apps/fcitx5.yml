@@ -1,1 +1,5 @@
 ---
+- name: Deploy fcitx5 config and rime data
+  ansible.builtin.copy:
+    src: apps/fcitx5/
+    dest: "{{ home }}/"
