@@ -9,7 +9,7 @@
   ansible.builtin.assert:
     that:
       - arch_release.stat.exists
-      - ansible_user_id != "root"
+      - ansible_facts["user_id"] != "root"
     fail_msg: "this playbook only supports Arch Linux, run as a normal user"
 
 - name: Check network connectivity
@@ -76,12 +76,12 @@
 - name: Add user to groups
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_user_id }}"
+    name: "{{ ansible_facts['user_id'] }}"
     groups: wheel,docker,vboxusers,libvirt
     append: true
 
 - name: Set default shell to zsh
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_user_id }}"
+    name: "{{ ansible_facts['user_id'] }}"
     shell: /usr/bin/zsh

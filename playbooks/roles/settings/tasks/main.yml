@@ -125,7 +125,7 @@
       become: true
       ansible.builtin.replace:
         path: "{{ sddm_theme }}/theme.conf"
-        regexp: "^(?i)background=.*"
+        regexp: "(?i)^background=.*"
         replace: 'Background="backgrounds/wallpaper.jpg"'
 
     - name: Write /etc/sddm.conf.d/10-theme.conf
