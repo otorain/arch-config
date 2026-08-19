@@ -2,4 +2,4 @@
 - name: Deploy nvim config (LazyVim starter; plugins pulled by lazy.nvim on first launch)
   ansible.builtin.copy:
     src: apps/nvim/
-    dest: "{{ home }}/"
+    dest: "{{ home }}/.config/nvim/"

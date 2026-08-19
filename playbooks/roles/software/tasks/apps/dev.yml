@@ -1,8 +1,36 @@
 ---
-- name: Deploy dev files (zed, pi, dsh-web unit, user-dirs, zsh fragments, try wrapper)
+- name: Deploy zed config
   ansible.builtin.copy:
-    src: apps/dev/
-    dest: "{{ home }}/"
+    src: apps/dev/zed/
+    dest: "{{ home }}/.config/zed/"
+
+- name: Deploy pi agent config
+  ansible.builtin.copy:
+    src: apps/dev/pi/
+    dest: "{{ home }}/.pi/"
+
+- name: Deploy systemd user units
+  ansible.builtin.copy:
+    src: apps/dev/systemd/
+    dest: "{{ home }}/.config/systemd/"
+
+- name: Deploy xdg user-dirs config
+  ansible.builtin.copy:
+    src: "apps/dev/{{ item }}"
+    dest: "{{ home }}/.config/{{ item }}"
+  loop:
+    - user-dirs.conf
+    - user-dirs.dirs
+
+- name: Deploy zsh conf.d fragments
+  ansible.builtin.copy:
+    src: apps/dev/conf.d/
+    dest: "{{ home }}/.config/zsh/conf.d/"
+
+- name: Deploy try wrapper script
+  ansible.builtin.copy:
+    src: apps/dev/bin/
+    dest: "{{ home }}/.local/bin/"
     mode: preserve
 
 - name: Set npm global prefix to ~/.local

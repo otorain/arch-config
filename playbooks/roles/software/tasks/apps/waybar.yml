@@ -5,9 +5,15 @@
     dest: "{{ home }}/.config/waybar/config.jsonc"
   notify: Reload waybar
 
-- name: Deploy waybar style + popup scripts (weather.py / calendar.py / waybar_geom.py)
+- name: Deploy waybar style
   ansible.builtin.copy:
-    src: apps/waybar/
-    dest: "{{ home }}/"
+    src: apps/waybar/style.css
+    dest: "{{ home }}/.config/waybar/style.css"
+  notify: Reload waybar
+
+- name: Deploy waybar popup scripts (weather.py / calendar.py / waybar_geom.py)
+  ansible.builtin.copy:
+    src: apps/waybar/bin/
+    dest: "{{ home }}/.local/bin/"
     mode: preserve
   notify: Reload waybar

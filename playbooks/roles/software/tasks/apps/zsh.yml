@@ -6,7 +6,17 @@
     depth: 1
     update: false
 
-- name: Deploy zsh files (.zshrc, conf.d fragments, highlight theme)
+- name: Deploy zshrc skeleton
   ansible.builtin.copy:
-    src: apps/zsh/
-    dest: "{{ home }}/"
+    src: apps/zsh/zshrc
+    dest: "{{ home }}/.zshrc"
+
+- name: Deploy zsh conf.d fragments
+  ansible.builtin.copy:
+    src: apps/zsh/conf.d/
+    dest: "{{ home }}/.config/zsh/conf.d/"
+
+- name: Deploy zsh syntax highlighting theme
+  ansible.builtin.copy:
+    src: apps/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
+    dest: "{{ home }}/.local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh"

@@ -38,10 +38,34 @@
         state: absent
 
 # GTK / Qt static config files
-- name: Deploy GTK/Kvantum/fontconfig files
+- name: Deploy GTK3 settings
   ansible.builtin.copy:
-    src: files/
-    dest: "{{ home }}/"
+    src: gtk-3.0/
+    dest: "{{ home }}/.config/gtk-3.0/"
+  notify: Refresh font cache
+
+- name: Deploy GTK4 settings
+  ansible.builtin.copy:
+    src: gtk-4.0/
+    dest: "{{ home }}/.config/gtk-4.0/"
+  notify: Refresh font cache
+
+- name: Deploy Kvantum theme config
+  ansible.builtin.copy:
+    src: Kvantum/
+    dest: "{{ home }}/.config/Kvantum/"
+  notify: Refresh font cache
+
+- name: Deploy fontconfig config
+  ansible.builtin.copy:
+    src: fontconfig/
+    dest: "{{ home }}/.config/fontconfig/"
+  notify: Refresh font cache
+
+- name: Deploy gtkrc-2.0
+  ansible.builtin.copy:
+    src: gtkrc-2.0
+    dest: "{{ home }}/.gtkrc-2.0"
   notify: Refresh font cache
 
 # GTK4 / Libadwaita theme links
