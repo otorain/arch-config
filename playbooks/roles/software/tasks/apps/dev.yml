@@ -1,1 +1,62 @@
 ---
+- name: Deploy dev files (zed, pi, dsh-web unit, user-dirs, zsh fragments, try wrapper)
+  ansible.builtin.copy:
+    src: apps/dev/
+    dest: "{{ home }}/"
+    mode: preserve
+
+- name: Set npm global prefix to ~/.local
+  ansible.builtin.command: "npm config set prefix {{ home }}/.local"
+  register: npm_prefix
+  changed_when: false
+  failed_when: false
+
+- name: Install npm global tools
+  ansible.builtin.command: "npm i -g {{ npm_globals | join(' ') }}"
+  register: npm_install
+  changed_when: false
+  failed_when: false
+
+- name: Warn on npm global install failure
+  ansible.builtin.debug:
+    msg: "npm global install failed, do it manually later: npm i -g {{ npm_globals | join(' ') }}"
+  when: npm_install.rc != 0
+
+- name: Set rustup default toolchain
+  ansible.builtin.command: rustup default stable
+  register: rustup_default
+  changed_when: "'info: using existing' not in rustup_default.stdout"
+  failed_when: false
+
+- name: Install try-cli (tobi/try, Ruby)
+  ansible.builtin.git:
+    repo: https://github.com/tobi/try.git
+    dest: "{{ home }}/.local/share/try-cli"
+    depth: 1
+    update: false
+  register: try_clone
+  failed_when: false
+
+- name: Warn on try-cli clone failure
+  ansible.builtin.debug:
+    msg: "try-cli clone failed, install manually later: https://github.com/tobi/try"
+  when: try_clone.rc | default(0) != 0
+
+- name: Update xdg user directories
+  ansible.builtin.command: xdg-user-dirs-update
+  changed_when: false
+  failed_when: false
+
+- name: Create working directories
+  ansible.builtin.file:
+    path: "{{ home }}/{{ item }}"
+    state: directory
+  loop:
+    - Projects
+    - Pictures/mpv
+    - src/tries
+
+- name: Build bat theme cache
+  ansible.builtin.command: bat cache --build
+  changed_when: false
+  failed_when: false

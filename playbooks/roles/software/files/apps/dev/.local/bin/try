@@ -1,0 +1,2 @@
+#!/bin/sh
+exec ruby "$HOME/.local/share/try-cli/try.rb" "$@"
