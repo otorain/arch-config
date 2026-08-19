@@ -1,0 +1,31 @@
+---
+- name: "AUR: check installed: {{ pkg }}"
+  ansible.builtin.command: "yay -Qi {{ pkg }}"
+  register: aur_qi
+  changed_when: false
+  failed_when: false
+
+- name: "AUR: install if missing: {{ pkg }}"
+  when: aur_qi.rc != 0
+  block:
+    - name: "AUR: probe availability: {{ pkg }}"
+      ansible.builtin.command: "yay -Si {{ pkg }}"
+      register: aur_si
+      changed_when: false
+      failed_when: false
+
+    - name: "AUR: warn if not resolvable: {{ pkg }}"
+      ansible.builtin.debug:
+        msg: "not in AUR (skipped): {{ pkg }}"
+      when: aur_si.rc != 0
+
+    - name: "AUR: install: {{ pkg }}"
+      ansible.builtin.command: "yay -S --needed --noconfirm {{ pkg }}"
+      when: aur_si.rc == 0
+      register: aur_install
+      failed_when: false
+
+    - name: "AUR: warn on failure: {{ pkg }}"
+      ansible.builtin.debug:
+        msg: "install failed, handle manually: {{ pkg }}"
+      when: aur_si.rc == 0 and aur_install is failed

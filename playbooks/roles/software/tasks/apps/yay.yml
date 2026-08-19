@@ -1,0 +1,42 @@
+---
+# Bootstrap yay from AUR (yay-bin). Needs base-devel + git from _pacman.yml.
+- name: Check if yay is installed
+  ansible.builtin.command: yay --version
+  register: yay_check
+  changed_when: false
+  failed_when: false
+
+- name: Bootstrap yay
+  when: yay_check.rc != 0
+  block:
+    - name: Create build directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: .yay
+      register: yay_tmp
+
+    - name: Clone yay-bin
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/yay-bin.git
+        dest: "{{ yay_tmp.path }}/yay-bin"
+        depth: 1
+
+    - name: Build yay-bin (deps already satisfied, no sudo inside)
+      ansible.builtin.command: makepkg -s --noconfirm
+      args:
+        chdir: "{{ yay_tmp.path }}/yay-bin"
+
+    - name: Find built package
+      ansible.builtin.find:
+        paths: "{{ yay_tmp.path }}/yay-bin"
+        patterns: "yay-bin-*.pkg.tar.zst"
+      register: yay_pkg
+
+    - name: Install yay-bin
+      become: true
+      ansible.builtin.command: "pacman -U --noconfirm {{ yay_pkg.files[0].path }}"
+
+    - name: Clean up build directory
+      ansible.builtin.file:
+        path: "{{ yay_tmp.path }}"
+        state: absent

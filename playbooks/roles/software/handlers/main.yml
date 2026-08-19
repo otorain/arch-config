@@ -1,0 +1,20 @@
+---
+- name: Reload waybar
+  ansible.builtin.command: pkill -SIGUSR2 -x waybar
+  failed_when: false
+  listen: Reload waybar
+
+- name: Update desktop database
+  ansible.builtin.command: "update-desktop-database {{ home }}/.local/share/applications"
+  failed_when: false
+  listen: Update desktop database
+
+- name: Update icon cache
+  ansible.builtin.command: "gtk-update-icon-cache -f {{ home }}/.local/share/icons/hicolor"
+  failed_when: false
+  listen: Update icon cache
+
+- name: Refresh font cache
+  ansible.builtin.command: fc-cache -f
+  failed_when: false
+  listen: Refresh font cache
