@@ -28,4 +28,4 @@
     - name: "AUR: warn on failure: {{ pkg }}"
       ansible.builtin.debug:
         msg: "install failed, handle manually: {{ pkg }}"
-      when: aur_si.rc == 0 and aur_install is failed
+      when: aur_si.rc == 0 and aur_install.rc != 0
