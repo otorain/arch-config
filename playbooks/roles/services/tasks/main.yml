@@ -1,1 +1,66 @@
 ---
+- name: Enable system services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop: "{{ system_units }}"
+  register: sys_services
+  ignore_errors: true
+
+- name: Warn about failed system services
+  ansible.builtin.debug:
+    msg: "enable failed: {{ item.item }}"
+  loop: "{{ sys_services.results }}"
+  when: item is failed
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Enable user audio services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+    scope: user
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ uid }}"
+  loop: "{{ user_units }}"
+  failed_when: false
+
+# dsh web (DeepSeek Harness) user service — unit file deployed by the dev app;
+# may fail on a headless run with no user manager, that's ok
+- name: Check dsh-web unit file
+  ansible.builtin.stat:
+    path: "{{ home }}/.config/systemd/user/dsh-web.service"
+  register: dsh_unit
+
+- name: Enable dsh-web user service
+  when: dsh_unit.stat.exists
+  block:
+    - name: Reload user systemd
+      ansible.builtin.command: systemctl --user daemon-reload
+      environment:
+        XDG_RUNTIME_DIR: "/run/user/{{ uid }}"
+      failed_when: false
+
+    - name: Enable dsh-web
+      ansible.builtin.systemd:
+        name: dsh-web.service
+        enabled: true
+        state: started
+        scope: user
+      environment:
+        XDG_RUNTIME_DIR: "/run/user/{{ uid }}"
+      register: dsh_svc
+      ignore_errors: true
+
+    - name: Warn on dsh-web failure
+      ansible.builtin.debug:
+        msg: "dsh web service failed to start — check: journalctl --user -u dsh-web -e"
+      when: dsh_svc is failed
+
+- name: Warn if dsh-web unit missing
+  ansible.builtin.debug:
+    msg: "dsh-web.service not found (dev app not run?); skipping user service enable"
+  when: not dsh_unit.stat.exists

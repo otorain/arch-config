@@ -9,3 +9,20 @@ npm_globals:
   - "@openai/codex"
   - "@mariozechner/pi-coding-agent"
   - "@deepseek-ai/dsh"
+system_units:
+  - NetworkManager
+  - bluetooth
+  - sshd
+  - fail2ban
+  - cups.socket
+  - avahi-daemon
+  - udisks2
+  - earlyoom
+  - fstrim.timer
+  - docker.socket
+  - libvirtd.socket
+  - sddm
+user_units:
+  - pipewire
+  - pipewire-pulse
+  - wireplumber
