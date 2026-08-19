@@ -1,0 +1,4 @@
+---
+- name: Regenerate locales
+  become: true
+  ansible.builtin.command: locale-gen

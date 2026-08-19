@@ -1,1 +1,87 @@
 ---
+# Preflight
+- name: Assert running on Arch Linux
+  ansible.builtin.stat:
+    path: /etc/arch-release
+  register: arch_release
+
+- name: Assert Arch Linux and non-root
+  ansible.builtin.assert:
+    that:
+      - arch_release.stat.exists
+      - ansible_user_id != "root"
+    fail_msg: "this playbook only supports Arch Linux, run as a normal user"
+
+- name: Check network connectivity
+  ansible.builtin.uri:
+    url: https://archlinux.org
+    method: HEAD
+    timeout: 5
+    status_code: [200, 301]
+
+# Timezone
+- name: Get current timezone
+  ansible.builtin.command: timedatectl show -p Timezone --value
+  register: current_tz
+  changed_when: false
+
+- name: Set timezone
+  become: true
+  ansible.builtin.command: "timedatectl set-timezone {{ timezone }}"
+  when: current_tz.stdout != timezone
+
+# Locale: en_US + zh_CN generated; Chinese UI, English terminal messages
+- name: Enable locales in /etc/locale.gen
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/locale.gen
+    regexp: "^#?({{ item }} UTF-8)"
+    line: '\1'
+    backrefs: true
+  loop:
+    - en_US.UTF-8
+    - zh_CN.UTF-8
+  notify: Regenerate locales
+
+- name: Write /etc/locale.conf
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/locale.conf
+    content: |
+      LANG=zh_CN.UTF-8
+      LC_MESSAGES=en_US.UTF-8
+    mode: "0644"
+
+# zram
+- name: Write zram-generator config
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/zram-generator.conf
+    content: |
+      [zram0]
+      zram-size = ram / 2
+      compression-algorithm = zstd
+    mode: "0644"
+
+# SSH hardening
+- name: Disable SSH root login
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/99-hardening.conf
+    content: |
+      PermitRootLogin no
+    mode: "0644"
+
+# User
+- name: Add user to groups
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: wheel,docker,vboxusers,libvirt
+    append: true
+
+- name: Set default shell to zsh
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: /usr/bin/zsh
