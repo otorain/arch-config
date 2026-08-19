@@ -1,1 +1,5 @@
 ---
+- name: Deploy kitty files (config, zsh integration fragment)
+  ansible.builtin.copy:
+    src: apps/kitty/
+    dest: "{{ home }}/"
