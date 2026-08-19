@@ -1,0 +1,5 @@
+---
+- name: Deploy zed config
+  ansible.builtin.copy:
+    src: zed/settings.json
+    dest: "{{ home }}/.config/zed/settings.json"

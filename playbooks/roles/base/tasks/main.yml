@@ -85,3 +85,17 @@
   ansible.builtin.user:
     name: "{{ ansible_facts['user_id'] }}"
     shell: /usr/bin/zsh
+
+# XDG user directories
+- name: Deploy xdg user-dirs config
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ home }}/.config/{{ item }}"
+  loop:
+    - user-dirs.conf
+    - user-dirs.dirs
+
+- name: Update xdg user directories
+  ansible.builtin.command: xdg-user-dirs-update
+  changed_when: false
+  failed_when: false

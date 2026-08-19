@@ -1,0 +1,12 @@
+---
+- name: Deploy github desktop entry
+  ansible.builtin.copy:
+    src: github/github.desktop
+    dest: "{{ home }}/.local/share/applications/github.desktop"
+  notify: Update desktop database
+
+- name: Deploy github icon
+  ansible.builtin.copy:
+    src: github/github.png
+    dest: "{{ home }}/.local/share/icons/hicolor/256x256/apps/github.png"
+  notify: Update icon cache

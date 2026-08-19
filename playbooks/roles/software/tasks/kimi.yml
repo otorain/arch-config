@@ -1,0 +1,12 @@
+---
+- name: Deploy kimi desktop entry
+  ansible.builtin.copy:
+    src: kimi/kimi.desktop
+    dest: "{{ home }}/.local/share/applications/kimi.desktop"
+  notify: Update desktop database
+
+- name: Deploy kimi icon
+  ansible.builtin.copy:
+    src: kimi/kimi.png
+    dest: "{{ home }}/.local/share/icons/hicolor/256x256/apps/kimi.png"
+  notify: Update icon cache

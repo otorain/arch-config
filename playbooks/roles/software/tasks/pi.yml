@@ -1,0 +1,5 @@
+---
+- name: Deploy pi agent config
+  ansible.builtin.copy:
+    src: pi/settings.json
+    dest: "{{ home }}/.pi/agent/settings.json"

@@ -1,0 +1,5 @@
+---
+- name: Deploy hyprpaper config
+  ansible.builtin.copy:
+    src: hyprpaper/hyprpaper.conf
+    dest: "{{ home }}/.config/hypr/hyprpaper.conf"

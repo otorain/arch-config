@@ -1,0 +1,20 @@
+---
+- name: Install try-cli (tobi/try, Ruby)
+  ansible.builtin.git:
+    repo: https://github.com/tobi/try.git
+    dest: "{{ home }}/.local/share/try-cli"
+    depth: 1
+    update: false
+  register: try_clone
+  failed_when: false
+
+- name: Warn on try-cli clone failure
+  ansible.builtin.debug:
+    msg: "try-cli clone failed, install manually later: https://github.com/tobi/try"
+  when: try_clone.rc | default(0) != 0
+
+- name: Deploy try wrapper script
+  ansible.builtin.copy:
+    src: try-cli/try
+    dest: "{{ home }}/.local/bin/try"
+    mode: preserve

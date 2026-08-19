@@ -1,0 +1,12 @@
+---
+- name: Deploy gmail desktop entry
+  ansible.builtin.copy:
+    src: gmail/gmail.desktop
+    dest: "{{ home }}/.local/share/applications/gmail.desktop"
+  notify: Update desktop database
+
+- name: Deploy gmail icon
+  ansible.builtin.copy:
+    src: gmail/gmail.png
+    dest: "{{ home }}/.local/share/icons/hicolor/256x256/apps/gmail.png"
+  notify: Update icon cache

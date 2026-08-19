@@ -1,0 +1,5 @@
+---
+- name: Deploy satty config
+  ansible.builtin.copy:
+    src: satty/config.toml
+    dest: "{{ home }}/.config/satty/config.toml"

@@ -1,0 +1,10 @@
+---
+- name: Deploy atuin config
+  ansible.builtin.copy:
+    src: atuin/config.toml
+    dest: "{{ home }}/.config/atuin/config.toml"
+
+- name: Deploy atuin catppuccin theme
+  ansible.builtin.copy:
+    src: atuin/catppuccin-mocha-blue.toml
+    dest: "{{ home }}/.config/atuin/themes/catppuccin-mocha-blue.toml"

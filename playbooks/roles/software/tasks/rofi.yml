@@ -1,0 +1,14 @@
+---
+- name: Deploy rofi config
+  ansible.builtin.copy:
+    src: rofi/config.rasi
+    dest: "{{ home }}/.config/rofi/config.rasi"
+
+- name: Deploy rofi themes
+  ansible.builtin.copy:
+    src: "rofi/{{ item }}"
+    dest: "{{ home }}/.local/share/rofi/themes/{{ item }}"
+  loop:
+    - catppuccin-default.rasi
+    - catppuccin-mocha.rasi
+    - custom.rasi

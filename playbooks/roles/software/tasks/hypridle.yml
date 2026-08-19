@@ -1,0 +1,5 @@
+---
+- name: Deploy hypridle config
+  ansible.builtin.copy:
+    src: hypridle/hypridle.conf
+    dest: "{{ home }}/.config/hypr/hypridle.conf"

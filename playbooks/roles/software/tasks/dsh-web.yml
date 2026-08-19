@@ -1,0 +1,5 @@
+---
+- name: Deploy dsh-web systemd user unit
+  ansible.builtin.copy:
+    src: dsh-web/dsh-web.service
+    dest: "{{ home }}/.config/systemd/user/dsh-web.service"

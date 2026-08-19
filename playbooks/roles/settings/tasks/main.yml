@@ -40,32 +40,44 @@
 # GTK / Qt static config files
 - name: Deploy GTK3 settings
   ansible.builtin.copy:
-    src: gtk-3.0/
-    dest: "{{ home }}/.config/gtk-3.0/"
+    src: gtk3-settings.ini
+    dest: "{{ home }}/.config/gtk-3.0/settings.ini"
   notify: Refresh font cache
 
 - name: Deploy GTK4 settings
   ansible.builtin.copy:
-    src: gtk-4.0/
-    dest: "{{ home }}/.config/gtk-4.0/"
-  notify: Refresh font cache
-
-- name: Deploy Kvantum theme config
-  ansible.builtin.copy:
-    src: Kvantum/
-    dest: "{{ home }}/.config/Kvantum/"
-  notify: Refresh font cache
-
-- name: Deploy fontconfig config
-  ansible.builtin.copy:
-    src: fontconfig/
-    dest: "{{ home }}/.config/fontconfig/"
+    src: gtk4-settings.ini
+    dest: "{{ home }}/.config/gtk-4.0/settings.ini"
   notify: Refresh font cache
 
 - name: Deploy gtkrc-2.0
   ansible.builtin.copy:
     src: gtkrc-2.0
     dest: "{{ home }}/.gtkrc-2.0"
+  notify: Refresh font cache
+
+- name: Deploy Kvantum config
+  ansible.builtin.copy:
+    src: kvantum.kvconfig
+    dest: "{{ home }}/.config/Kvantum/kvantum.kvconfig"
+  notify: Refresh font cache
+
+- name: Deploy Kvantum catppuccin theme (kvconfig)
+  ansible.builtin.copy:
+    src: catppuccin-mocha-blue.kvconfig
+    dest: "{{ home }}/.config/Kvantum/catppuccin-mocha-blue/catppuccin-mocha-blue.kvconfig"
+  notify: Refresh font cache
+
+- name: Deploy Kvantum catppuccin theme (svg)
+  ansible.builtin.copy:
+    src: catppuccin-mocha-blue.svg
+    dest: "{{ home }}/.config/Kvantum/catppuccin-mocha-blue/catppuccin-mocha-blue.svg"
+  notify: Refresh font cache
+
+- name: Deploy fontconfig config
+  ansible.builtin.copy:
+    src: fonts.conf
+    dest: "{{ home }}/.config/fontconfig/fonts.conf"
   notify: Refresh font cache
 
 # GTK4 / Libadwaita theme links

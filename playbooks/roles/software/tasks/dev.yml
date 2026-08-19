@@ -1,38 +1,4 @@
 ---
-- name: Deploy zed config
-  ansible.builtin.copy:
-    src: dev/zed/
-    dest: "{{ home }}/.config/zed/"
-
-- name: Deploy pi agent config
-  ansible.builtin.copy:
-    src: dev/pi/
-    dest: "{{ home }}/.pi/"
-
-- name: Deploy systemd user units
-  ansible.builtin.copy:
-    src: dev/systemd/
-    dest: "{{ home }}/.config/systemd/"
-
-- name: Deploy xdg user-dirs config
-  ansible.builtin.copy:
-    src: "dev/{{ item }}"
-    dest: "{{ home }}/.config/{{ item }}"
-  loop:
-    - user-dirs.conf
-    - user-dirs.dirs
-
-- name: Deploy zsh conf.d fragments
-  ansible.builtin.copy:
-    src: dev/conf.d/
-    dest: "{{ home }}/.config/zsh/conf.d/"
-
-- name: Deploy try wrapper script
-  ansible.builtin.copy:
-    src: dev/bin/
-    dest: "{{ home }}/.local/bin/"
-    mode: preserve
-
 - name: Set npm global prefix to ~/.local
   ansible.builtin.command: "npm config set prefix {{ home }}/.local"
   register: npm_prefix
@@ -54,25 +20,6 @@
   ansible.builtin.command: rustup default stable
   register: rustup_default
   changed_when: "'info: using existing' not in rustup_default.stdout"
-  failed_when: false
-
-- name: Install try-cli (tobi/try, Ruby)
-  ansible.builtin.git:
-    repo: https://github.com/tobi/try.git
-    dest: "{{ home }}/.local/share/try-cli"
-    depth: 1
-    update: false
-  register: try_clone
-  failed_when: false
-
-- name: Warn on try-cli clone failure
-  ansible.builtin.debug:
-    msg: "try-cli clone failed, install manually later: https://github.com/tobi/try"
-  when: try_clone.rc | default(0) != 0
-
-- name: Update xdg user directories
-  ansible.builtin.command: xdg-user-dirs-update
-  changed_when: false
   failed_when: false
 
 - name: Create working directories

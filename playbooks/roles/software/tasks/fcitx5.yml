@@ -1,8 +1,13 @@
 ---
-- name: Deploy fcitx5 conf snippets
+- name: Deploy fcitx5 classicui config
   ansible.builtin.copy:
-    src: fcitx5/conf/
-    dest: "{{ home }}/.config/fcitx5/conf/"
+    src: fcitx5/classicui.conf
+    dest: "{{ home }}/.config/fcitx5/conf/classicui.conf"
+
+- name: Deploy fcitx5 rime config
+  ansible.builtin.copy:
+    src: fcitx5/rime.conf
+    dest: "{{ home }}/.config/fcitx5/conf/rime.conf"
 
 - name: Deploy fcitx5 profile
   ansible.builtin.copy:
@@ -11,5 +16,5 @@
 
 - name: Deploy fcitx5 rime data
   ansible.builtin.copy:
-    src: fcitx5/rime/
-    dest: "{{ home }}/.local/share/fcitx5/rime/"
+    src: fcitx5/default.custom.yaml
+    dest: "{{ home }}/.local/share/fcitx5/rime/default.custom.yaml"

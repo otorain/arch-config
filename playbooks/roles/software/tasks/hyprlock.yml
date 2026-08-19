@@ -1,0 +1,5 @@
+---
+- name: Deploy hyprlock config
+  ansible.builtin.copy:
+    src: hyprlock/hyprlock.conf
+    dest: "{{ home }}/.config/hypr/hyprlock.conf"

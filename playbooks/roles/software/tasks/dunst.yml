@@ -1,0 +1,5 @@
+---
+- name: Deploy dunst config
+  ansible.builtin.copy:
+    src: dunst/dunstrc
+    dest: "{{ home }}/.config/dunst/dunstrc"

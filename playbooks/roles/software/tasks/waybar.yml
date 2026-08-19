@@ -13,7 +13,9 @@
 
 - name: Deploy waybar popup scripts (weather.py / calendar.py / waybar_geom.py)
   ansible.builtin.copy:
-    src: waybar/bin/
-    dest: "{{ home }}/.local/bin/"
+    src: "{{ item }}"
+    dest: "{{ home }}/.local/bin/{{ item | basename }}"
     mode: preserve
+  with_fileglob:
+    - "waybar/*.py"
   notify: Reload waybar

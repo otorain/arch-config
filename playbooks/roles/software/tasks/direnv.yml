@@ -1,0 +1,5 @@
+---
+- name: Deploy direnv config
+  ansible.builtin.copy:
+    src: direnv/direnvrc
+    dest: "{{ home }}/.config/direnv/direnvrc"

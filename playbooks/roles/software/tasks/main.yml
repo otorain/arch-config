@@ -29,12 +29,19 @@
       tags: aur
   tags: aur
 
-- name: "App: cli-tools"
+- name: "App: atuin"
   ansible.builtin.include_tasks:
-    file: cli-tools.yml
+    file: atuin.yml
     apply:
-      tags: cli-tools
-  tags: cli-tools
+      tags: atuin
+  tags: atuin
+
+- name: "App: deepseek"
+  ansible.builtin.include_tasks:
+    file: deepseek.yml
+    apply:
+      tags: deepseek
+  tags: deepseek
 
 - name: "App: dev"
   ansible.builtin.include_tasks:
@@ -42,6 +49,27 @@
     apply:
       tags: dev
   tags: dev
+
+- name: "App: direnv"
+  ansible.builtin.include_tasks:
+    file: direnv.yml
+    apply:
+      tags: direnv
+  tags: direnv
+
+- name: "App: dsh-web"
+  ansible.builtin.include_tasks:
+    file: dsh-web.yml
+    apply:
+      tags: dsh-web
+  tags: dsh-web
+
+- name: "App: dunst"
+  ansible.builtin.include_tasks:
+    file: dunst.yml
+    apply:
+      tags: dunst
+  tags: dunst
 
 - name: "App: fcitx5"
   ansible.builtin.include_tasks:
@@ -57,6 +85,20 @@
       tags: git
   tags: git
 
+- name: "App: github"
+  ansible.builtin.include_tasks:
+    file: github.yml
+    apply:
+      tags: github
+  tags: github
+
+- name: "App: gmail"
+  ansible.builtin.include_tasks:
+    file: gmail.yml
+    apply:
+      tags: gmail
+  tags: gmail
+
 - name: "App: gui-apps"
   ansible.builtin.include_tasks:
     file: gui-apps.yml
@@ -70,6 +112,34 @@
     apply:
       tags: hyprland
   tags: hyprland
+
+- name: "App: hypridle"
+  ansible.builtin.include_tasks:
+    file: hypridle.yml
+    apply:
+      tags: hypridle
+  tags: hypridle
+
+- name: "App: hyprlock"
+  ansible.builtin.include_tasks:
+    file: hyprlock.yml
+    apply:
+      tags: hyprlock
+  tags: hyprlock
+
+- name: "App: hyprpaper"
+  ansible.builtin.include_tasks:
+    file: hyprpaper.yml
+    apply:
+      tags: hyprpaper
+  tags: hyprpaper
+
+- name: "App: kimi"
+  ansible.builtin.include_tasks:
+    file: kimi.yml
+    apply:
+      tags: kimi
+  tags: kimi
 
 - name: "App: kitty"
   ansible.builtin.include_tasks:
@@ -99,6 +169,34 @@
       tags: pcmanfm
   tags: pcmanfm
 
+- name: "App: pi"
+  ansible.builtin.include_tasks:
+    file: pi.yml
+    apply:
+      tags: pi
+  tags: pi
+
+- name: "App: rofi"
+  ansible.builtin.include_tasks:
+    file: rofi.yml
+    apply:
+      tags: rofi
+  tags: rofi
+
+- name: "App: satty"
+  ansible.builtin.include_tasks:
+    file: satty.yml
+    apply:
+      tags: satty
+  tags: satty
+
+- name: "App: try-cli"
+  ansible.builtin.include_tasks:
+    file: try-cli.yml
+    apply:
+      tags: try-cli
+  tags: try-cli
+
 - name: "App: waybar"
   ansible.builtin.include_tasks:
     file: waybar.yml
@@ -106,19 +204,19 @@
       tags: waybar
   tags: waybar
 
-- name: "App: web-apps"
-  ansible.builtin.include_tasks:
-    file: web-apps.yml
-    apply:
-      tags: web-apps
-  tags: web-apps
-
 - name: "App: zathura"
   ansible.builtin.include_tasks:
     file: zathura.yml
     apply:
       tags: zathura
   tags: zathura
+
+- name: "App: zed"
+  ansible.builtin.include_tasks:
+    file: zed.yml
+    apply:
+      tags: zed
+  tags: zed
 
 - name: "App: zsh"
   ansible.builtin.include_tasks:

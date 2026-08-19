@@ -25,8 +25,10 @@
 
 - name: Deploy zsh conf.d fragments
   ansible.builtin.copy:
-    src: zsh/conf.d/
-    dest: "{{ home }}/.config/zsh/conf.d/"
+    src: "{{ item }}"
+    dest: "{{ home }}/.config/zsh/conf.d/{{ item | basename }}"
+  with_fileglob:
+    - "zsh/[0-9]*.zsh"
 
 - name: Deploy zsh syntax highlighting theme
   ansible.builtin.copy:

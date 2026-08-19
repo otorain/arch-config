@@ -1,0 +1,12 @@
+---
+- name: Deploy deepseek desktop entry
+  ansible.builtin.copy:
+    src: deepseek/deepseek.desktop
+    dest: "{{ home }}/.local/share/applications/deepseek.desktop"
+  notify: Update desktop database
+
+- name: Deploy deepseek icon
+  ansible.builtin.copy:
+    src: deepseek/deepseek.png
+    dest: "{{ home }}/.local/share/icons/hicolor/256x256/apps/deepseek.png"
+  notify: Update icon cache
