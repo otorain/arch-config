@@ -1,32 +1,105 @@
 # AGENTS.md
 
-Personal Arch Linux + Hyprland bootstrap. Not an application: no build, no automated tests, no git history. Docs and code comments are in English. Commit messages are in English.
+Personal Arch Linux + Hyprland bootstrap, managed by Ansible. Not an
+application: no build, no automated tests, no git history. Docs and code
+comments are in English. Commit messages are in English.
 
 ## Verification
 
-- `shellcheck install.sh` and `luac -p dotfiles/.config/hypr/hyprland.lua` are the only static checks (tools are in `packages/pacman.txt`).
-- Do NOT run `stylua` on `hyprland.lua` — default stylua (tabs) would reformat the whole file; existing style is 4-space indent with aligned `=`.
-- NEVER run `./install.sh` on the machine you're working on — it mutates system state (pacman, systemd, `/etc`, `$HOME`). It only runs on Arch, as a non-root user with sudo.
-- NEVER copy dotfiles directly into `$HOME` or edit live config files under `~/.config` to "apply" a change — the running system is only updated via `install.sh` (e.g. `./install.sh --only dotfiles`). Edit the file under `dotfiles/` (or the relevant source), then deploy with install.sh.
+- `cd playbooks && ansible-playbook site.yml --syntax-check` and `ansible-lint`
+  are the static checks; `luac -p` applies to the **rendered**
+  `~/.config/hypr/hyprland.lua`, not the `.j2` template.
+- Do NOT run stylua on `hyprland.lua.j2` — default stylua (tabs) would
+  reformat the whole file; existing style is 4-space indent with aligned `=`.
+- The playbook is designed to run on this machine (it replaced install.sh):
+  `cd playbooks && ansible-playbook site.yml --ask-become-pass`, or a subset
+  via `--tags <app>` (e.g. `--tags waybar`). NEVER copy files from
+  `playbooks/roles/**/files/` into `$HOME` by hand — deploy via the playbook.
 
 ## Layout
 
-- `install.sh` — single entrypoint, idempotent stages: `preflight → pacman → yay → aur → system → services → user → dotfiles → themes → mpv → post`. `--only stage1,stage2` runs a subset. Adding a stage means touching 3 places: the function, `main()`, and the header comment.
-- `scripts/` — standalone, idempotent install snippets for ad-hoc git-clone/script-based installs that don't fit the package stages (`install-yay.sh`, `install-oh-my-zsh.sh`, `install-fcitx5-theme.sh`, `install-try-cli.sh`). install.sh stage functions are thin wrappers calling them (`bash "$SCRIPT_DIR/scripts/<name>.sh"`), preserving the caller context (`as_user_home` where the inline code used it). Each script is self-contained (own `set -euo pipefail` + output helpers) so it also runs standalone; scripts writing under `$TARGET_HOME` derive `TARGET_USER`/`TARGET_HOME` themselves or rely on the `$HOME` set by `as_user_home`. Adding a script here means updating the caller stage + this list.
-- `packages/{pacman,aur}.txt` — one package per line, `#` comments. The AUR stage probes `yay -Si` and skips missing packages with a warning instead of failing.
-- `dotfiles/` — mirrored 1:1 onto `$HOME` (including dotfiles, via `find . -type f`); pre-existing files are overwritten without backup. Adding a file here = deployed to `~`. Exception: `~/.config/git/config` is user-owned — the dotfiles stage generates it once (interactive `user.name`/`user.email` prompt) and never overwrites it; it includes the dotfiles-managed `~/.config/git/custom` (delta + catppuccin). The stage ends by reloading a running waybar (`pkill -SIGUSR2 -x waybar`, no-op if absent) so waybar config/module changes apply without relogin.
-- `dotfiles/.config/nvim/` — LazyVim starter structure: `lua/config/` holds global config, `lua/plugins/` one plugin spec per file. Plugin bodies are not committed to dotfiles; lazy.nvim pulls them on first launch; `lazy-lock.json` must be updated along with config.
-- `assets/colin-watts.jpg` — one wallpaper used twice: SDDM theme background and `~/.config/hypr/wallpaper.jpg` (referenced by `hyprpaper.conf`).
-- README is dual-language: `README.md` English (GitHub homepage), `README.zh.md` Chinese mirror. Keep both in sync; do not translate the zh mirror away.
+- `playbooks/` — the whole Ansible project. Run all ansible commands from here.
+  - `site.yml` — single entrypoint, runs roles `base → software → settings → services`.
+  - `inventory/hosts.ini` — host alias `desktop` (connection=local); add future
+    machines here plus a matching `host_vars/<name>.yml`.
+  - `inventory/group_vars/all.yml` — shared vars (home, uid, timezone, theme
+    names, npm globals, systemd unit lists).
+  - `inventory/host_vars/desktop.yml` — machine vars: `monitor`, `scale`,
+    `net_interface`. Consumed by the hyprland.lua / waybar / wechat templates.
+  - `roles/base` — layer 1: preflight asserts, timezone, locale, zram, sshd
+    hardening, user groups, default shell. Its `files/` holds
+    `user-dirs.conf` / `user-dirs.dirs` (deployed to `~/.config/`) and it runs
+    `xdg-user-dirs-update`.
+  - `roles/software` — layer 2: packages + per-app config. `tasks/` is flat
+    (no subdirs): `main.yml` includes the infra files `_pacman.yml → yay.yml →
+    _aur.yml` FIRST (hard order constraint: yay needs base-devel+git, _aur
+    needs yay; `_aur_one.yml` is a per-package helper), then one `<app>.yml`
+    per application, each tagged with the app name. Includes use the
+    `include_tasks` + module-arg `apply: tags:` + outer `tags:` pattern
+    (plain `tags:` on a dynamic include does not reach inner tasks).
+    All official packages live in `_pacman.yml`, all AUR packages in
+    `_aur.yml` (warn-and-continue per package); app files only deploy config,
+    user services, and zsh fragments.
+    - `files/` has one directory **per software** (28 apps): atuin, deepseek,
+      dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
+      hyprland, hyprlock, hyprpaper, kimi, kitty, mimeapps, mpv, nvim,
+      pcmanfm, pi, rofi, satty, try-cli, waybar, wechat, zathura, zed, zsh.
+      Each contains only files — no subdirectories mirroring destination
+      paths, no hidden structural names; destinations appear only in task
+      `dest:` (dev and hyprland have no files dir). Exception: `files/nvim/`
+      keeps its internal tree (deployed wholesale). Deleting a software =
+      delete `files/<sw>/` + `tasks/<sw>.yml` + one include line in `main.yml`.
+    - `templates/<software>/` — hyprland/hyprland.lua.j2,
+      waybar/config.jsonc.j2, wechat/wechat.desktop.j2.
+  - `roles/settings` — layer 3: fcitx5 catppuccin theme, GTK/Qt/Kvantum/font
+    config files, GTK4 Colloid symlinks, gsettings, SDDM theme + wallpaper.
+    Its `files/` are flat with collision-avoiding prefixes:
+    `gtk3-settings.ini`, `gtk4-settings.ini`, `gtkrc-2.0`, `kvantum.kvconfig`,
+    `catppuccin-mocha-blue.kvconfig`, `catppuccin-mocha-blue.svg`,
+    `fonts.conf`.
+  - `roles/services` — layer 4: system systemd units + user pipewire units +
+    dsh-web user service.
+- `assets/colin-watts.jpg` — one wallpaper used twice: SDDM theme background
+  and `~/.config/hypr/wallpaper.jpg` (referenced by `hyprpaper.conf`).
+- README is dual-language: `README.md` English (GitHub homepage),
+  `README.zh.md` Chinese mirror. Keep both in sync.
 
 ## Gotchas
 
-- Hyprland config is **Lua** (`dotfiles/.config/hypr/hyprland.lua`) — Hyprland 0.55+ dropped hyprlang. Do not create or edit a `hyprland.conf`.
-- Hyprland 0.55+ rejects legacy `hyprctl dispatch <name> <args>` strings (Lua parse error); everything must use the Lua DSL, e.g. `hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })'` (`enable` likewise). Known casualties: the dpms commands in `hypridle.conf` (symptom: locks but never blanks the screen) and waybar 0.15.0's `hyprland/workspaces` click-to-switch — the module hardcodes the legacy `dispatch workspace N` IPC call and ignores the config `on-click` for workspace buttons, so no config change can fix it (symptom: clicking a workspace number does nothing). Fixed in waybar master (auto-detects the Lua dispatch protocol); resolves with the waybar 0.16 release — don't "fix" it via `config.jsonc` or by switching to `waybar-git` unless the user asks.
-- The weather popup (`weather.py --popup`) is a fullscreen transparent **gtk4-layer-shell** surface (GTK4), not an xdg toplevel — position, CSS rounded corners, and "click outside to close" (caught by the surface itself) all live inside `weather.py`. Do not add a Hyprland `window_rule` for it, and do not reintroduce `focus-out-event` dismissal (with `follow_mouse = 1` that closes the popup on mere mouse leave). The clock popup (`calendar.py`, lunar calendar + CN holiday badges fetched from holiday-cn and cached under `~/.cache/calendar`) follows the same pattern — same rules apply. Both popups anchor under their waybar module via AT-SPI geometry through the shared `~/.local/bin/waybar_geom.py` helper (waybar itself is still GTK3, so atk-bridge exposes its widget tree on the `org.a11y` bus; `GetExtents` coord_type must be unsigned), falling back to monitor-center when the a11y stack is unavailable. `gtk-layer-shell` (GTK3) stays in `packages/pacman.txt` because the waybar package links against it; the popups use `gtk4-layer-shell`. gtk4-layer-shell must be loaded before libwayland-client or it silently degrades to a plain tiled toplevel ("Failed to initialize layer surface" on stderr) — PyGObject's dlopen order can't guarantee this, so both scripts re-exec themselves with `LD_PRELOAD=/usr/lib/libgtk4-layer-shell.so` at startup (see gtk4-layer-shell's linking.md). Don't remove that re-exec block. Also: the themes stage symlinks the Colloid theme into `~/.config/gtk-4.0/gtk.css`, which GTK loads at **USER priority (800)** — any app CSS that must override the theme (e.g. the popups' transparent window background) needs `Gtk.STYLE_PROVIDER_PRIORITY_USER`; the usual `PRIORITY_APPLICATION` (600) silently loses, and the symptom is an opaque fullscreen surface that hides the desktop (theme paints `.background { background-color: @window_bg_color }`, GTK then marks the whole surface opaque and the compositor culls everything below it).
-- Machine-specific hardcodes are intentional, don't "fix" them: monitor `DP-1` @ scale 1.25 (real-machine alternates `DP-2`/`eDP-1` are commented in the file), waybar `network.interface = "wlp6s0"` (laptop variant `wlo1` noted in comment), timezone `Asia/Shanghai`.
-- `install.sh` supports both `./install.sh` and `sudo ./install.sh` via `TARGET_USER="${SUDO_USER:-$USER}"` and the `as_user`/`as_user_home` helpers. Any stage that writes under `$TARGET_HOME` must use these helpers (and chown afterwards), or files end up root-owned.
-- The `themes` stage calls `gsettings` over a guessed `DBUS_SESSION_BUS_ADDRESS` — it can fail on a headless/tty run and only warns; that's expected.
-- `~/.local/bin/try` wraps a git clone of `tobi/try` (Ruby). The AUR package named `try` is a different tool — don't swap it in.
-- Everything themes to catppuccin-mocha (blue accent): kitty, rofi, dunst, waybar, GTK (Colloid-Dark-Catppuccin), Qt (kvantum), cursors, SDDM, git-delta, zsh syntax highlighting. New config should match.
-- User-facing UI text stays Chinese (desktop entry names/comments, waybar labels, hyprlock placeholder). Everything else — comments, docs, and install.sh output strings (info/ok/warn/die/echo messages) — is English.
+- Hyprland config is **Lua** — Hyprland 0.55+ dropped hyprlang. Do not create
+  or edit a `hyprland.conf`.
+- Hyprland 0.55+ rejects legacy `hyprctl dispatch <name> <args>` strings; use
+  the Lua DSL (`hl.dsp.dpms({ action = "disable" })`). Known casualties: dpms
+  in `hypridle.conf`, and waybar 0.15.0's `hyprland/workspaces`
+  click-to-switch (fixed in waybar master; resolves with the 0.16 release —
+  don't "fix" it via config or by switching to waybar-git unless asked).
+- The weather popup (`weather.py --popup`) and clock popup (`calendar.py`)
+  are fullscreen transparent **gtk4-layer-shell** surfaces — position, CSS
+  rounded corners, and click-outside-to-close live inside the scripts. Do not
+  add Hyprland window_rules for them, do not reintroduce focus-out dismissal,
+  and do not remove the `LD_PRELOAD=/usr/lib/libgtk4-layer-shell.so` re-exec
+  block (gtk4-layer-shell must load before libwayland-client). App CSS that
+  must override the Colloid theme needs `Gtk.STYLE_PROVIDER_PRIORITY_USER`
+  (theme loads at USER priority 800). Both popups anchor under their waybar
+  module via AT-SPI geometry through `waybar_geom.py`.
+- Machine differences live in `host_vars/` — monitor `DP-1` @ scale 1.25,
+  waybar `network.interface = wlp6s0`, wechat `QT_SCALE_FACTOR`. Don't
+  hardcode them back into templates.
+- `~/.config/git/config` is user-owned — created once (interactive
+  user.name/user.email prompt on first run), never overwritten; it includes
+  the managed `~/.config/git/custom` (delta + catppuccin).
+- gsettings over a guessed `DBUS_SESSION_BUS_ADDRESS` can fail on a
+  headless/tty run and only warns; that's expected.
+- `~/.local/bin/try` wraps a git clone of `tobi/try` (Ruby). The AUR package
+  named `try` is a different tool — don't swap it in.
+- Everything themes to catppuccin-mocha (blue accent). New config should match.
+- User-facing UI text stays Chinese (desktop entry names/comments, waybar
+  labels, hyprlock placeholder). Everything else — comments, docs, playbook
+  task names and output — is English.
+- `.zshrc` is a skeleton sourcing `~/.config/zsh/conf.d/*.zsh` in lexical
+  order. ALL 13 fragments live in `roles/software/files/zsh/` root (numbered
+  05–99) and are deployed via `with_fileglob: "zsh/[0-9]*.zsh"` to
+  `~/.config/zsh/conf.d/`; `99-syntax-highlighting.zsh` must stay last.
+  `~/.zshrc` itself is deployed ONCE (`force: false`) — the user owns it
+  afterwards; a grep+warn pair warns when an existing `.zshrc` lacks the
+  conf.d sourcing loop.

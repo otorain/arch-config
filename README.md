@@ -4,32 +4,64 @@
 
 # arch-config — personal Arch Linux (Hyprland) system config
 
-Personal Arch Linux (Hyprland) desktop environment config: install script + config files in one repo, catppuccin-mocha (blue) theme.
+Personal Arch Linux + Hyprland bootstrap, managed by Ansible. One playbook
+installs all packages and deploys every config file; theme is
+catppuccin-mocha (blue accent).
+
+The repo no longer uses `install.sh` — the playbook under `playbooks/` is the
+single source of truth.
+
+## Requirements
+
+- Arch Linux (base install done, e.g. via archinstall — see "Base install" below)
+- `ansible` package installed (`sudo pacman -S ansible`)
+- sudo privileges (the playbook asks for the become password)
 
 ## Usage
 
-First install the base system with archinstall (see "Base install" below), then:
-
 ```bash
 git clone <your-repo> ~/arch-config
-cd ~/arch-config
-./install.sh
+cd ~/arch-config/playbooks
+ansible-playbook site.yml --ask-become-pass               # full setup
+ansible-playbook site.yml --tags waybar --ask-become-pass  # one app only
+ansible-playbook site.yml --list-tasks                     # what's available
 ```
 
-Re-running is safe. To run only some stages:
+Re-running is safe (idempotent). Each app has its own tag, named after the
+app (e.g. `waybar`, `hyprland`, `zsh`, `nvim`).
 
-```bash
-./install.sh --only pacman,aur        # install packages only
-./install.sh --only dotfiles,themes   # deploy configs only
+## Layout
+
+```
+playbooks/
+├── site.yml                    # entrypoint: roles base → software → settings → services
+├── inventory/
+│   ├── hosts.ini               # host alias "desktop" (connection=local)
+│   ├── group_vars/all.yml      # shared vars (home, uid, timezone, themes, unit lists)
+│   └── host_vars/desktop.yml   # machine vars: monitor, scale, net_interface
+└── roles/
+    ├── base/                   # timezone, locale, zram, sshd, groups, shell, xdg user-dirs
+    ├── software/               # packages (_pacman.yml / _aur.yml) + one <app>.yml per app
+    │   ├── files/<app>/        # static config files, one dir per app (28 apps)
+    │   └── templates/<app>/    # hyprland.lua, waybar config, wechat desktop entry
+    ├── settings/               # GTK/Qt/Kvantum/font configs, fcitx5 + SDDM themes, gsettings
+    └── services/               # system systemd units + user pipewire/dsh-web units
 ```
 
-Stage order: `preflight → pacman → yay → aur → system → services → user → dotfiles → themes → mpv → post`
+The `software` role manages 28 apps (atuin, deepseek, dev, direnv, dsh-web,
+dunst, fcitx5, git, github, gmail, hypridle, hyprland, hyprlock, hyprpaper,
+kimi, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, try-cli, waybar,
+wechat, zathura, zed, zsh). All official-repo packages live in
+`tasks/_pacman.yml`, all AUR packages in `tasks/_aur.yml`; per-app task files
+only deploy configuration.
 
-## Base install (archinstall suggestions)
+## Machine differences
 
-- If you use btrfs, install `compsize` afterwards
-- Mirrors: `reflector --country China --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist`
-- The timezone script sets Asia/Shanghai; the locale script generates en_US.UTF-8 + zh_CN.UTF-8, default `LANG=zh_CN.UTF-8` (terminal errors stay in English via `LC_MESSAGES=en_US.UTF-8`)
+Machine-specific values (monitor name, scale factor, network interface) live
+in `playbooks/inventory/host_vars/desktop.yml` — edit them there, not in the
+templates. Current values: monitor `DP-1` @ scale 1.25, NIC `wlp6s0`. To add
+another machine, add a host alias to `inventory/hosts.ini` and a matching
+`host_vars/<name>.yml`.
 
 ## Desktop components
 
@@ -45,19 +77,25 @@ Stage order: `preflight → pacman → yay → aur → system → services → u
 - hyprpolkitagent (polkit agent)
 - sddm (login manager, catppuccin theme)
 
+## Base install (archinstall suggestions)
+
+- If you use btrfs, install `compsize` afterwards
+- Mirrors: `reflector --country China --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist`
+- The playbook sets the timezone to Asia/Shanghai and generates en_US.UTF-8 + zh_CN.UTF-8, default `LANG=zh_CN.UTF-8` (terminal errors stay in English via `LC_MESSAGES=en_US.UTF-8`)
+
 ## Manual steps after install
 
-1. **Monitor**: check the interface name with `hyprctl monitors`, then edit the `hl.monitor({...})` line at the top of `~/.config/hypr/hyprland.lua` (Hyprland 0.55 dropped hyprlang, the config is the Lua version). Default is `DP-1` + scale 1.25; external monitors usually use 1
-2. **neovim**: config is deployed with the dotfiles (LazyVim); on first launch it auto-installs plugins and compiles tree-sitter grammars (needs gcc, already in the package list)
+1. **Monitor**: check the interface name with `hyprctl monitors`, then edit `monitor`/`scale` in `playbooks/inventory/host_vars/desktop.yml` and re-run `ansible-playbook site.yml --tags hyprland` (the rendered `~/.config/hypr/hyprland.lua` is a template now; direct edits get overwritten). Default is `DP-1` + scale 1.25; external monitors usually use 1
+2. **neovim**: config is deployed by the playbook (LazyVim); on first launch it auto-installs plugins and compiles tree-sitter grammars (needs gcc, already in the package list)
 3. **Input method**: fcitx5 autostarts after re-login; rime auto-deploys rime-ice on first run. To keep your old word-frequency data, copy `~/.local/share/fcitx5/rime/*.userdb` from the old system
 4. **dropbox**: `hl.exec_cmd("dropbox")` is commented out in hyprland.lua; uncomment it after installing the AUR package
 5. **VirtualBox**: extension pack in AUR `virtualbox-ext-oracle`; if modules break after a kernel update, run `sudo vboxreload`
 6. **goldendict-ng**: dictionaries must be placed manually, see the [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) docs (put dictionary files under `~/.local/share/goldendict`, then add the directory in settings). Autostarts in the tray at login; `Super+T` forwards the query through single-instance IPC, avoiding cold start
-7. **git**: on the first dotfiles run you're asked for `user.name`/`user.email`, saved to `~/.config/git/config` — that file is yours and is never overwritten on re-runs. Shared settings (delta, catppuccin theme) live in `~/.config/git/custom`, which is managed by dotfiles; don't edit it
+7. **git**: on the first run of the git app (only when `~/.config/git/config` is missing) the playbook asks for `user.name`/`user.email`, saved to `~/.config/git/config` — that file is yours and is never overwritten afterwards. Shared settings (delta, catppuccin theme) live in `~/.config/git/custom`, which is managed by the playbook; don't edit it
 
 ## dsh web (DeepSeek Harness)
 
-`dsh web` serves the DeepSeek Harness coding-agent browser UI at <http://127.0.0.1:3080>. The `post` stage installs the CLI globally (`npm i -g @deepseek-ai/dsh`, lands in `~/.local/bin/dsh`) and enables it as a user service (`dotfiles/.config/systemd/user/dsh-web.service`), so it starts at login:
+`dsh web` serves the DeepSeek Harness coding-agent browser UI at <http://127.0.0.1:3080>. The playbook installs the CLI globally (`npm i -g @deepseek-ai/dsh`, lands in `~/.local/bin/dsh`); the `dsh-web` app deploys the user unit (`~/.config/systemd/user/dsh-web.service`) and the `services` role enables it, so it starts at login:
 
 ```bash
 systemctl --user status dsh-web        # status
@@ -70,7 +108,7 @@ systemctl --user restart dsh-web       # restart
 - **Upgrade**: `npm i -g @deepseek-ai/dsh@latest && systemctl --user restart dsh-web`
 - **npm ≥ 12** blocks install scripts by default, so `npm i -g` warns about koffi/node-pty/… — dsh still works (native prebuilds ship with the packages, or compile on demand). To run the scripts anyway: `npm i -g --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs @deepseek-ai/dsh`
 - **Port already in use**: if an old `npx @deepseek-ai/dsh web` instance is still running, stop it first (`pkill -f "dsh web"`), then `systemctl --user reset-failed dsh-web && systemctl --user restart dsh-web`
-- **Config-only deploys**: if you run `./install.sh --only dotfiles`, the unit is deployed but not enabled — enable once manually: `systemctl --user enable --now dsh-web`
+- **Config-only deploys**: if you run only `--tags dsh-web`, the unit is deployed but not enabled — enable once manually: `systemctl --user enable --now dsh-web`
 
 ## Keybindings
 
@@ -122,48 +160,6 @@ systemctl --user restart dsh-web       # restart
 | `XF86AudioPlay` | Play/pause |
 | `XF86AudioNext` | Next track |
 | `XF86AudioPrev` | Previous track |
-
-## Packages that may fail to install (script warns and skips)
-
-AUR package names change over time. If the official repo version of `zed` doesn't suit you, use the AUR `zed-preview-bin`; `pycharm`/`rubymine` are AUR builds (downloading official tarballs), or you can install them manually via JetBrains Toolbox.
-
-## File layout
-
-```
-.
-├── install.sh          # main script (idempotent, supports --only)
-├── scripts/            # standalone ad-hoc installs (yay, oh-my-zsh, fcitx5 theme, try-cli)
-├── packages/
-│   ├── pacman.txt      # official repos (one package per line, # comments)
-│   └── aur.txt         # AUR
-├── assets/
-│   ├── colin-watts.jpg # SDDM / desktop wallpaper
-│   └── screenshot.png  # README cover image
-└── dotfiles/           # mirrored onto ~ as-is (existing files are overwritten)
-    ├── .zshrc
-    ├── .pi/agent/      # pi-coding-agent config
-    ├── .config/hypr/   # hyprland.lua + hyprlock + hypridle + hyprpaper
-    ├── .config/waybar/ # waybar modules
-    ├── .config/kitty/  # includes catppuccin mocha theme
-    ├── .config/rofi/ + .local/share/rofi/themes/
-    ├── .config/dunst/  # includes mocha colors
-    ├── .config/mpv/    # uosc/thumbfast/sponsorblock provided by AUR
-    ├── .config/git/    # custom = delta + catppuccin (included by user-owned ~/.config/git/config)
-    ├── .config/systemd/user/ # dsh-web.service — DeepSeek Harness web UI user service (enabled in the post stage)
-    ├── .config/fcitx5/ # fcitx5 config (profile/classicui/rime.conf)
-    ├── .local/share/fcitx5/rime/ # rime-ice default.custom.yaml
-    ├── .config/atuin/  # includes catppuccin theme
-    ├── .config/Kvantum/ # Qt theme (catppuccin-mocha-blue)
-    ├── .config/gtk-3.0/ + .config/fontconfig/
-    ├── .config/direnv/ # includes layout_uv
-    ├── .config/nvim/   # LazyVim config (init.lua + lua/config + lua/plugins)
-    ├── .config/satty/ + .config/zathura/ + .config/pcmanfm/
-    ├── .config/zed/   # settings.json
-    ├── .config/mimeapps.list + .config/user-dirs.{conf,dirs}
-    ├── .local/share/applications/ # overrides system .desktop (deepseek/github/gmail/kimi/wechat etc.)
-    ├── .local/share/icons/ # PWA icons (deepseek/github/gmail/kimi)
-    └── .local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh
-```
 
 ## License
 

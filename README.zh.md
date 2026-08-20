@@ -4,32 +4,60 @@
 
 # arch-config — 自用 Arch Linux (Hyprland) 系统配置
 
-自用 Arch Linux (Hyprland) 桌面环境配置：安装脚本 + 配置文件一体，catppuccin-mocha（蓝色）主题。
+自用 Arch Linux + Hyprland 引导配置，由 Ansible 管理。一个 playbook 装好
+所有软件包并部署全部配置文件；主题为 catppuccin-mocha（蓝色强调）。
+
+本仓库已不再使用 `install.sh`——`playbooks/` 下的 playbook 是唯一权威来源。
+
+## 环境要求
+
+- Arch Linux（已完成基础安装，例如用 archinstall——见下文「基础安装」）
+- 已安装 `ansible` 包（`sudo pacman -S ansible`）
+- sudo 权限（playbook 会询问 become 密码）
 
 ## 使用
 
-先用 archinstall 装好基础系统（见下文「基础安装」），然后：
-
 ```bash
 git clone <你的仓库> ~/arch-config
-cd ~/arch-config
-./install.sh
+cd ~/arch-config/playbooks
+ansible-playbook site.yml --ask-become-pass               # 完整安装
+ansible-playbook site.yml --tags waybar --ask-become-pass  # 只装某个应用
+ansible-playbook site.yml --list-tasks                     # 查看可用任务
 ```
 
-重复运行安全。只跑部分阶段：
+重复运行安全（幂等）。每个应用有自己的 tag，与应用同名（如 `waybar`、
+`hyprland`、`zsh`、`nvim`）。
 
-```bash
-./install.sh --only pacman,aur        # 只装包
-./install.sh --only dotfiles,themes   # 只铺配置
+## 目录结构
+
+```
+playbooks/
+├── site.yml                    # 入口：角色顺序 base → software → settings → services
+├── inventory/
+│   ├── hosts.ini               # 主机别名 "desktop"（connection=local）
+│   ├── group_vars/all.yml      # 共享变量（home、uid、时区、主题、unit 列表）
+│   └── host_vars/desktop.yml   # 机器变量：monitor、scale、net_interface
+└── roles/
+    ├── base/                   # 时区、locale、zram、sshd、用户组、默认 shell、xdg user-dirs
+    ├── software/               # 软件包（_pacman.yml / _aur.yml）+ 每个应用一个 <app>.yml
+    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 28 个应用）
+    │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat 桌面项
+    ├── settings/               # GTK/Qt/Kvantum/字体配置、fcitx5 与 SDDM 主题、gsettings
+    └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
 ```
 
-阶段顺序：`preflight → pacman → yay → aur → system → services → user → dotfiles → themes → mpv → post`
+`software` 角色管理 28 个应用（atuin、deepseek、dev、direnv、dsh-web、
+dunst、fcitx5、git、github、gmail、hypridle、hyprland、hyprlock、hyprpaper、
+kimi、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、try-cli、waybar、
+wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
+AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
 
-## 基础安装（archinstall 建议）
+## 机器差异
 
-- 文件系统如用 btrfs，装完补 `compsize`
-- 镜像源：`reflector --country China --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist`
-- 时区脚本会设为 Asia/Shanghai；locale 脚本生成 en_US.UTF-8 + zh_CN.UTF-8，默认 `LANG=zh_CN.UTF-8`（终端报错保持英文 `LC_MESSAGES=en_US.UTF-8`）
+与具体机器相关的值（显示器名称、缩放比例、网卡接口）放在
+`playbooks/inventory/host_vars/desktop.yml`——在那里改，不要改模板。当前
+值：显示器 `DP-1`、缩放 1.25、网卡 `wlp6s0`。要添加新机器，在
+`inventory/hosts.ini` 里加主机别名，并配套一个 `host_vars/<名称>.yml`。
 
 ## 桌面组件
 
@@ -45,19 +73,25 @@ cd ~/arch-config
 - hyprpolkitagent（polkit 代理）
 - sddm（登录管理器，catppuccin 主题）
 
+## 基础安装（archinstall 建议）
+
+- 文件系统如用 btrfs，装完补 `compsize`
+- 镜像源：`reflector --country China --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist`
+- playbook 会把时区设为 Asia/Shanghai，并生成 en_US.UTF-8 + zh_CN.UTF-8，默认 `LANG=zh_CN.UTF-8`（终端报错保持英文 `LC_MESSAGES=en_US.UTF-8`）
+
 ## 装完后的手工事项
 
-1. **显示器**：`hyprctl monitors` 查看接口名，编辑 `~/.config/hypr/hyprland.lua` 顶部的 `hl.monitor({...})` 行（Hyprland 0.55 起 hyprlang 弃用，配置为 Lua 版）。默认 `DP-1` + 缩放 1.25，外接显示器通常用 1
-2. **neovim**：配置随 dotfiles 部署（LazyVim），首次启动自动装插件并编译 tree-sitter grammar（需 gcc，已在包清单里）
+1. **显示器**：`hyprctl monitors` 查看接口名，编辑 `playbooks/inventory/host_vars/desktop.yml` 里的 `monitor`/`scale`，然后重跑 `ansible-playbook site.yml --tags hyprland`（生成的 `~/.config/hypr/hyprland.lua` 现在是模板渲染产物，直接手改会被覆盖）。默认 `DP-1` + 缩放 1.25，外接显示器通常用 1
+2. **neovim**：配置由 playbook 部署（LazyVim），首次启动自动装插件并编译 tree-sitter grammar（需 gcc，已在包清单里）
 3. **输入法**：重新登录后 fcitx5 自启，rime 首次会自动部署雾凇拼音（rime-ice）。想保留旧词频，复制旧系统 `~/.local/share/fcitx5/rime/*.userdb`
 4. **dropbox**：`hl.exec_cmd("dropbox")` 在 hyprland.lua 里被注释掉了，装好 AUR 包后按需取消注释
 5. **VirtualBox**：扩展包在 AUR `virtualbox-ext-oracle`；内核更新后如模块失效，执行 `sudo vboxreload`
 6. **goldendict-ng**：词典需手动放置，见 [Dictionaries](https://github.com/xiaoyifang/goldendict-ng?tab=readme-ov-file#dictionaries) 文档（词典文件可放 `~/.local/share/goldendict`，然后在设置里添加目录）。登录自启常驻托盘，`Super+T` 通过单实例 IPC 转发查询词，免冷启动
-7. **git**：首次运行 dotfiles 阶段时会交互询问 `user.name`/`user.email`，保存在 `~/.config/git/config`——该文件归你所有，重跑安装不会覆盖。共享配置（delta、catppuccin 主题）在 `~/.config/git/custom`，由 dotfiles 管理，请勿手动修改
+7. **git**：git 应用首次运行时（仅当 `~/.config/git/config` 不存在）playbook 会交互询问 `user.name`/`user.email`，保存在 `~/.config/git/config`——该文件归你所有，之后不会被覆盖。共享配置（delta、catppuccin 主题）在 `~/.config/git/custom`，由 playbook 管理，请勿手动修改
 
 ## dsh web（DeepSeek Harness）
 
-`dsh web` 在 <http://127.0.0.1:3080> 提供 DeepSeek Harness 编码代理的浏览器界面。`post` 阶段会全局安装 CLI（`npm i -g @deepseek-ai/dsh`，落在 `~/.local/bin/dsh`），并启用用户服务（`dotfiles/.config/systemd/user/dsh-web.service`），登录即自启：
+`dsh web` 在 <http://127.0.0.1:3080> 提供 DeepSeek Harness 编码代理的浏览器界面。playbook 会全局安装 CLI（`npm i -g @deepseek-ai/dsh`，落在 `~/.local/bin/dsh`）；`dsh-web` 应用部署用户 unit（`~/.config/systemd/user/dsh-web.service`），`services` 角色负责启用，登录即自启：
 
 ```bash
 systemctl --user status dsh-web        # 状态
@@ -70,7 +104,7 @@ systemctl --user restart dsh-web       # 重启
 - **升级**：`npm i -g @deepseek-ai/dsh@latest && systemctl --user restart dsh-web`
 - **npm ≥ 12** 默认拦截安装脚本，`npm i -g` 会警告 koffi/node-pty 等——dsh 仍可正常工作（原生预编译随包自带，或按需现场编译）。想执行这些脚本：`npm i -g --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs @deepseek-ai/dsh`
 - **端口被占用**：若还有旧的 `npx @deepseek-ai/dsh web` 实例在跑，先停掉（`pkill -f "dsh web"`），再 `systemctl --user reset-failed dsh-web && systemctl --user restart dsh-web`
-- **只铺配置**：若只跑 `./install.sh --only dotfiles`，unit 文件会部署但不会启用——手动执行一次 `systemctl --user enable --now dsh-web`
+- **只铺配置**：若只跑 `--tags dsh-web`，unit 文件会部署但不会启用——手动执行一次 `systemctl --user enable --now dsh-web`
 
 ## 键位
 
@@ -122,48 +156,6 @@ systemctl --user restart dsh-web       # 重启
 | `XF86AudioPlay` | 播放/暂停 |
 | `XF86AudioNext` | 下一首 |
 | `XF86AudioPrev` | 上一首 |
-
-## 可能装不上的包（脚本会警告跳过）
-
-AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-preview-bin`；`pycharm`/`rubymine` 是 AUR 构建（下载官方 tarball），也可用 JetBrains Toolbox 手动装。
-
-## 文件结构
-
-```
-.
-├── install.sh          # 主脚本（幂等，支持 --only）
-├── scripts/            # 独立的临时安装脚本（yay、oh-my-zsh、fcitx5 主题、try-cli）
-├── packages/
-│   ├── pacman.txt      # 官方仓库（每行一包，# 注释）
-│   └── aur.txt         # AUR
-├── assets/
-│   ├── colin-watts.jpg # SDDM / 桌面壁纸
-│   └── screenshot.png  # README 封面图
-└── dotfiles/           # 原样映射到 ~（已有文件直接覆盖）
-    ├── .zshrc
-    ├── .pi/agent/      # pi-coding-agent 配置
-    ├── .config/hypr/   # hyprland.lua + hyprlock + hypridle + hyprpaper
-    ├── .config/waybar/ # waybar 模块
-    ├── .config/kitty/  # 含 catppuccin mocha 主题
-    ├── .config/rofi/ + .local/share/rofi/themes/
-    ├── .config/dunst/  # 含 mocha 配色
-    ├── .config/mpv/    # uosc/thumbfast/sponsorblock 由 AUR 提供
-    ├── .config/git/    # custom = delta + catppuccin（被用户自有的 ~/.config/git/config include）
-    ├── .config/systemd/user/ # dsh-web.service — DeepSeek Harness 网页端用户服务（post 阶段启用）
-    ├── .config/fcitx5/ # fcitx5 配置（profile/classicui/rime.conf）
-    ├── .local/share/fcitx5/rime/ # 雾凇拼音 default.custom.yaml
-    ├── .config/atuin/  # 含 catppuccin 主题
-    ├── .config/Kvantum/ # qt 主题（catppuccin-mocha-blue）
-    ├── .config/gtk-3.0/ + .config/fontconfig/
-    ├── .config/direnv/ # 含 layout_uv
-    ├── .config/nvim/   # LazyVim 配置（init.lua + lua/config + lua/plugins）
-    ├── .config/satty/ + .config/zathura/ + .config/pcmanfm/
-    ├── .config/zed/   # settings.json
-    ├── .config/mimeapps.list + .config/user-dirs.{conf,dirs}
-    ├── .local/share/applications/ # 覆盖系统 .desktop（deepseek/github/gmail/kimi/wechat 等）
-    ├── .local/share/icons/ # PWA 图标（deepseek/github/gmail/kimi）
-    └── .local/share/catppuccin_mocha-zsh-syntax-highlighting.zsh
-```
 
 ## 许可证
 
