@@ -40,13 +40,13 @@ playbooks/
 └── roles/
     ├── base/                   # 时区、locale、zram、sshd、用户组、默认 shell、xdg user-dirs
     ├── software/               # 软件包（_pacman.yml / _aur.yml）+ 每个应用一个 <app>.yml
-    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 28 个应用）
+    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 29 个应用）
     │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat 桌面项
     ├── settings/               # GTK/Qt/Kvantum/字体配置、fcitx5 与 SDDM 主题、gsettings
     └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
 ```
 
-`software` 角色管理 28 个应用（atuin、deepseek、dev、direnv、dsh-web、
+`software` 角色管理 29 个应用（atuin、deepseek、dev、direnv、dsh-web、
 dunst、fcitx5、git、github、gmail、hypridle、hyprland、hyprlock、hyprpaper、
 kimi、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、try-cli、waybar、
 wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
@@ -156,6 +156,10 @@ systemctl --user restart dsh-web       # 重启
 | `XF86AudioPlay` | 播放/暂停 |
 | `XF86AudioNext` | 下一首 |
 | `XF86AudioPrev` | 上一首 |
+
+## 可能装不上的包（playbook 会警告跳过）
+
+AUR 包名会变动。若 `zed` 官方仓库版本不合意可用 AUR `zed-preview-bin`；`pycharm`/`rubymine` 是 AUR 构建（下载官方 tarball），也可用 JetBrains Toolbox 手动装。
 
 ## 许可证
 

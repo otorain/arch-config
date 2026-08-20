@@ -40,15 +40,16 @@ comments are in English. Commit messages are in English.
     All official packages live in `_pacman.yml`, all AUR packages in
     `_aur.yml` (warn-and-continue per package); app files only deploy config,
     user services, and zsh fragments.
-    - `files/` has one directory **per software** (28 apps): atuin, deepseek,
+    - `files/` has one directory **per software** (29 apps): atuin, deepseek,
       dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
       hyprland, hyprlock, hyprpaper, kimi, kitty, mimeapps, mpv, nvim,
       pcmanfm, pi, rofi, satty, try-cli, waybar, wechat, zathura, zed, zsh.
       Each contains only files — no subdirectories mirroring destination
       paths, no hidden structural names; destinations appear only in task
-      `dest:` (dev and hyprland have no files dir). Exception: `files/nvim/`
-      keeps its internal tree (deployed wholesale). Deleting a software =
-      delete `files/<sw>/` + `tasks/<sw>.yml` + one include line in `main.yml`.
+      `dest:` (dev and hyprland have no files dir; wechat is template-only).
+      Exception: `files/nvim/` keeps its internal tree (deployed wholesale).
+      Deleting a software = delete `files/<sw>/` + `tasks/<sw>.yml` + one
+      include line in `main.yml`.
     - `templates/<software>/` — hyprland/hyprland.lua.j2,
       waybar/config.jsonc.j2, wechat/wechat.desktop.j2.
   - `roles/settings` — layer 3: fcitx5 catppuccin theme, GTK/Qt/Kvantum/font

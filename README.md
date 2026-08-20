@@ -42,13 +42,13 @@ playbooks/
 └── roles/
     ├── base/                   # timezone, locale, zram, sshd, groups, shell, xdg user-dirs
     ├── software/               # packages (_pacman.yml / _aur.yml) + one <app>.yml per app
-    │   ├── files/<app>/        # static config files, one dir per app (28 apps)
+    │   ├── files/<app>/        # static config files, one dir per app (29 apps)
     │   └── templates/<app>/    # hyprland.lua, waybar config, wechat desktop entry
     ├── settings/               # GTK/Qt/Kvantum/font configs, fcitx5 + SDDM themes, gsettings
     └── services/               # system systemd units + user pipewire/dsh-web units
 ```
 
-The `software` role manages 28 apps (atuin, deepseek, dev, direnv, dsh-web,
+The `software` role manages 29 apps (atuin, deepseek, dev, direnv, dsh-web,
 dunst, fcitx5, git, github, gmail, hypridle, hyprland, hyprlock, hyprpaper,
 kimi, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, try-cli, waybar,
 wechat, zathura, zed, zsh). All official-repo packages live in
@@ -160,6 +160,10 @@ systemctl --user restart dsh-web       # restart
 | `XF86AudioPlay` | Play/pause |
 | `XF86AudioNext` | Next track |
 | `XF86AudioPrev` | Previous track |
+
+## Packages that may fail to install (playbook warns and skips)
+
+AUR package names change over time. If the official repo version of `zed` doesn't suit you, use the AUR `zed-preview-bin`; `pycharm`/`rubymine` are AUR builds (downloading official tarballs), or you can install them manually via JetBrains Toolbox.
 
 ## License
 
