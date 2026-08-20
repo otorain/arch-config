@@ -11,7 +11,7 @@ comments are in English. Commit messages are in English.
   `~/.config/hypr/hyprland.lua`, not the `.j2` template.
 - Do NOT run stylua on `hyprland.lua.j2` — default stylua (tabs) would
   reformat the whole file; existing style is 4-space indent with aligned `=`.
-- The playbook is designed to run on this machine (it replaced install.sh):
+- The playbook is designed to run on this machine:
   `cd playbooks && ansible-playbook site.yml --ask-become-pass`, or a subset
   via `--tags <app>` (e.g. `--tags waybar`). NEVER copy files from
   `playbooks/roles/**/files/` into `$HOME` by hand — deploy via the playbook.

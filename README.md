@@ -8,9 +8,6 @@ Personal Arch Linux + Hyprland bootstrap, managed by Ansible. One playbook
 installs all packages and deploys every config file; theme is
 catppuccin-mocha (blue accent).
 
-The repo no longer uses `install.sh` — the playbook under `playbooks/` is the
-single source of truth.
-
 ## Requirements
 
 - Arch Linux (base install done, e.g. via archinstall — see "Base install" below)

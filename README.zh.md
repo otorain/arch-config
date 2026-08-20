@@ -7,8 +7,6 @@
 自用 Arch Linux + Hyprland 引导配置，由 Ansible 管理。一个 playbook 装好
 所有软件包并部署全部配置文件；主题为 catppuccin-mocha（蓝色强调）。
 
-本仓库已不再使用 `install.sh`——`playbooks/` 下的 playbook 是唯一权威来源。
-
 ## 环境要求
 
 - Arch Linux（已完成基础安装，例如用 archinstall——见下文「基础安装」）

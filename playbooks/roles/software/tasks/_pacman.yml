@@ -1,5 +1,5 @@
 ---
-# All official-repo packages in one shot (replaces packages/pacman.txt).
+# All official-repo packages in one shot.
 # Grouped by owning application; a package with no app lives in its group.
 - name: Install official-repo packages
   become: true
