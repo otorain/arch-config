@@ -35,8 +35,9 @@
     - name: Install yay-bin
       become: true
       ansible.builtin.command: "pacman -U --noconfirm {{ yay_pkg.files[0].path }}"
-
+  always:
     - name: Clean up build directory
       ansible.builtin.file:
         path: "{{ yay_tmp.path }}"
         state: absent
+      when: yay_tmp.path is defined

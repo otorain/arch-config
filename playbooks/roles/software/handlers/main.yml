@@ -13,8 +13,3 @@
   ansible.builtin.command: "gtk-update-icon-cache -f {{ home }}/.local/share/icons/hicolor"
   failed_when: false
   listen: Update icon cache
-
-- name: Refresh font cache
-  ansible.builtin.command: fc-cache -f
-  failed_when: false
-  listen: Refresh font cache

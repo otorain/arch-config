@@ -28,7 +28,7 @@
   loop: "{{ user_units }}"
   failed_when: false
 
-# dsh web (DeepSeek Harness) user service — unit file deployed by the dev app;
+# dsh web (DeepSeek Harness) user service — unit file deployed by the dsh-web app;
 # may fail on a headless run with no user manager, that's ok
 - name: Check dsh-web unit file
   ansible.builtin.stat:
@@ -62,5 +62,5 @@
 
 - name: Warn if dsh-web unit missing
   ansible.builtin.debug:
-    msg: "dsh-web.service not found (dev app not run?); skipping user service enable"
+    msg: "dsh-web.service not found (dsh-web app not run?); skipping user service enable"
   when: not dsh_unit.stat.exists

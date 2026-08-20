@@ -31,11 +31,12 @@
       args:
         chdir: "{{ home }}/.local/share/fcitx5/themes/catppuccin-mocha-blue"
       failed_when: false
-
+  always:
     - name: Clean up
       ansible.builtin.file:
         path: "{{ fcitx5_tmp.path }}"
         state: absent
+      when: fcitx5_tmp.path is defined
 
 # GTK / Qt static config files
 - name: Deploy GTK3 settings

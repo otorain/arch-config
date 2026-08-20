@@ -20,7 +20,9 @@
 
 - name: Warn if zshrc does not source the conf.d fragments
   ansible.builtin.debug:
-    msg: "~/.zshrc does not source ~/.config/zsh/conf.d/*.zsh — app shell integrations will not load. Add: for f in ~/.config/zsh/conf.d/*.zsh(N); do source $f; done"
+    msg: >-
+      ~/.zshrc does not source ~/.config/zsh/conf.d/*.zsh — app shell integrations
+      will not load. Add: for f in ~/.config/zsh/conf.d/*.zsh(N); do source $f; done
   when: zshrc_conf_d.rc != 0
 
 - name: Deploy zsh conf.d fragments

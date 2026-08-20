@@ -1,0 +1,10 @@
+---
+# Deliberate patterns for this personal single-machine dotfiles playbook:
+skip_list:
+  - risky-file-permissions   # user-owned dotfiles; umask-default modes are fine, executable bits set via git modes + mode: preserve
+  - var-naming[no-role-prefix]  # single-project roles, no shared-role reuse
+  - no-changed-when          # handlers are change-triggered by design
+  - latest[git]              # git clones use update: false intentionally (install once, never pull)
+  - command-instead-of-module  # yay/pkill/gsettings etc. have no suitable module
+  - name[casing]             # task names carry app names like "App: dsh-web"
+  - yaml[line-length]        # long shell/msg lines kept readable inline
