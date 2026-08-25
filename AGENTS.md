@@ -98,7 +98,7 @@ comments are in English. Commit messages are in English.
   labels, hyprlock placeholder). Everything else — comments, docs, playbook
   task names and output — is English.
 - `.zshrc` is a skeleton sourcing `~/.config/zsh/conf.d/*.zsh` in lexical
-  order. ALL 13 fragments live in `roles/software/files/zsh/` root (numbered
+  order. ALL 14 fragments live in `roles/software/files/zsh/` root (numbered
   05–99) and are deployed via `with_fileglob: "zsh/[0-9]*.zsh"` to
   `~/.config/zsh/conf.d/`; `99-syntax-highlighting.zsh` must stay last.
   `~/.zshrc` itself is deployed ONCE (`force: false`) — the user owns it
