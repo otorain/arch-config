@@ -149,6 +149,10 @@
       - yaml-language-server
       - bash-language-server
       - dockerfile-language-server
+      # === Image processing ===
+      - libvips
+      - imagemagick
+      - potrace
       # === GUI apps ===
       - kitty
       - zathura
