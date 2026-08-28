@@ -149,6 +149,8 @@
       - yaml-language-server
       - bash-language-server
       - dockerfile-language-server
+      # === ROCm ===
+      - rocm-smi-lib
       # === Image processing ===
       - libvips
       - imagemagick
