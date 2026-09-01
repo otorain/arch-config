@@ -168,3 +168,6 @@
       - swayimg
       - papirus-icon-theme
       - zed
+      # === Archive manager ===
+      - engrampa
+      - unrar
