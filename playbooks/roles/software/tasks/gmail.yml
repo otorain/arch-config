@@ -1,8 +1,15 @@
 ---
-- name: Deploy gmail desktop entry
-  ansible.builtin.copy:
-    src: gmail/gmail.desktop
+- name: Deploy gmail desktop entry (mailto handler; Exec uses {{ home }})
+  ansible.builtin.template:
+    src: gmail/gmail.desktop.j2
     dest: "{{ home }}/.local/share/applications/gmail.desktop"
+  notify: Update desktop database
+
+- name: Deploy gmail mailto handler script
+  ansible.builtin.copy:
+    src: gmail/gmail-mailto
+    dest: "{{ home }}/.local/bin/gmail-mailto"
+    mode: "0755"
   notify: Update desktop database
 
 - name: Deploy gmail icon
