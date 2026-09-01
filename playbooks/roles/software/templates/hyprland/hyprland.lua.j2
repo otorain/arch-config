@@ -420,6 +420,16 @@ hl.window_rule({
 	float = true,
 })
 
+-- Keep the archive manager engrampa floating; class is org.mate.engrampa on
+-- native Wayland and engrampa under XWayland (no GDK_BACKEND is forced)
+hl.window_rule({
+	name = "float-engrampa",
+	match = { class = "^(engrampa|org\\.mate\\.engrampa)$" },
+	float = true,
+	size = "1000 700",
+	center = true,
+})
+
 -- Chrome PWA (DeepSeek / Kimi)
 hl.window_rule({
 	name = "float-deepseek",
@@ -454,6 +464,16 @@ hl.window_rule({
 	size = "1300 800",
 	center = true,
 	workspace = "special:kimi silent",
+})
+
+-- Gmail web app (chrome --app=mail.google.com) floats on the current workspace.
+-- Class prefix is host-derived but the suffix varies, so match loosely.
+hl.window_rule({
+	name = "float-gmail",
+	match = { class = "^(chrome-mail\\.google\\.com.*)$" },
+	float = true,
+	size = "1200 800",
+	center = true,
 })
 
 -- WeChat (XWayland) floats on the current workspace; not in a special workspace,
