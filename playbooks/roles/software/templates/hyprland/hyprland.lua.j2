@@ -476,6 +476,16 @@ hl.window_rule({
 	center = true,
 })
 
+-- GitHub web app (chrome --app=github.com) floats on the current workspace.
+-- Class prefix is host-derived but the suffix varies, so match loosely.
+hl.window_rule({
+	name = "float-github",
+	match = { class = "^(chrome-github\\.com.*)$" },
+	float = true,
+	size = "1200 800",
+	center = true,
+})
+
 -- WeChat (XWayland) floats on the current workspace; not in a special workspace,
 -- because Hyprland fails to render the fcitx5 candidate popup on special workspaces
 hl.window_rule({
