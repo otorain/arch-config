@@ -172,3 +172,8 @@
       # === Archive manager ===
       - engrampa
       - unrar
+      # === Wine ===
+      - wine-staging
+      - winetricks
+      - wine-gecko
+      - wine-mono
