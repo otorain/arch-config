@@ -84,6 +84,7 @@
       - satty
       - wl-clipboard
       - cliphist
+      - wtype
       - qt5-wayland
       - qt6-wayland
       - kvantum
