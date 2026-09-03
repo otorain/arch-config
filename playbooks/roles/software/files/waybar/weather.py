@@ -455,6 +455,28 @@ def on_key(_ctrl, keyval, _keycode, _state, win):
     return False
 
 
+def kill_existing_popup(pid_file=PID_FILE):
+    """Toggle helper: if the pidfile names a live weather.py process, kill it
+    and return True. A stale pidfile (dead pid) is ignored; a live pid whose
+    cmdline is NOT weather.py (pid reuse) is left alone."""
+    try:
+        with open(pid_file, encoding="utf-8") as f:
+            pid = int(f.read().strip())
+    except (OSError, ValueError):
+        return False
+    if pid <= 0:
+        return False
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            cmdline = f.read()
+    except OSError:
+        return False  # process is gone (stale pidfile)
+    if b"weather.py" not in cmdline:
+        return False  # pid was reused by something else
+    run("kill", str(pid))
+    return True
+
+
 def run_popup():
     GLib.set_prgname("weather-popup")
     os.makedirs(CACHE_DIR, exist_ok=True)
@@ -463,15 +485,8 @@ def run_popup():
         return
 
     # Toggle: a second click on the module closes an already-open popup.
-    try:
-        with open(PID_FILE, encoding="utf-8") as f:
-            pid = int(f.read().strip())
-        if pid > 0:
-            os.kill(pid, 0)  # raises OSError if the process is gone
-            run("kill", str(pid))
-            return
-    except (OSError, ValueError):
-        pass
+    if kill_existing_popup():
+        return
 
     data = ensure_data()
 
