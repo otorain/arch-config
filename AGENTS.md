@@ -8,7 +8,8 @@ comments are in English. Commit messages are in English.
 
 - `cd playbooks && ansible-playbook site.yml --syntax-check` and `ansible-lint`
   are the static checks; `luac -p` applies to the **rendered**
-  `~/.config/hypr/hyprland.lua`, not the `.j2` template.
+  `~/.config/hypr/hyprland.lua`, not the `.j2` template. `--check` dry runs
+  work — read-only probe commands run with `check_mode: false`.
 - Do NOT run stylua on `hyprland.lua.j2` — default stylua (tabs) would
   reformat the whole file; existing style is 4-space indent with aligned `=`.
 - The playbook is designed to run on this machine:

@@ -24,6 +24,7 @@
   ansible.builtin.command: timedatectl show -p Timezone --value
   register: current_tz
   changed_when: false
+  check_mode: false  # read-only probe; must run so `when:` works under --check
 
 - name: Set timezone
   become: true

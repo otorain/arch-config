@@ -14,7 +14,8 @@
 - name: Warn on npm global install failure
   ansible.builtin.debug:
     msg: "npm global install failed, do it manually later: npm i -g {{ npm_globals | join(' ') }}"
-  when: npm_install.rc != 0
+  # default(0): in --check mode the install command is skipped and has no rc
+  when: npm_install.rc | default(0) != 0
 
 - name: Set rustup default toolchain
   ansible.builtin.command: rustup default stable
