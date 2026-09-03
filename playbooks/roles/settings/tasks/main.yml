@@ -125,9 +125,20 @@
     - { key: icon-theme, value: "{{ icon_theme }}" }
     - { key: color-scheme, value: prefer-dark }
     - { key: font-name, value: "{{ gtk_font }}" }
+  register: gsettings_results
   changed_when: false
   failed_when: false
   when: colloid_theme is defined
+
+- name: Warn on gsettings failures
+  ansible.builtin.debug:
+    msg: "gsettings {{ item.item.key }} failed (headless run?) — re-run from a graphical session"
+  # default([]): when colloid_theme is undefined the apply task is skipped and
+  # registers no results list
+  loop: "{{ gsettings_results.results | default([]) }}"
+  when: item is failed
+  loop_control:
+    label: "{{ item.item.key }}"
 
 # SDDM catppuccin theme + wallpaper
 - name: Locate SDDM catppuccin theme
