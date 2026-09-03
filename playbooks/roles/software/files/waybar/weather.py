@@ -225,6 +225,7 @@ def read_default_city():
 
 
 def switch_city(city):
+    os.makedirs(CACHE_DIR, exist_ok=True)
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         f.write(city + "\n")
     subprocess.run(["pkill", "-SIGUSR2", "waybar"],
@@ -233,6 +234,7 @@ def switch_city(city):
 
 def fetch_all(api_key):
     """Fetch every city once, write data.json for the popup, return results."""
+    os.makedirs(CACHE_DIR, exist_ok=True)  # first-ever run: waybar exec path has no popup to create it
     results = {}
     for c in CITIES:
         data = fetch_city(c["adcode"], api_key)
