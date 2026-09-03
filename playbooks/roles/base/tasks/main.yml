@@ -71,6 +71,7 @@
     content: |
       PermitRootLogin no
     mode: "0644"
+  notify: Reload sshd
 
 # XDG user directories
 - name: Deploy xdg user-dirs config

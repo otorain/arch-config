@@ -2,3 +2,11 @@
 - name: Regenerate locales
   become: true
   ansible.builtin.command: locale-gen
+
+# Handlers flush at end of play, after the services role has enabled+started
+# sshd — a reload then always finds a running daemon.
+- name: Reload sshd
+  become: true
+  ansible.builtin.systemd:
+    name: sshd
+    state: reloaded
