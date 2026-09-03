@@ -72,20 +72,6 @@
       PermitRootLogin no
     mode: "0644"
 
-# User
-- name: Add user to groups
-  become: true
-  ansible.builtin.user:
-    name: "{{ ansible_facts['user_id'] }}"
-    groups: wheel,docker,vboxusers,libvirt
-    append: true
-
-- name: Set default shell to zsh
-  become: true
-  ansible.builtin.user:
-    name: "{{ ansible_facts['user_id'] }}"
-    shell: /usr/bin/zsh
-
 # XDG user directories
 - name: Deploy xdg user-dirs config
   ansible.builtin.copy:

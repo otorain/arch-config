@@ -27,7 +27,7 @@ comments are in English. Commit messages are in English.
   - `inventory/host_vars/desktop.yml` — machine vars: `monitor`, `scale`,
     `net_interface`. Consumed by the hyprland.lua / waybar / wechat templates.
   - `roles/base` — layer 1: preflight asserts, timezone, locale, zram, sshd
-    hardening, user groups, default shell. Its `files/` holds
+    hardening (reloads sshd via handler). Its `files/` holds
     `user-dirs.conf` / `user-dirs.dirs` (deployed to `~/.config/`) and it runs
     `xdg-user-dirs-update`.
   - `roles/software` — layer 2: packages + per-app config. `tasks/` is flat
@@ -58,8 +58,9 @@ comments are in English. Commit messages are in English.
     `gtk3-settings.ini`, `gtk4-settings.ini`, `gtkrc-2.0`, `kvantum.kvconfig`,
     `catppuccin-mocha-blue.kvconfig`, `catppuccin-mocha-blue.svg`,
     `fonts.conf`.
-  - `roles/services` — layer 4: system systemd units + user pipewire units +
-    dsh-web user service.
+  - `roles/services` — layer 4: user groups + default shell (they need
+    packages installed by software, so they cannot live in base), system
+    systemd units + user pipewire units + dsh-web user service.
 - `assets/colin-watts.jpg` — one wallpaper used twice: SDDM theme background
   and `~/.config/hypr/wallpaper.jpg` (referenced by `hyprpaper.conf`).
 - README is dual-language: `README.md` English (GitHub homepage),
