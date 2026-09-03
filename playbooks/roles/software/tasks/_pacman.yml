@@ -1,10 +1,18 @@
 ---
+# Full -Syu on every run: Arch forbids partial upgrades (installing new
+# packages against a stale system db can break existing binaries).
+# The pacman module rejects name+upgrade in one task, so upgrade first.
+- name: Upgrade all system packages
+  become: true
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+
 # All official-repo packages in one shot.
 # Grouped by owning application; a package with no app lives in its group.
 - name: Install official-repo packages
   become: true
   community.general.pacman:
-    update_cache: true
     state: present
     name:
       # === Base tools ===
