@@ -9,10 +9,12 @@
     src: fcitx5/rime.conf
     dest: "{{ home }}/.config/fcitx5/conf/rime.conf"
 
+# backup: fcitx5 rewrites the profile when the IM list changes at runtime
 - name: Deploy fcitx5 profile
   ansible.builtin.copy:
     src: fcitx5/profile
     dest: "{{ home }}/.config/fcitx5/profile"
+    backup: true
 
 - name: Deploy fcitx5 rime data
   ansible.builtin.copy:

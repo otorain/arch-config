@@ -1,5 +1,8 @@
 ---
+# backup: Zed rewrites settings.json from the UI; keep a copy of the user's
+# runtime changes when the managed config overwrites them
 - name: Deploy zed config
   ansible.builtin.copy:
     src: zed/settings.json
     dest: "{{ home }}/.config/zed/settings.json"
+    backup: true

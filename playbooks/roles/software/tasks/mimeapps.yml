@@ -1,5 +1,7 @@
 ---
+# backup: xdg-mime writes user default-app changes to this file at runtime
 - name: Deploy mimeapps.list (default applications for mime types)
   ansible.builtin.copy:
     src: mimeapps/mimeapps.list
     dest: "{{ home }}/.config/mimeapps.list"
+    backup: true
