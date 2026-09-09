@@ -1,8 +1,11 @@
 [Desktop Entry]
 Name=wechat
 Name[zh_CN]=微信
-# Override the system-level desktop entry: under XWayland with 1.25 fractional scaling, the app must scale itself or it looks blurry -- scale comes from host_vars
-Exec=env QT_SCALE_FACTOR={{ scale }} /opt/wechat/wechat %U
+# Keep this user-level override so we control the launch flags if ever needed.
+# wechat >= 4.1.13 runs natively on Wayland: the compositor drives fractional
+# scaling, so do NOT re-add QT_SCALE_FACTOR -- it double-scales and breaks the
+# UI (blank regions + misaligned clicks).
+Exec=/opt/wechat/wechat %U
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/icons/hicolor/256x256/apps/wechat.png

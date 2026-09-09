@@ -26,7 +26,7 @@ comments are in English. Commit messages are in English.
   - `inventory/group_vars/all.yml` — shared vars (home, uid, timezone, theme
     names, npm globals, systemd unit lists).
   - `inventory/host_vars/desktop.yml` — machine vars: `monitor`, `scale`,
-    `net_interface`. Consumed by the hyprland.lua / waybar / wechat templates.
+    `net_interface`. Consumed by the hyprland.lua / waybar templates.
   - `roles/base` — layer 1: preflight asserts, timezone, locale, zram, sshd
     hardening (reloads sshd via handler). Its `files/` holds
     `user-dirs.conf` / `user-dirs.dirs` (deployed to `~/.config/`) and it runs
@@ -86,8 +86,11 @@ comments are in English. Commit messages are in English.
   (theme loads at USER priority 800). Both popups anchor under their waybar
   module via AT-SPI geometry through `waybar_geom.py`.
 - Machine differences live in `host_vars/` — monitor `DP-1` @ scale 1.25,
-  waybar `network.interface = wlp6s0`, wechat `QT_SCALE_FACTOR`. Don't
+  waybar `network.interface = wlp6s0`. Don't
   hardcode them back into templates.
+- wechat >= 4.1.13 runs natively on Wayland — the compositor drives fractional
+  scaling. Never re-add `QT_SCALE_FACTOR` to its desktop entry: it double-scales
+  and breaks the UI (blank regions + misaligned clicks).
 - `~/.config/git/config` is user-owned — created once (interactive
   user.name/user.email prompt on first run), never overwritten; it includes
   the managed `~/.config/git/custom` (delta + catppuccin).

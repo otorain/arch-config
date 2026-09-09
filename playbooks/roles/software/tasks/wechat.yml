@@ -1,5 +1,5 @@
 ---
-- name: Deploy wechat desktop override (QT_SCALE_FACTOR from host_vars)
+- name: Deploy wechat desktop override (native Wayland, no QT_SCALE_FACTOR)
   ansible.builtin.template:
     src: wechat/wechat.desktop.j2
     dest: "{{ home }}/.local/share/applications/wechat.desktop"
