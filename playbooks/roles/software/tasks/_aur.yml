@@ -42,7 +42,6 @@
     # === mpv scripts ===
     - mpv-uosc
     - mpv-thumbfast-git
-    - mpv-sponsorblock
     # === AI coding tools ===
     - opencode-bin
     - herdr-bin

@@ -9,7 +9,7 @@
     path: "{{ home }}/.config/mpv/scripts"
     state: directory
 
-- name: Link system mpv scripts (uosc / thumbfast / sponsorblock)
+- name: Link system mpv scripts (uosc / thumbfast)
   ansible.builtin.file:
     src: "{{ item }}"
     dest: "{{ home }}/.config/mpv/scripts/{{ item | basename }}"
