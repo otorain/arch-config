@@ -29,6 +29,7 @@
     - vscode-langservers-extracted
     - prettierd
     - vagrant
+    - pitchfork-bin
     # === Themes ===
     - colloid-catppuccin-gtk-theme-git
     - catppuccin-cursors-mocha
