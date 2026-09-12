@@ -1,6 +1,31 @@
 ---
 # All AUR packages. Requires yay (yay.yml).
 # Per-package probe + warn-and-continue so one bad package never fails the run.
+#
+# AUR builds must run as a non-root user (makepkg refuses root), and the final
+# install step is yay's internal `sudo pacman -U`, which cannot prompt for a
+# password when the playbook runs without a tty (agent/CI). So installs run as
+# a dedicated builder account (kewlfft.aur pattern) whose only privilege is
+# passwordless sudo for /usr/bin/pacman; the login user's sudo stays fully
+# password-protected.
+- name: Create aur_builder user
+  become: true
+  ansible.builtin.user:
+    name: aur_builder
+    system: true  # uid < 1000, hidden from the SDDM login screen
+    create_home: true
+    home: /home/aur_builder
+    shell: /usr/bin/nologin
+    password_lock: true
+
+- name: Allow aur_builder to run pacman without a password
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/10-aur_builder
+    content: "aur_builder ALL=(root) NOPASSWD: /usr/bin/pacman\n"
+    mode: "0440"
+    validate: "visudo -cf %s"
+
 - name: Install AUR packages
   ansible.builtin.include_tasks: _aur_one.yml
   loop:

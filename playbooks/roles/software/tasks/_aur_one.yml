@@ -22,6 +22,12 @@
       when: aur_si.rc != 0
 
     - name: "AUR: install: {{ pkg }}"
+      become: true
+      become_user: aur_builder
+      # Ansible's sudo become does not pass -H: set HOME explicitly, otherwise
+      # yay would write its cache into the login user's ~/.cache (denied).
+      environment:
+        HOME: /home/aur_builder
       ansible.builtin.command: "yay -S --needed --noconfirm {{ pkg }}"
       when: aur_si.rc == 0
       register: aur_install
@@ -29,6 +35,9 @@
 
     - name: "AUR: warn on failure: {{ pkg }}"
       ansible.builtin.debug:
-        msg: "install failed, handle manually: {{ pkg }}"
+        msg: |
+          install failed, handle manually: {{ pkg }}
+          last stderr lines:
+          {{ (aur_install.stderr_lines | default([]))[-10:] | join('\n') }}
       # default(0): in --check mode the install command is skipped and has no rc
       when: aur_si.rc == 0 and aur_install.rc | default(0) != 0

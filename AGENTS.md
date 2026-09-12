@@ -39,8 +39,10 @@ comments are in English. Commit messages are in English.
     `include_tasks` + module-arg `apply: tags:` + outer `tags:` pattern
     (plain `tags:` on a dynamic include does not reach inner tasks).
     All official packages live in `_pacman.yml`, all AUR packages in
-    `_aur.yml` (warn-and-continue per package); app files only deploy config,
-    user services, and zsh fragments.
+    `_aur.yml` (warn-and-continue per package; failures print the stderr
+    tail). `_aur.yml` also creates the dedicated `aur_builder` build user
+    (see Gotchas). App files only deploy config, user services, and zsh
+    fragments.
     - `files/` has one directory **per software** (29 apps): atuin, deepseek,
       dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
       hyprland, hyprlock, hyprpaper, kimi, kitty, mimeapps, mpv, nvim,
@@ -85,6 +87,14 @@ comments are in English. Commit messages are in English.
   must override the Colloid theme needs `Gtk.STYLE_PROVIDER_PRIORITY_USER`
   (theme loads at USER priority 800). Both popups anchor under their waybar
   module via AT-SPI geometry through `waybar_geom.py`.
+- AUR installs run as the dedicated `aur_builder` system user (`system: true`,
+  nologin shell, locked password — invisible to SDDM) with `HOME` set to
+  `/home/aur_builder` explicitly, because Ansible's sudo become does not pass
+  `-H`. Rationale: makepkg refuses to run as root, and yay's internal
+  `sudo pacman -U` cannot prompt for a password when the playbook runs
+  without a tty (agent/CI). `/etc/sudoers.d/10-aur_builder` grants
+  `aur_builder` NOPASSWD for `/usr/bin/pacman` only (kewlfft.aur pattern);
+  the login user's own sudo stays fully password-protected.
 - Machine differences live in `host_vars/` — monitor `DP-1` @ scale 1.25,
   waybar `network.interface = wlp6s0`. Don't
   hardcode them back into templates.
