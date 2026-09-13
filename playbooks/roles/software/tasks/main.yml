@@ -134,6 +134,13 @@
       tags: kimi
   tags: kimi
 
+- name: "App: k3s"
+  ansible.builtin.include_tasks:
+    file: k3s.yml
+    apply:
+      tags: k3s
+  tags: k3s
+
 - name: "App: kitty"
   ansible.builtin.include_tasks:
     file: kitty.yml

@@ -1,0 +1,12 @@
+---
+# Root-owned server config; software runs before services, so this is in
+# place before k3s.service first starts — the generated kubeconfig is 644
+# from the start (user kubectl access without file copies).
+- name: Deploy k3s server config
+  become: true
+  ansible.builtin.copy:
+    src: k3s/config.yaml
+    dest: /etc/rancher/k3s/config.yaml
+    owner: root
+    group: root
+    mode: "0644"
