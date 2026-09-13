@@ -2,6 +2,17 @@
 # Root-owned server config; software runs before services, so this is in
 # place before k3s.service first starts — the generated kubeconfig is 644
 # from the start (user kubectl access without file copies).
+# The k3s-bin package does not create /etc/rancher/k3s (k3s creates it at
+# first start — too late for us), and copy refuses a missing dest dir.
+- name: Create k3s config directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
 - name: Deploy k3s server config
   become: true
   ansible.builtin.copy:
