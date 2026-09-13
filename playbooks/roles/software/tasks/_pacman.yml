@@ -60,6 +60,10 @@
       - dnsmasq
       - virtualbox
       - virtualbox-host-dkms
+      # === Kubernetes ===
+      - kubectl
+      - helm
+      - k9s
       # === Audio (full PipeWire suite) ===
       - pipewire
       - pipewire-alsa

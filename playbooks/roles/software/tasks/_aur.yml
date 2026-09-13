@@ -54,6 +54,8 @@
     - prettierd
     - vagrant
     - pitchfork-bin
+    # === Kubernetes ===
+    - k3s-bin
     # === Themes ===
     - colloid-catppuccin-gtk-theme-git
     - catppuccin-cursors-mocha
