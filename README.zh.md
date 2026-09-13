@@ -27,7 +27,7 @@
 ## 特性
 
 - **一条命令装完** — `site.yml` 幂等，重复运行永远安全
-- **29 个应用**，分四层：`base → software → settings → services`
+- **30 个应用**，分四层：`base → software → settings → services`
 - **中文优先的桌面** — fcitx5 + 雾凇拼音（rime-ice）、zh_CN locale、微信缩放修正
 - **Hyprland 0.55+ Lua 配置**，由每台机器的 host_vars 渲染生成
 
@@ -63,15 +63,15 @@ playbooks/
 └── roles/
     ├── base/                   # 时区、locale、zram、sshd、用户组、默认 shell、xdg user-dirs
     ├── software/               # 软件包（_pacman.yml / _aur.yml）+ 每个应用一个 <app>.yml
-    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 29 个应用）
+    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 30 个应用）
     │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat 桌面项
     ├── settings/               # GTK/Qt/Kvantum/字体配置、fcitx5 与 SDDM 主题、gsettings
     └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
 ```
 
-`software` 角色管理 29 个应用（atuin、deepseek、dev、direnv、dsh-web、
+`software` 角色管理 30 个应用（atuin、deepseek、dev、direnv、dsh-web、
 dunst、fcitx5、git、github、gmail、hypridle、hyprland、hyprlock、hyprpaper、
-kimi、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、try-cli、waybar、
+kimi、k3s、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、try-cli、waybar、
 wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
 AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
 

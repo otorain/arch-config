@@ -28,7 +28,7 @@ desktop themes to catppuccin-mocha (blue accent).
 ## Features
 
 - **One-command setup** — `site.yml` is idempotent; re-running it is always safe
-- **29 apps** in four layers: `base → software → settings → services`
+- **30 apps** in four layers: `base → software → settings → services`
 - **Chinese-first desktop** — fcitx5 + rime-ice input, zh_CN locale, WeChat scaling fix
 - **Hyprland 0.55+ Lua config**, rendered from per-machine host vars
 
@@ -64,15 +64,15 @@ playbooks/
 └── roles/
     ├── base/                   # timezone, locale, zram, sshd, groups, shell, xdg user-dirs
     ├── software/               # packages (_pacman.yml / _aur.yml) + one <app>.yml per app
-    │   ├── files/<app>/        # static config files, one dir per app (29 apps)
+    │   ├── files/<app>/        # static config files, one dir per app (30 apps)
     │   └── templates/<app>/    # hyprland.lua, waybar config, wechat desktop entry
     ├── settings/               # GTK/Qt/Kvantum/font configs, fcitx5 + SDDM themes, gsettings
     └── services/               # system systemd units + user pipewire/dsh-web units
 ```
 
-The `software` role manages 29 apps (atuin, deepseek, dev, direnv, dsh-web,
+The `software` role manages 30 apps (atuin, deepseek, dev, direnv, dsh-web,
 dunst, fcitx5, git, github, gmail, hypridle, hyprland, hyprlock, hyprpaper,
-kimi, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, try-cli, waybar,
+kimi, k3s, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, try-cli, waybar,
 wechat, zathura, zed, zsh). All official-repo packages live in
 `tasks/_pacman.yml`, all AUR packages in `tasks/_aur.yml`; per-app task files
 only deploy configuration.
