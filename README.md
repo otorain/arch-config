@@ -176,7 +176,7 @@ systemctl --user restart dsh-web       # restart
    rime-ice on first run. To keep your old word-frequency data, copy
    `~/.local/share/fcitx5/rime/*.userdb` from the old system
 4. **zsh** — `~/.zshrc` is a skeleton: core env/history plus a loop that
-   sources `~/.config/zsh/conf.d/*.zsh` (13 numbered fragments: aliases,
+   sources `~/.config/zsh/conf.d/*.zsh` (15 numbered fragments: aliases,
    zoxide, fzf, atuin, direnv, syntax highlighting, …). It is deployed only
    once (`force: false`) — afterwards it's yours and never overwritten. If
    you rewrite it, keep the conf.d sourcing loop, or the playbook warns that

@@ -166,7 +166,7 @@ systemctl --user restart dsh-web       # 重启
 3. **输入法** — 重新登录后 fcitx5 自启，rime 首次会自动部署雾凇拼音
    （rime-ice）。想保留旧词频，复制旧系统 `~/.local/share/fcitx5/rime/*.userdb`
 4. **zsh** — `~/.zshrc` 是骨架：核心环境变量与历史记录配置，外加一段加载
-   `~/.config/zsh/conf.d/*.zsh` 的循环（13 个带编号的片段：别名、zoxide、
+   `~/.config/zsh/conf.d/*.zsh` 的循环（15 个带编号的片段：别名、zoxide、
    fzf、atuin、direnv、语法高亮等）。它只部署一次（`force: false`）——之后
    归你所有，不会被覆盖。若你重写它，务必保留 conf.d 的 source 循环，否则
    playbook 会告警：应用 shell 集成会静默失效
