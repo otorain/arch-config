@@ -166,6 +166,8 @@
       - rocm-smi-lib
       # === Image processing ===
       - libvips
+      - openslide      # libvips optdepend: enables vips-openslide module
+      - poppler-glib   # libvips optdepend: enables vips-poppler module
       - imagemagick
       - potrace
       # === GUI apps ===
