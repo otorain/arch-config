@@ -177,6 +177,7 @@
       - mpv
       - mpv-mpris
       - obsidian
+      - obs-studio
       - firefox
       - pcmanfm
       - nfs-utils
