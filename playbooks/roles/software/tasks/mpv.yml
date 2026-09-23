@@ -9,10 +9,27 @@
     path: "{{ home }}/.config/mpv/scripts"
     state: directory
 
-- name: Link system mpv scripts (uosc / thumbfast)
+- name: Link uosc script
   ansible.builtin.file:
-    src: "{{ item }}"
-    dest: "{{ home }}/.config/mpv/scripts/{{ item | basename }}"
+    src: /usr/share/mpv/scripts/uosc
+    dest: "{{ home }}/.config/mpv/scripts/uosc"
     state: link
     force: true
-  loop: "{{ query('ansible.builtin.fileglob', '/usr/share/mpv/scripts/*') }}"
+
+# uosc renders icons via ligatures from these fonts; mpv only scans
+# ~~/fonts, and the mpv-uosc package drops them in /usr/share/mpv/fonts
+# (outside mpv's search path), so link them into the user config.
+- name: Ensure mpv fonts dir
+  ansible.builtin.file:
+    path: "{{ home }}/.config/mpv/fonts"
+    state: directory
+
+- name: Link uosc icon fonts
+  ansible.builtin.file:
+    src: "/usr/share/mpv/fonts/{{ item }}"
+    dest: "{{ home }}/.config/mpv/fonts/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - uosc_icons.otf
+    - uosc_textures.ttf
