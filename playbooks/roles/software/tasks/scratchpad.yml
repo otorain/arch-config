@@ -1,0 +1,6 @@
+---
+- name: Deploy scratchpad script
+  ansible.builtin.copy:
+    src: scratchpad/scratchpad.sh
+    dest: "{{ home }}/.local/bin/scratchpad.sh"
+    mode: "0755"

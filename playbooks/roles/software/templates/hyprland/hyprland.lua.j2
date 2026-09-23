@@ -179,6 +179,8 @@ hl.bind(mod .. " + T", hl.dsp.exec_cmd('goldendict -m "$(wl-paste -p)"'))
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 -- Color picker (-a auto-copies to the clipboard)
 hl.bind(mod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprpicker -a"))
+-- Note scratchpad (scratchpad.sh: rofi picker over ~/.scratchpads, floating kitty+nvim)
+hl.bind(mod .. " + N", hl.dsp.exec_cmd("~/.local/bin/scratchpad.sh"))
 
 -- --- Universal clipboard (Super+C/V/X = copy/paste/cut, terminal-aware) ---
 -- Inject explicit Ctrl/Shift chords into the focused window. The down/up split
@@ -492,6 +494,15 @@ hl.window_rule({
 	name = "float-wechat",
 	match = { class = "^(wechat)$" },
 	float = true,
+})
+
+-- Note scratchpad terminal (kitty --class floating-scratchpad, launched by Super+N)
+hl.window_rule({
+	name = "float-scratchpad",
+	match = { class = "^(floating-scratchpad)$" },
+	float = true,
+	size = "800 600",
+	center = true,
 })
 
 -- The weather popup (weather.py --popup) is a gtk4-layer-shell surface, not an

@@ -197,6 +197,13 @@
       tags: satty
   tags: satty
 
+- name: "App: scratchpad"
+  ansible.builtin.include_tasks:
+    file: scratchpad.yml
+    apply:
+      tags: scratchpad
+  tags: scratchpad
+
 - name: "App: try-cli"
   ansible.builtin.include_tasks:
     file: try-cli.yml

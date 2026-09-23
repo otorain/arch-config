@@ -69,10 +69,10 @@ playbooks/
     └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
 ```
 
-`software` 角色管理 30 个应用（atuin、deepseek、dev、direnv、dsh-web、
+`software` 角色管理 31 个应用（atuin、deepseek、dev、direnv、dsh-web、
 dunst、fcitx5、git、github、gmail、hypridle、hyprland、hyprlock、hyprpaper、
-kimi、k3s、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、try-cli、waybar、
-wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
+kimi、k3s、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、scratchpad、
+try-cli、waybar、wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
 AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
 
 ## 机器差异
@@ -199,6 +199,7 @@ systemctl --user restart dsh-web       # 重启
 | `Super+T` | 选中文字查词典（goldendict） |
 | `Super+O` | 剪贴板历史（cliphist + rofi） |
 | `Super+Shift+P` | 取色器（hyprpicker，自动复制） |
+| `Super+N` | 记事本 scratchpad（rofi 选择，浮动 nvim） |
 | `Super+P` | 区域截图（satty 标注） |
 | `Print` | 全屏截图 |
 | `Shift+Print` | 区域截图（无标注） |

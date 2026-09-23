@@ -70,10 +70,10 @@ playbooks/
     └── services/               # system systemd units + user pipewire/dsh-web units
 ```
 
-The `software` role manages 30 apps (atuin, deepseek, dev, direnv, dsh-web,
+The `software` role manages 31 apps (atuin, deepseek, dev, direnv, dsh-web,
 dunst, fcitx5, git, github, gmail, hypridle, hyprland, hyprlock, hyprpaper,
-kimi, k3s, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, try-cli, waybar,
-wechat, zathura, zed, zsh). All official-repo packages live in
+kimi, k3s, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, scratchpad,
+try-cli, waybar, wechat, zathura, zed, zsh). All official-repo packages live in
 `tasks/_pacman.yml`, all AUR packages in `tasks/_aur.yml`; per-app task files
 only deploy configuration.
 
@@ -212,6 +212,7 @@ systemctl --user restart dsh-web       # restart
 | `Super+T` | Look up selected text (goldendict) |
 | `Super+O` | Clipboard history (cliphist + rofi) |
 | `Super+Shift+P` | Color picker (hyprpicker, auto-copy) |
+| `Super+N` | Note scratchpad (rofi picker, floating nvim) |
 | `Super+P` | Region screenshot (satty annotation) |
 | `Print` | Fullscreen screenshot |
 | `Shift+Print` | Region screenshot (no annotation) |
