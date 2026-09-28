@@ -165,6 +165,8 @@
       # === ROCm ===
       - rocm-smi-lib
       # === Image processing ===
+      - libwebp
+      - libwebp-utils  # cwebp/dwebp CLI (split from libwebp in 1.6.0)
       - libvips
       - openslide      # libvips optdepend: enables vips-openslide module
       - poppler-glib   # libvips optdepend: enables vips-poppler module
