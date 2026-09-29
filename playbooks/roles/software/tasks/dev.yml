@@ -6,14 +6,14 @@
   failed_when: false
 
 - name: Install npm global tools
-  ansible.builtin.command: "npm i -g {{ npm_globals | join(' ') }}"
+  ansible.builtin.command: "npm i -g --allow-scripts=@anthropic-ai/claude-code {{ npm_globals | join(' ') }}"
   register: npm_install
   changed_when: false
   failed_when: false
 
 - name: Warn on npm global install failure
   ansible.builtin.debug:
-    msg: "npm global install failed, do it manually later: npm i -g {{ npm_globals | join(' ') }}"
+    msg: "npm global install failed, do it manually later: npm i -g --allow-scripts=@anthropic-ai/claude-code {{ npm_globals | join(' ') }}"
   # default(0): in --check mode the install command is skipped and has no rc
   when: npm_install.rc | default(0) != 0
 
