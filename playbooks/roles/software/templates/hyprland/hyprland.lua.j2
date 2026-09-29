@@ -155,6 +155,9 @@ hl.animation({ leaf = "border", enabled = true, speed = 8, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 5, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = false, speed = 3, bezier = "default", style = "fade" })
 
+-- rofi is a layer-shell surface: skip its open/close fade so the menu pops instantly
+hl.layer_rule({ name = "noanim-rofi", match = { namespace = "^(rofi)$" }, no_anim = true })
+
 ----------------
 ---- BINDINGS --
 ----------------
