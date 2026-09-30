@@ -9,7 +9,6 @@ npm_globals:
   - "@openai/codex"
   - "@mariozechner/pi-coding-agent"
   - "@deepseek-ai/dsh"
-  - "@anthropic-ai/claude-code"
 system_units:
   - NetworkManager
   - bluetooth

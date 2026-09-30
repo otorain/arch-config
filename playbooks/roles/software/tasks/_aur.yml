@@ -43,6 +43,7 @@
     - mpv-uosc
     - mpv-thumbfast-git
     # === AI coding tools ===
+    - claude-code
     - opencode-bin
     - herdr-bin
     - kimi-code
