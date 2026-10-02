@@ -2,7 +2,9 @@
 
 Personal Arch Linux + Hyprland bootstrap, managed by Ansible. Not an
 application: no build, no automated tests, no git history. Docs and code
-comments are in English. Commit messages are in English.
+comments are in English. Exception: the `docs/` usage documentation set
+(usage / apps / maintenance / architecture) is written in Chinese. Commit
+messages are in English.
 
 ## Verification
 

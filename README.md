@@ -22,13 +22,14 @@ desktop themes to catppuccin-mocha (blue accent).
 - [Post-install checklist](#post-install-checklist)
 - [Keybindings](#keybindings)
 - [Troubleshooting](#troubleshooting)
+- [Documentation](#documentation)
 - [Development](#development)
 - [License](#license)
 
 ## Features
 
 - **One-command setup** — `site.yml` is idempotent; re-running it is always safe
-- **30 apps** in four layers: `base → software → settings → services`
+- **31 apps** in four layers: `base → software → settings → services`
 - **Chinese-first desktop** — fcitx5 + rime-ice input, zh_CN locale, WeChat scaling fix
 - **Hyprland 0.55+ Lua config**, rendered from per-machine host vars
 
@@ -64,7 +65,7 @@ playbooks/
 └── roles/
     ├── base/                   # timezone, locale, zram, sshd, groups, shell, xdg user-dirs
     ├── software/               # packages (_pacman.yml / _aur.yml) + one <app>.yml per app
-    │   ├── files/<app>/        # static config files, one dir per app (30 apps)
+    │   ├── files/<app>/        # static config files, one dir per app (31 apps)
     │   └── templates/<app>/    # hyprland.lua, waybar config, wechat desktop entry
     ├── settings/               # GTK/Qt/Kvantum/font configs, fcitx5 + SDDM themes, gsettings
     └── services/               # system systemd units + user pipewire/dsh-web units
@@ -265,6 +266,12 @@ systemctl --user restart dsh-web       # restart
 - **VirtualBox modules break after a kernel update** — run `sudo vboxreload`
 - **dsh web won't start or the port is busy** — see the
   [dsh web](#dsh-web-deepseek-harness) section above
+
+## Documentation
+
+系统使用文档（中文）在 [`docs/`](docs/README.md)：[日常使用指南](docs/usage.md)、
+[应用说明](docs/apps.md)、[维护与开发](docs/maintenance.md)、
+[架构与原理](docs/architecture.md)。
 
 ## Development
 

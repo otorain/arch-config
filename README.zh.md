@@ -21,13 +21,14 @@
 - [安装后清单](#安装后清单)
 - [键位](#键位)
 - [故障排查](#故障排查)
+- [文档](#文档)
 - [开发](#开发)
 - [许可证](#许可证)
 
 ## 特性
 
 - **一条命令装完** — `site.yml` 幂等，重复运行永远安全
-- **30 个应用**，分四层：`base → software → settings → services`
+- **31 个应用**，分四层：`base → software → settings → services`
 - **中文优先的桌面** — fcitx5 + 雾凇拼音（rime-ice）、zh_CN locale、微信缩放修正
 - **Hyprland 0.55+ Lua 配置**，由每台机器的 host_vars 渲染生成
 
@@ -63,7 +64,7 @@ playbooks/
 └── roles/
     ├── base/                   # 时区、locale、zram、sshd、用户组、默认 shell、xdg user-dirs
     ├── software/               # 软件包（_pacman.yml / _aur.yml）+ 每个应用一个 <app>.yml
-    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 30 个应用）
+    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 31 个应用）
     │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat 桌面项
     ├── settings/               # GTK/Qt/Kvantum/字体配置、fcitx5 与 SDDM 主题、gsettings
     └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
@@ -251,6 +252,12 @@ systemctl --user restart dsh-web       # 重启
 - **内核更新后 VirtualBox 模块失效** — 执行 `sudo vboxreload`
 - **dsh web 起不来或端口被占** — 见上文
   [dsh web (DeepSeek Harness)](#dsh-web-deepseek-harness) 一节
+
+## 文档
+
+系统使用文档在 [`docs/`](docs/README.md)：[日常使用指南](docs/usage.md)、
+[应用说明](docs/apps.md)、[维护与开发](docs/maintenance.md)、
+[架构与原理](docs/architecture.md)。
 
 ## 开发
 
