@@ -28,7 +28,7 @@
 - **包**：官方仓库 `hypridle`
 - **部署**：`files/hypridle/hypridle.conf` → `~/.config/hypr/hypridle.conf`
 - **要点**：到时间先调 hyprlock 锁屏，再关显示器（dpms）。
-- **注意**：dpms 动作用的是 Lua DSL（`hl.dsp.dpms`），不是旧的 `hyprctl dispatch` 字符串——0.55+ 已拒绝旧写法。
+- **注意**：开关显示器的命令是 `hyprctl dispatch 'hl.dsp.dpms(...)'`——`hyprctl dispatch` 只是运载工具，载荷是 Lua DSL 表达式；0.55+ 拒绝的是 `hyprctl dispatch dpms off` 这种旧式写法。
 
 ### hyprlock
 
