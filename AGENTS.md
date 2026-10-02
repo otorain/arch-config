@@ -57,7 +57,8 @@ messages are in English.
       Deleting a software = delete `files/<sw>/` + `tasks/<sw>.yml` + one
       include line in `main.yml`.
     - `templates/<software>/` — hyprland/hyprland.lua.j2,
-      waybar/config.jsonc.j2, wechat/wechat.desktop.j2.
+      waybar/config.jsonc.j2, wechat/wechat.desktop.j2,
+      gmail/gmail.desktop.j2 (Exec expands `{{ home }}`).
   - `roles/settings` — layer 3: fcitx5 catppuccin theme, GTK/Qt/Kvantum/font
     config files, GTK4 Colloid symlinks, gsettings, SDDM theme + wallpaper.
     Its `files/` are flat with collision-avoiding prefixes:

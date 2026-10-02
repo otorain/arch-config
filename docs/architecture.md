@@ -17,7 +17,7 @@
 
 ## 软件清单与配置分离
 
-software 角色里，"装什么"和"怎么配"是两类文件：所有官方仓库包集中在 `tasks/_pacman.yml`（按 `# ===` 分组注释归类），所有 AUR 包集中在 `tasks/_aur.yml`；而 31 个 `tasks/<app>.yml` 一律只管部署——拷贝配置、放用户服务、注册 zsh fragment。好处是双方向的：想知道"系统里装了什么"只看两个文件；想知道"某个软件配成什么样"只看它的 app 文件，不用在几百行包清单里翻。
+software 角色里，"装什么"和"怎么配"是两类文件：所有官方仓库包集中在 `tasks/_pacman.yml`（按 `# ===` 分组注释归类），所有 AUR 包集中在 `tasks/_aur.yml`；而 31 个 `tasks/<app>.yml` 一律不装 pacman/AUR 包，只做部署与环境初始化——拷贝配置、放用户服务、注册 zsh fragment，个别还做 git clone、npm 全局安装这类初始化（如 zsh、try-cli、dev）。好处是双方向的：想知道"系统里装了什么"只看两个文件；想知道"某个软件配成什么样"只看它的 app 文件，不用在几百行包清单里翻。
 
 `main.yml` 开头的三个基础设施 include 有硬顺序：`_pacman → yay → _aur`。yay 本身要从 AUR bootstrap（`tasks/yay.yml`：clone yay-bin、makepkg、`pacman -U`），依赖 `_pacman.yml` 里的 `base-devel` 和 `git`；`_aur.yml` 则要求 yay 二进制已就位。`_aur_one.yml` 是单包 helper：先查已装、再探可用、装失败打印 stderr 末尾并继续——AUR 包名随时间漂移，一个包失败不该拖垮整个运行。
 
