@@ -213,7 +213,7 @@ GitHub 网页应用（Chrome `--app` 模式）。
 
 开发工具链与环境初始化（无配置文件）。
 
-- **包**：官方仓库的编程语言组（`rustup`、`python`、`ruby`、`nodejs`、`bun`、`pnpm`、`go`、`mise` 等）、CLI 工具组（`fzf`、`zoxide`、`ripgrep`、`yazi` 等）、LSP 组（`lua-language-server`、`pyright`、`ruff`、`gopls` 等）；AUR 的 Dev tools 组（`terraform-ls`、`vscode-langservers-extracted`、`prettierd`、`vagrant`、`pitchfork-bin`）与 AI coding 组（`claude-code`、`opencode-bin`、`herdr-bin`）
+- **包**：官方仓库的 Programming languages 组（`rustup`、`python`、`ruby`、`nodejs`、`bun`、`pnpm`、`go`、`mise` 等）、CLI tools 组（`fzf`、`zoxide`、`ripgrep`、`yazi` 等）、LSP / Development 组（`lua-language-server`、`pyright`、`ruff`、`gopls` 等）；AUR 的 Dev tools 组（`terraform-ls`、`vscode-langservers-extracted`、`prettierd`、`vagrant`、`pitchfork-bin`）与 AI coding tools 组（`claude-code`、`opencode-bin`、`herdr-bin`）
 - **部署**：无 `files/` 目录；任务做环境初始化：
   - npm 全局前缀设为 `~/.local`，安装 npm 全局工具（`@openai/codex`、`@mariozechner/pi-coding-agent`、`@deepseek-ai/dsh`）
   - `rustup default stable`
@@ -225,7 +225,7 @@ GitHub 网页应用（Chrome `--app` 模式）。
 
 编辑器，LazyVim 发行配置。
 
-- **包**：官方仓库 `neovim`、`tree-sitter-cli`（LSP 服务器在 dev 组）
+- **包**：官方仓库 `neovim`、`tree-sitter-cli`（LSP 服务器见 dev 一节，`_pacman.yml` 的 `LSP / Development` 组）
 - **部署**：`files/nvim/` 整棵树 → `~/.config/nvim/`（LazyVim starter；首次启动由 lazy.nvim 自动装插件、编译 tree-sitter 语法）
 - **注意**：`files/nvim/` 是唯一保留内部目录结构的 `files/` 目录（整体部署），其他 app 的 `files/` 都是扁平的。
 
