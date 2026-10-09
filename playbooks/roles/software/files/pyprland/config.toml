@@ -27,8 +27,10 @@ margin = 180
 # class on every show.
 # pinned = false: wechat recreates its window on its own, and pypr's blind
 # pin-toggle on hide would pin the new window, showing it on every workspace.
+# size = "": keep wechat's own window size; pypr's default is 80% 80%.
 command = ""
 class = "wechat"
 pinned = false
+size = ""
 animation = "fromTop"
 margin = 180

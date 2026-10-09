@@ -114,8 +114,9 @@ messages are in English.
   only command-less scratchpads re-resolve the window by class on every show;
   `pinned = false` because wechat recreates its window outside pypr's
   control, and pypr's blind pin-toggle on hide would then pin the new window,
-  making it visible on every workspace; its Alt+W bind falls back to
-  launching wechat when pypr reports it not running. Keep `workspace = "special:..."` out of their window rules —
+  making it visible on every workspace; `size = ""` keeps wechat's own window
+  size (pypr's default would force 80% 80% on every show); its Alt+W bind
+  falls back to launching wechat when pypr reports it not running. Keep `workspace = "special:..."` out of their window rules —
   Hyprland does not render the fcitx5 candidate popup on special workspaces,
   while pypr shows scratchpads on the active workspace.
 - `~/.config/git/config` is user-owned — created once (interactive
