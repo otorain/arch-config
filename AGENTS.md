@@ -106,21 +106,18 @@ messages are in English.
   scaling. Never re-add `QT_SCALE_FACTOR` to its desktop entry: it double-scales
   and breaks the UI (blank regions + misaligned clicks).
 - DeepSeek / Kimi / WeChat are pyprland scratchpads (`pypr toggle <name>`;
-  config `~/.config/pypr/config.toml`, deployed by the pyprland app). The
-  chrome `--app` pads need `process_tracking = false`: chrome delegates to an
-  already-running process, so PID tracking loses the window. wechat is an
-  unmanaged scratchpad (`command = ""` — the field is required; empty makes
-  it unmanaged): wechat replaces its login window with the main window, and
-  only command-less scratchpads re-resolve the window by class on every show;
-  `pinned = false` because wechat recreates its window outside pypr's
-  control, and pypr's blind pin-toggle on hide would then pin the new window,
-  making it visible on every workspace; `size = ""` keeps wechat's own window
-  size (pypr's default would force 80% 80% on every show); Alt+W runs
+  config `~/.config/pypr/config.toml`, deployed by the pyprland app).
+  DeepSeek/Kimi need `process_tracking = false`: chrome `--app` windows
+  belong to the already-running browser process, so PID tracking loses them.
+  wechat's `command = ""` (required field; empty = unmanaged),
+  `pinned = false` and `size = ""` are a bound set: its login window is
+  replaced by the main window and the window is recreated by wechat itself,
+  so pypr may only match it by class, never pin or resize it. Alt+W runs
   `~/.local/bin/wechat-toggle.sh`, which calls `pypr toggle` only when a
   wechat window exists (a failing toggle raises an on-screen error
-  notification) and launches wechat otherwise. Keep `workspace = "special:..."` out of their window rules —
-  Hyprland does not render the fcitx5 candidate popup on special workspaces,
-  while pypr shows scratchpads on the active workspace.
+  notification). Keep `workspace = "special:..."` out of their window rules:
+  pypr shows scratchpads on the active workspace; on special workspaces the
+  fcitx5 candidate popup does not render.
 - `~/.config/git/config` is user-owned — created once (interactive
   user.name/user.email prompt on first run), never overwritten; it includes
   the managed `~/.config/git/custom` (delta + catppuccin).

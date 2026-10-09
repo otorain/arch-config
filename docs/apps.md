@@ -94,12 +94,17 @@
 
 ### pyprland
 
-Hyprland scratchpad 守护进程，管理 DeepSeek / Kimi / 微信三个便签窗口（呼出键位见[日常使用指南](usage.md)）。
+Hyprland scratchpad 守护进程，把 DeepSeek / Kimi / 微信管理成便签窗口：按呼出键从屏幕顶部滑出，再按一次滑回隐藏（键位见[日常使用指南](usage.md)）。
 
 - **包**：AUR `pyprland`
-- **部署**：`files/pyprland/config.toml` → `~/.config/pypr/config.toml`；`files/pyprland/wechat-toggle.sh` → `~/.local/bin/wechat-toggle.sh`（0755）
-- **要点**：hyprland 启动时拉起 `pypr` 守护进程，`pypr toggle <名字>` 呼出/隐藏（顶部滑出动画）。DeepSeek/Kimi 配 `process_tracking = false`——Chrome `--app` 会把窗口委托给已运行的浏览器进程，PID 跟踪会丢窗口，改为按 class 匹配（因此也是 lazy：首次呼出才启动）。微信是 unmanaged scratchpad（`command = ""`）：它的登录窗会被主窗替换，只有无 command 的 scratchpad 才在每次显示时按 class 重新解析窗口；微信未运行时 `Alt+W` 直接启动它（`wechat-toggle.sh` 只在窗口存在时才调 `pypr toggle`，避免 pypr 弹出错误通知）。微信另配 `pinned = false`——它会自行重建窗口，而 pypr 隐藏时是盲目切换 pin，会把新窗口 pin 在隐藏工作区上，导致切工作区时窗口自动弹出；并用 `size = ""` 保留微信自己的窗口尺寸（pypr 默认会在每次显示时强制 80%×80%）。
-- **注意**：不要给这三个窗口的 hyprland 规则加回 `workspace = "special:..."`——Hyprland 在 special workspace 上不渲染 fcitx5 候选框，而 pypr 是把窗口移到当前工作区显示的，中文输入不受影响。
+- **部署**：
+  - `files/pyprland/config.toml` → `~/.config/pypr/config.toml`
+  - `files/pyprland/wechat-toggle.sh` → `~/.local/bin/wechat-toggle.sh`（0755）
+- **要点**：hyprland 启动时拉起 `pypr` 守护进程，呼出键实际调用 `pypr toggle <名字>`。窗口隐藏期间常驻不关闭，从 rofi 启动也会被按 class 接管。DeepSeek/Kimi 懒启动（首次呼出才拉起）；微信未运行时 `Alt+W` 直接启动（wechat-toggle.sh 只在窗口存在时才调 pypr）。
+- **注意**：
+  - DeepSeek/Kimi 的 `process_tracking = false` 不可改回——Chrome `--app` 窗口归属已运行的浏览器进程，PID 跟踪会失效。
+  - 微信的 `command = ""`、`pinned = false`、`size = ""` 是一组绑定约束：登录窗会被主窗替换、窗口由微信自行重建，pypr 只能按 class 匹配，不能 pin 也不能改尺寸。
+  - 不要给这三个窗口的 hyprland 规则加 `workspace = "special:..."`——pypr 是把窗口移到当前工作区显示的；special workspace 上 fcitx5 候选框不渲染。
 
 ## Shell 与终端
 
