@@ -1,6 +1,6 @@
 # 应用说明
 
-> 31 个 app，按类别分组。每个 app 一节：装了什么包、部署了哪些文件、使用要点与注意事项。
+> 32 个 app，按类别分组。每个 app 一节：装了什么包、部署了哪些文件、使用要点与注意事项。
 > 包清单见 `playbooks/roles/software/tasks/_pacman.yml`（官方仓库）与 `_aur.yml`（AUR）。
 >
 > 图例：`backup: true` 表示该文件会被对应软件在运行时改写（如 zed 的设置），

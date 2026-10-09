@@ -29,7 +29,7 @@ desktop themes to catppuccin-mocha (blue accent).
 ## Features
 
 - **One-command setup** — `site.yml` is idempotent; re-running it is always safe
-- **31 apps** in four layers: `base → software → settings → services`
+- **32 apps** in four layers: `base → software → settings → services`
 - **Chinese-first desktop** — fcitx5 + rime-ice input, zh_CN locale, WeChat scaling fix
 - **Hyprland 0.55+ Lua config**, rendered from per-machine host vars
 
@@ -65,18 +65,18 @@ playbooks/
 └── roles/
     ├── base/                   # timezone, locale, zram, sshd, groups, shell, xdg user-dirs
     ├── software/               # packages (_pacman.yml / _aur.yml) + one <app>.yml per app
-    │   ├── files/<app>/        # static config files, one dir per app (31 apps)
-    │   └── templates/<app>/    # hyprland.lua, waybar config, wechat desktop entry
+    │   ├── files/<app>/        # static config files, one dir per app (32 apps)
+    │   └── templates/<app>/    # hyprland.lua, waybar config, wechat/gmail desktop entries
     ├── settings/               # GTK/Qt/Kvantum/font configs, fcitx5 + SDDM themes, gsettings
     └── services/               # system systemd units + user pipewire/dsh-web units
 ```
 
-The `software` role manages 31 apps (atuin, deepseek, dev, direnv, dsh-web,
+The `software` role manages 32 apps (atuin, deepseek, dev, direnv, dsh-web,
 dunst, fcitx5, git, github, gmail, hypridle, hyprland, hyprlock, hyprpaper,
-kimi, k3s, kitty, mimeapps, mpv, nvim, pcmanfm, pi, rofi, satty, scratchpad,
-try-cli, waybar, wechat, zathura, zed, zsh). All official-repo packages live in
-`tasks/_pacman.yml`, all AUR packages in `tasks/_aur.yml`; per-app task files
-only deploy configuration.
+kimi, k3s, kitty, mimeapps, mpv, nvim, pcmanfm, pi, pyprland, rofi, satty,
+scratchpad, try-cli, waybar, wechat, zathura, zed, zsh). All official-repo
+packages live in `tasks/_pacman.yml`, all AUR packages in `tasks/_aur.yml`;
+per-app task files only deploy configuration.
 
 ## Machine differences
 
@@ -87,7 +87,7 @@ interface — are kept out of the templates and live in
 | Variable | Meaning | Consumed by |
 | --- | --- | --- |
 | `monitor` | Monitor output name (e.g. `DP-1`) | hyprland.lua |
-| `scale` | Fractional scaling factor (e.g. `1.25`) | hyprland.lua, WeChat desktop entry (`QT_SCALE_FACTOR`) |
+| `scale` | Fractional scaling factor (e.g. `1.25`) | hyprland.lua |
 | `net_interface` | Network interface (e.g. `wlp6s0`) | waybar status bar |
 
 Current values: `monitor = DP-1`, `scale = 1.25`, `net_interface = wlp6s0`.
@@ -168,7 +168,7 @@ systemctl --user restart dsh-web       # restart
 1. **Monitor** — check the monitor name with `hyprctl monitors`, then edit
    `monitor`/`scale` in `playbooks/inventory/host_vars/desktop.yml` and re-run
    `ansible-playbook site.yml --tags hyprland`. The rendered
-   `~/.config/hypr/hyprland.lua` is a template now; direct edits get
+   `~/.config/hypr/hyprland.lua` is a rendered template; direct edits get
    overwritten. Default is `DP-1` + scale 1.25; external monitors usually use 1
 2. **neovim** — config is deployed by the playbook (LazyVim); on first launch
    it auto-installs plugins and compiles tree-sitter grammars (needs gcc,
@@ -222,6 +222,7 @@ systemctl --user restart dsh-web       # restart
 | `Super+X` | Cut |
 | `Super+Q` | DeepSeek scratchpad |
 | ``Super+` `` | Kimi scratchpad |
+| `Alt+W` | WeChat scratchpad |
 | `Super+Shift+Q` | Close window |
 | `Super+F` | Fullscreen |
 | `Super+Shift+Space` | Toggle floating |

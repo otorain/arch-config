@@ -28,7 +28,7 @@
 ## 特性
 
 - **一条命令装完** — `site.yml` 幂等，重复运行永远安全
-- **31 个应用**，分四层：`base → software → settings → services`
+- **32 个应用**，分四层：`base → software → settings → services`
 - **中文优先的桌面** — fcitx5 + 雾凇拼音（rime-ice）、zh_CN locale、微信缩放修正
 - **Hyprland 0.55+ Lua 配置**，由每台机器的 host_vars 渲染生成
 
@@ -64,17 +64,17 @@ playbooks/
 └── roles/
     ├── base/                   # 时区、locale、zram、sshd、用户组、默认 shell、xdg user-dirs
     ├── software/               # 软件包（_pacman.yml / _aur.yml）+ 每个应用一个 <app>.yml
-    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 31 个应用）
-    │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat 桌面项
+    │   ├── files/<app>/        # 静态配置文件，每个应用一个目录（共 32 个应用）
+    │   └── templates/<app>/    # hyprland.lua、waybar 配置、wechat/gmail 桌面项
     ├── settings/               # GTK/Qt/Kvantum/字体配置、fcitx5 与 SDDM 主题、gsettings
     └── services/               # 系统 systemd 单元 + 用户 pipewire/dsh-web 单元
 ```
 
-`software` 角色管理 31 个应用（atuin、deepseek、dev、direnv、dsh-web、
+`software` 角色管理 32 个应用（atuin、deepseek、dev、direnv、dsh-web、
 dunst、fcitx5、git、github、gmail、hypridle、hyprland、hyprlock、hyprpaper、
-kimi、k3s、kitty、mimeapps、mpv、nvim、pcmanfm、pi、rofi、satty、scratchpad、
-try-cli、waybar、wechat、zathura、zed、zsh）。所有官方仓库包在 `tasks/_pacman.yml`，所有
-AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
+kimi、k3s、kitty、mimeapps、mpv、nvim、pcmanfm、pi、pyprland、rofi、satty、
+scratchpad、try-cli、waybar、wechat、zathura、zed、zsh）。所有官方仓库包在
+`tasks/_pacman.yml`，所有 AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
 
 ## 机器差异
 
@@ -84,7 +84,7 @@ AUR 包在 `tasks/_aur.yml`；各应用的任务文件只负责部署配置。
 | 变量 | 含义 | 消费方 |
 | --- | --- | --- |
 | `monitor` | 显示器输出名（如 `DP-1`） | hyprland.lua |
-| `scale` | 缩放比例（如 `1.25`） | hyprland.lua、微信桌面项（`QT_SCALE_FACTOR`） |
+| `scale` | 缩放比例（如 `1.25`） | hyprland.lua |
 | `net_interface` | 网卡接口（如 `wlp6s0`） | waybar 状态栏 |
 
 当前值：`monitor = DP-1`、`scale = 1.25`、`net_interface = wlp6s0`。
@@ -160,7 +160,7 @@ systemctl --user restart dsh-web       # 重启
 1. **显示器** — `hyprctl monitors` 查看显示器名称，编辑
    `playbooks/inventory/host_vars/desktop.yml` 里的 `monitor`/`scale`，然后
    重跑 `ansible-playbook site.yml --tags hyprland`。生成的
-   `~/.config/hypr/hyprland.lua` 现在是模板渲染产物，直接手改会被覆盖。
+   `~/.config/hypr/hyprland.lua` 是模板渲染产物，直接手改会被覆盖。
    默认 `DP-1` + 缩放 1.25，外接显示器通常用 1
 2. **neovim** — 配置由 playbook 部署（LazyVim），首次启动自动装插件并编译
    tree-sitter grammar（需 gcc，已在包清单里）
@@ -209,6 +209,7 @@ systemctl --user restart dsh-web       # 重启
 | `Super+X` | 剪切 |
 | `Super+Q` | DeepSeek scratchpad |
 | ``Super+` `` | Kimi scratchpad |
+| `Alt+W` | 微信 scratchpad |
 | `Super+Shift+Q` | 关闭窗口 |
 | `Super+F` | 全屏 |
 | `Super+Shift+Space` | 浮动 |
