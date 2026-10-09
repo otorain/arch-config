@@ -53,7 +53,7 @@
 | `Super+Ctrl+←/→` | 相邻工作区 |
 | `Super+滚轮` | 逐个切换工作区 |
 
-**scratchpad（便签窗口）**：`Super+Q` 呼出 [DeepSeek](apps.md#deepseek)、``Super+` `` 呼出 [Kimi](apps.md#kimi)、`Alt+W` 呼出[微信](apps.md#wechat)。三者由 pyprland 管理：按一次从屏幕顶部滑出到当前工作区，再按一次滑回隐藏；窗口常驻不关闭，首次呼出时才启动。从 rofi 启动它们也会被 pyprland 按窗口 class 接管。
+**scratchpad（便签窗口）**：`Super+Q` 呼出 [DeepSeek](apps.md#deepseek)、``Super+` `` 呼出 [Kimi](apps.md#kimi)、`Alt+W` 呼出[微信](apps.md#wechat)。三者由 pyprland 管理：按一次从屏幕顶部滑出到当前工作区，再按一次滑回隐藏；窗口常驻不关闭。DeepSeek/Kimi 首次呼出时才启动；微信未运行时 `Alt+W` 直接启动它。从 rofi 启动它们也会被 pyprland 按窗口 class 接管。
 
 ### 截图与取色
 

@@ -1,5 +1,5 @@
 # Pyprland scratchpads — https://hyprland-community.github.io/pyprland/scratchpads.html
-# process_tracking = false: chrome --app and wechat delegate to an already-running
+# process_tracking = false: chrome --app delegates to an already-running
 # instance; the spawned PID exits at once. Also forces lazy.
 
 [pyprland]
@@ -22,8 +22,10 @@ size = "63% 69%"
 margin = 180
 
 [scratchpads.wechat]
-command = "/opt/wechat/wechat"
+# command = "" (the field is required): wechat swaps its login window for the
+# main window, and only command-less scratchpads re-resolve their window by
+# class on every show.
+command = ""
 class = "wechat"
-process_tracking = false
 animation = "fromTop"
 margin = 180

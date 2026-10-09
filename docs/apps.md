@@ -98,7 +98,7 @@ Hyprland scratchpad 守护进程，管理 DeepSeek / Kimi / 微信三个便签�
 
 - **包**：AUR `pyprland`
 - **部署**：`files/pyprland/config.toml` → `~/.config/pypr/config.toml`
-- **要点**：hyprland 启动时拉起 `pypr` 守护进程，`pypr toggle <名字>` 呼出/隐藏（顶部滑出动画）。三个 app 的 `process_tracking = false` 是必需的——Chrome `--app` 和单实例的微信会把窗口委托给已运行的进程，PID 跟踪会丢窗口，改为按 class 匹配（因此也是 lazy：首次呼出才启动）。
+- **要点**：hyprland 启动时拉起 `pypr` 守护进程，`pypr toggle <名字>` 呼出/隐藏（顶部滑出动画）。DeepSeek/Kimi 配 `process_tracking = false`——Chrome `--app` 会把窗口委托给已运行的浏览器进程，PID 跟踪会丢窗口，改为按 class 匹配（因此也是 lazy：首次呼出才启动）。微信是 unmanaged scratchpad（`command = ""`）：它的登录窗会被主窗替换，只有无 command 的 scratchpad 才在每次显示时按 class 重新解析窗口；微信未运行时 `Alt+W` 直接启动它。
 - **注意**：不要给这三个窗口的 hyprland 规则加回 `workspace = "special:..."`——Hyprland 在 special workspace 上不渲染 fcitx5 候选框，而 pypr 是把窗口移到当前工作区显示的，中文输入不受影响。
 
 ## Shell 与终端
@@ -259,7 +259,7 @@ GitHub 网页应用（Chrome `--app` 模式）。
 
 - **包**：AUR `wechat-bin`
 - **部署**：`templates/wechat/wechat.desktop.j2` → `~/.local/share/applications/wechat.desktop`（用户级覆盖，掌握启动参数）
-- **要点**：`Alt+W` 呼出/隐藏（pyprland scratchpad）。
+- **要点**：`Alt+W` 呼出/隐藏（pyprland scratchpad）；微信未运行时 `Alt+W` 直接启动。
 - **注意**：wechat ≥ 4.1.13 原生支持 Wayland，分数缩放由 compositor 驱动——绝不能往桌面项里加 `QT_SCALE_FACTOR`，会双重缩放导致界面空白、点击错位。
 
 ### gmail

@@ -106,13 +106,16 @@ messages are in English.
   scaling. Never re-add `QT_SCALE_FACTOR` to its desktop entry: it double-scales
   and breaks the UI (blank regions + misaligned clicks).
 - DeepSeek / Kimi / WeChat are pyprland scratchpads (`pypr toggle <name>`;
-  config `~/.config/pypr/config.toml`, deployed by the pyprland app). Their
-  `process_tracking = false` is load-bearing: chrome `--app` and
-  single-instance wechat delegate to an already-running process, so PID
-  tracking loses the window and matching falls back to class. Keep
-  `workspace = "special:..."` out of their window rules — Hyprland does not
-  render the fcitx5 candidate popup on special workspaces, while pypr shows
-  scratchpads on the active workspace.
+  config `~/.config/pypr/config.toml`, deployed by the pyprland app). The
+  chrome `--app` pads need `process_tracking = false`: chrome delegates to an
+  already-running process, so PID tracking loses the window. wechat is an
+  unmanaged scratchpad (`command = ""` — the field is required; empty makes
+  it unmanaged): wechat replaces its login window with the main window, and
+  only command-less scratchpads re-resolve the window by class on every show;
+  its Alt+W bind falls back to launching wechat when pypr reports it not
+  running. Keep `workspace = "special:..."` out of their window rules —
+  Hyprland does not render the fcitx5 candidate popup on special workspaces,
+  while pypr shows scratchpads on the active workspace.
 - `~/.config/git/config` is user-owned — created once (interactive
   user.name/user.email prompt on first run), never overwritten; it includes
   the managed `~/.config/git/custom` (delta + catppuccin).
