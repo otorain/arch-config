@@ -116,6 +116,11 @@ messages are in English.
 - User-facing UI text stays Chinese (desktop entry names/comments, waybar
   labels, hyprlock placeholder). Everything else — comments, docs, playbook
   task names and output — is English.
+- Comments describe the current state only, never what was replaced or removed
+  (git history covers that). Write them only for non-obvious rationale; put
+  each comment directly above the exact line it documents, never trailing
+  across unrelated lines; state facts tersely — no conversational
+  explanation.
 - `.zshrc` is a skeleton sourcing `~/.config/zsh/conf.d/*.zsh` in lexical
   order. ALL 15 fragments live in `roles/software/files/zsh/` root (numbered
   05–99) and are deployed via `with_fileglob: "zsh/[0-9]*.zsh"` to
