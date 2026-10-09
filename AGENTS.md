@@ -45,11 +45,11 @@ messages are in English.
     tail). `_aur.yml` also creates the dedicated `aur_builder` build user
     (see Gotchas). App files only deploy config, user services, and zsh
     fragments.
-    - `files/` has one directory **per software** (31 apps): atuin, deepseek,
+    - `files/` has one directory **per software** (32 apps): atuin, deepseek,
       dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
       hyprland, hyprlock, hyprpaper, kimi, k3s, kitty, mimeapps, mpv, nvim,
-      pcmanfm, pi, rofi, satty, scratchpad, try-cli, waybar, wechat, zathura,
-      zed, zsh.
+      pcmanfm, pi, pyprland, rofi, satty, scratchpad, try-cli, waybar, wechat,
+      zathura, zed, zsh.
       Each contains only files — no subdirectories mirroring destination
       paths, no hidden structural names; destinations appear only in task
       `dest:` (dev and hyprland have no files dir; wechat is template-only).
@@ -105,6 +105,14 @@ messages are in English.
 - wechat >= 4.1.13 runs natively on Wayland — the compositor drives fractional
   scaling. Never re-add `QT_SCALE_FACTOR` to its desktop entry: it double-scales
   and breaks the UI (blank regions + misaligned clicks).
+- DeepSeek / Kimi / WeChat are pyprland scratchpads (`pypr toggle <name>`;
+  config `~/.config/pypr/config.toml`, deployed by the pyprland app). Their
+  `process_tracking = false` is load-bearing: chrome `--app` and
+  single-instance wechat delegate to an already-running process, so PID
+  tracking loses the window and matching falls back to class. Keep
+  `workspace = "special:..."` out of their window rules — Hyprland does not
+  render the fcitx5 candidate popup on special workspaces, while pypr shows
+  scratchpads on the active workspace.
 - `~/.config/git/config` is user-owned — created once (interactive
   user.name/user.email prompt on first run), never overwritten; it includes
   the managed `~/.config/git/custom` (delta + catppuccin).

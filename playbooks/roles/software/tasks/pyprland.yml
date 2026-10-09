@@ -1,0 +1,5 @@
+---
+- name: Deploy pyprland config
+  ansible.builtin.copy:
+    src: pyprland/config.toml
+    dest: "{{ home }}/.config/pypr/config.toml"

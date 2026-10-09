@@ -183,6 +183,13 @@
       tags: pi
   tags: pi
 
+- name: "App: pyprland"
+  ansible.builtin.include_tasks:
+    file: pyprland.yml
+    apply:
+      tags: pyprland
+  tags: pyprland
+
 - name: "App: rofi"
   ansible.builtin.include_tasks:
     file: rofi.yml

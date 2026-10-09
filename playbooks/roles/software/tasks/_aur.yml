@@ -57,6 +57,8 @@
     - pitchfork-bin
     # === Kubernetes ===
     - k3s-bin
+    # === Hyprland ===
+    - pyprland
     # === Themes ===
     - colloid-catppuccin-gtk-theme-git
     - catppuccin-cursors-mocha

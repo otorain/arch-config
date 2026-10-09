@@ -23,6 +23,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("nm-applet --indicator")
 	hl.exec_cmd("blueman-applet")
 	hl.exec_cmd("hyprpolkitagent")
+	hl.exec_cmd("pypr")
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")
 	-- hl.exec_cmd("dropbox")
@@ -246,10 +247,10 @@ hl.bind(
 hl.bind("Print", hl.dsp.exec_cmd("grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png"))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd('grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png'))
 
--- DeepSeek scratchpad (special workspace)
-hl.bind(mod .. " + Q", hl.dsp.workspace.toggle_special("deepseek"))
--- Kimi scratchpad
-hl.bind(mod .. " + grave", hl.dsp.workspace.toggle_special("kimi"))
+-- DeepSeek / Kimi / WeChat scratchpads (pyprland)
+hl.bind(mod .. " + Q", hl.dsp.exec_cmd("pypr toggle deepseek"))
+hl.bind(mod .. " + grave", hl.dsp.exec_cmd("pypr toggle kimi"))
+hl.bind(mod2 .. " + W", hl.dsp.exec_cmd("pypr toggle wechat"))
 
 -- --- Window operations ---
 hl.bind(mod .. " + SHIFT + Q", hl.dsp.window.close())
@@ -435,32 +436,13 @@ hl.window_rule({
 	center = true,
 })
 
--- Chrome PWA (DeepSeek / Kimi)
-hl.window_rule({
-	name = "float-deepseek",
-	match = { class = "^(chrome-hmjcdonmhijmnefklekckjkeoknbiipb-Default)$" },
-	float = true,
-	size = "1200 800",
-	center = true,
-	workspace = "special:deepseek silent",
-})
-hl.window_rule({
-	name = "float-kimi",
-	match = { class = "^(chrome-cfbmbdcmhmpondjkflgbghnelgpldahk-Default)$" },
-	float = true,
-	size = "1200 800",
-	center = true,
-	workspace = "special:kimi silent",
-})
-
--- Web apps (app mode, class names are derived from the --app URL; tested values are above)
+-- Web apps (app mode, class names are derived from the --app URL)
 hl.window_rule({
 	name = "float-deepseek-web",
 	match = { class = "^(chrome-chat\\.deepseek\\.com__-Default)$" },
 	float = true,
 	size = "1200 800",
 	center = true,
-	workspace = "special:deepseek silent",
 })
 hl.window_rule({
 	name = "float-kimi-web",
@@ -468,7 +450,6 @@ hl.window_rule({
 	float = true,
 	size = "1300 800",
 	center = true,
-	workspace = "special:kimi silent",
 })
 
 -- Gmail web app (chrome --app=mail.google.com) floats on the current workspace.
@@ -491,8 +472,6 @@ hl.window_rule({
 	center = true,
 })
 
--- WeChat (XWayland) floats on the current workspace; not in a special workspace,
--- because Hyprland fails to render the fcitx5 candidate popup on special workspaces
 hl.window_rule({
 	name = "float-wechat",
 	match = { class = "^(wechat)$" },

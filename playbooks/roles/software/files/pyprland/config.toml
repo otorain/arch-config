@@ -1,0 +1,26 @@
+# Pyprland scratchpads — https://hyprland-community.github.io/pyprland/scratchpads.html
+# process_tracking = false: chrome --app and wechat delegate to an already-running
+# instance; the spawned PID exits at once. Also forces lazy.
+
+[scratchpads.deepseek]
+command = "google-chrome-stable --app=https://chat.deepseek.com"
+class = "chrome-chat.deepseek.com__-Default"
+process_tracking = false
+animation = "fromTop"
+size = "59% 69%"
+margin = 180
+
+[scratchpads.kimi]
+command = "google-chrome-stable --app=https://www.kimi.com"
+class = "chrome-www.kimi.com__-Default"
+process_tracking = false
+animation = "fromTop"
+size = "63% 69%"
+margin = 180
+
+[scratchpads.wechat]
+command = "/opt/wechat/wechat"
+class = "wechat"
+process_tracking = false
+animation = "fromTop"
+margin = 180

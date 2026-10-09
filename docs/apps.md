@@ -92,6 +92,15 @@
 - **部署**：`files/scratchpad/scratchpad.sh` → `~/.local/bin/scratchpad.sh`（0755）
 - **要点**：笔记存放在 `~/.scratchpads/*.md`；picker 按修改时间倒序、显示相对时间与首行预览，`Ctrl+D` 删除（有二次确认）；编辑窗口的 class 是 `floating-scratchpad`，由 hyprland 窗口规则浮动。详细用法见[日常使用指南](usage.md)。
 
+### pyprland
+
+Hyprland scratchpad 守护进程，管理 DeepSeek / Kimi / 微信三个便签窗口（呼出键位见[日常使用指南](usage.md)）。
+
+- **包**：AUR `pyprland`
+- **部署**：`files/pyprland/config.toml` → `~/.config/pypr/config.toml`
+- **要点**：hyprland 启动时拉起 `pypr` 守护进程，`pypr toggle <名字>` 呼出/隐藏（顶部滑出动画）。三个 app 的 `process_tracking = false` 是必需的——Chrome `--app` 和单实例的微信会把窗口委托给已运行的进程，PID 跟踪会丢窗口，改为按 class 匹配（因此也是 lazy：首次呼出才启动）。
+- **注意**：不要给这三个窗口的 hyprland 规则加回 `workspace = "special:..."`——Hyprland 在 special workspace 上不渲染 fcitx5 候选框，而 pypr 是把窗口移到当前工作区显示的，中文输入不受影响。
+
 ## Shell 与终端
 
 ### zsh
@@ -167,7 +176,7 @@ DeepSeek 聊天网页应用（Chrome `--app` 模式，独立窗口）。
 - **部署**：
   - `files/deepseek/deepseek.desktop` → `~/.local/share/applications/`
   - `files/deepseek/deepseek.png` → `~/.local/share/icons/hicolor/256x256/apps/`
-- **要点**：`Super+Q` 呼出/隐藏——hyprland 为它配了 special workspace。DeepSeek 的 CLI（dsh）见 [dsh-web](#dsh-web)。
+- **要点**：`Super+Q` 呼出/隐藏（pyprland scratchpad，见 [pyprland](#pyprland)）。DeepSeek 的 CLI（dsh）见 [dsh-web](#dsh-web)。
 
 ### kimi
 
@@ -175,7 +184,7 @@ Kimi 网页应用（Chrome `--app` 模式）。
 
 - **包**：AUR `kimi-code`（Kimi CLI）；桌面项依赖 `google-chrome`
 - **部署**：`files/kimi/kimi.desktop` + `kimi.png`（路径模式同 deepseek）
-- **要点**：``Super+` `` 呼出/隐藏（special workspace）。
+- **要点**：``Super+` `` 呼出/隐藏（pyprland scratchpad）。
 
 ### pi
 
@@ -250,6 +259,7 @@ GitHub 网页应用（Chrome `--app` 模式）。
 
 - **包**：AUR `wechat-bin`
 - **部署**：`templates/wechat/wechat.desktop.j2` → `~/.local/share/applications/wechat.desktop`（用户级覆盖，掌握启动参数）
+- **要点**：`Alt+W` 呼出/隐藏（pyprland scratchpad）。
 - **注意**：wechat ≥ 4.1.13 原生支持 Wayland，分数缩放由 compositor 驱动——绝不能往桌面项里加 `QT_SCALE_FACTOR`，会双重缩放导致界面空白、点击错位。
 
 ### gmail
