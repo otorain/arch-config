@@ -25,7 +25,10 @@ margin = 180
 # command = "" (the field is required): wechat swaps its login window for the
 # main window, and only command-less scratchpads re-resolve their window by
 # class on every show.
+# pinned = false: wechat recreates its window on its own, and pypr's blind
+# pin-toggle on hide would pin the new window, showing it on every workspace.
 command = ""
 class = "wechat"
+pinned = false
 animation = "fromTop"
 margin = 180
