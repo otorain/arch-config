@@ -8,3 +8,9 @@
   ansible.builtin.copy:
     src: pyprland/config.toml
     dest: "{{ home }}/.config/pypr/config.toml"
+
+- name: Deploy wechat toggle script
+  ansible.builtin.copy:
+    src: pyprland/wechat-toggle.sh
+    dest: "{{ home }}/.local/bin/wechat-toggle.sh"
+    mode: "0755"
