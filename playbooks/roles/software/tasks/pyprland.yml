@@ -1,4 +1,9 @@
 ---
+- name: Create pypr config directory
+  ansible.builtin.file:
+    path: "{{ home }}/.config/pypr"
+    state: directory
+
 - name: Deploy pyprland config
   ansible.builtin.copy:
     src: pyprland/config.toml
