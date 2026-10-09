@@ -2,6 +2,9 @@
 # process_tracking = false: chrome --app and wechat delegate to an already-running
 # instance; the spawned PID exits at once. Also forces lazy.
 
+[pyprland]
+plugins = ["scratchpads"]
+
 [scratchpads.deepseek]
 command = "google-chrome-stable --app=https://chat.deepseek.com"
 class = "chrome-chat.deepseek.com__-Default"
