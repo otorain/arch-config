@@ -18,7 +18,11 @@ the `# === JetBrains IDE ===` group plus a Hyprland keybinding each.
   directory and lists `goland-jre` / `java-runtime` as optional deps, so a
   system JRE is required for launch. `jre-openjdk` installs before AUR
   packages (`_pacman.yml` precedes `_aur.yml` in `main.yml`), so
-  `java-runtime` is satisfied when `goland` installs.
+  `java-runtime` is satisfied when `goland` installs. Known trade-off,
+  accepted by the user after confirming: JetBrains documents JBR 21 as the
+  bundled/validated runtime and states JRE/JDK-modified installs are not
+  supported (JCEF and the new UI are built against JBR); `jre-openjdk` is
+  currently Java 27. If GoLand misbehaves, switch to `goland-jre`.
 - **Scope:** match PyCharm/RubyMine — package + Hyprland keybinding + README /
   usage doc updates. No app task file, no config deployment, no desktop entry
   (the package ships one), no `docs/apps.md` section (siblings have none).
