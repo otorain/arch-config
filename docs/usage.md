@@ -14,7 +14,7 @@
 | `Super+E` | emoji 选择器（rofi） |
 | `Super+0` | 电源菜单（rofi-power-menu） |
 | `Super+Ctrl+C` / `+F` | Chrome / Firefox |
-| `Super+Ctrl+R` / `+P` | RubyMine / PyCharm |
+| `Super+Ctrl+R` / `+P` / `+G` | RubyMine / PyCharm / GoLand |
 | `Super+F3` | 文件管理器（pcmanfm） |
 | `Super+T` | 用 goldendict 查当前选中的词 |
 

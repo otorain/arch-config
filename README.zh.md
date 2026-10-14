@@ -196,6 +196,7 @@ systemctl --user restart dsh-web       # 重启
 | `Super+Ctrl+F` | Firefox |
 | `Super+Ctrl+R` | RubyMine |
 | `Super+Ctrl+P` | PyCharm |
+| `Super+Ctrl+G` | GoLand |
 | `Super+F3` | 文件管理器（pcmanfm） |
 | `Super+T` | 选中文字查词典（goldendict） |
 | `Super+O` | 剪贴板历史（cliphist + rofi） |
@@ -248,7 +249,7 @@ systemctl --user restart dsh-web       # 重启
 
 - **AUR 包装不上** — AUR 包名会变动；playbook 会警告并跳过失败的 AUR 包，
   其余任务继续执行。若 `zed` 官方仓库版本不合意，可用 AUR
-  `zed-preview-bin`；`pycharm`/`rubymine` 是 AUR 构建（下载官方
+  `zed-preview-bin`；`pycharm`/`rubymine`/`goland` 是 AUR 构建（下载官方
   tarball）——也可用 JetBrains Toolbox 手动装
 - **内核更新后 VirtualBox 模块失效** — 执行 `sudo vboxreload`
 - **dsh web 起不来或端口被占** — 见上文

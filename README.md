@@ -209,6 +209,7 @@ systemctl --user restart dsh-web       # restart
 | `Super+Ctrl+F` | Firefox |
 | `Super+Ctrl+R` | RubyMine |
 | `Super+Ctrl+P` | PyCharm |
+| `Super+Ctrl+G` | GoLand |
 | `Super+F3` | File manager (pcmanfm) |
 | `Super+T` | Look up selected text (goldendict) |
 | `Super+O` | Clipboard history (cliphist + rofi) |
@@ -262,7 +263,7 @@ systemctl --user restart dsh-web       # restart
 - **AUR packages that fail to install** — AUR package names change over time;
   the playbook warns and skips a failed AUR package so the rest of the run
   continues. If the official-repo `zed` doesn't suit you, use AUR
-  `zed-preview-bin`; `pycharm`/`rubymine` are AUR builds (they download the
+  `zed-preview-bin`; `pycharm`/`rubymine`/`goland` are AUR builds (they download the
   official tarballs) — or install them via JetBrains Toolbox
 - **VirtualBox modules break after a kernel update** — run `sudo vboxreload`
 - **dsh web won't start or the port is busy** — see the
