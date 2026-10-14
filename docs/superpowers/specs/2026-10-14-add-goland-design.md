@@ -10,9 +10,10 @@ the `# === JetBrains IDE ===` group plus a Hyprland keybinding each.
 
 ## Choices (confirmed with user)
 
-- **Source:** AUR `goland` — same maintainer (freswa) and packaging as the
-  installed `pycharm`/`rubymine`; ships `/usr/bin/goland` and its own
-  `jetbrains-goland.desktop`.
+- **Source:** AUR `goland` (maintainer freswa); ships `/usr/bin/goland` and
+  its own `jetbrains-goland.desktop`. The installed `pycharm`/`rubymine` are
+  other maintainers' packages that bundle their JBR; `goland` alone strips it
+  (see Runtime).
 - **Runtime:** system JRE (`jre-openjdk`, official repos) over the AUR
   `goland-jre` subpackage. The `goland` PKGBUILD deletes the bundled `jbr/`
   directory and lists `goland-jre` / `java-runtime` as optional deps, so a
