@@ -1,4 +1,15 @@
 ---
+# [multilib] is commented out in the stock pacman.conf. Enable it before
+# the -Syu below so the repo's database syncs in the same run.
+- name: Enable multilib repository
+  become: true
+  ansible.builtin.replace:
+    path: /etc/pacman.conf
+    regexp: '^#\[multilib\]\n#Include = /etc/pacman\.d/mirrorlist$'
+    replace: |
+      [multilib]
+      Include = /etc/pacman.d/mirrorlist
+
 # Full -Syu on every run: Arch forbids partial upgrades (installing new
 # packages against a stale system db can break existing binaries).
 # The pacman module rejects name+upgrade in one task, so upgrade first.

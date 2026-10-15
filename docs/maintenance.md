@@ -38,7 +38,7 @@ ansible-playbook site.yml --check                          # dry run：只看会
 以加一个名为 `myapp` 的软件为例：
 
 1. **加包**。二选一（或都要）：
-   - 官方仓库：编辑 `playbooks/roles/software/tasks/_pacman.yml`，把包名加进合适的 `# ===` 分组
+   - 官方仓库：编辑 `playbooks/roles/software/tasks/_pacman.yml`，把包名加进合适的 `# ===` 分组。32 位包（`steam`、`lib32-*`）直接写包名——`[multilib]` 已由 `_pacman.yml` 顶部的任务自动启用
    - AUR：编辑 `_aur.yml` 加进对应分组。单个 AUR 包失败只会警告并跳过（输出里带 stderr 末尾几行），不会中断整个运行
 2. **放配置文件**（有的话）：新建 `playbooks/roles/software/files/myapp/`，扁平放文件——不要按目标路径建子目录镜像，目标路径只写在任务的 `dest:` 里
 3. **写任务**：新建 `tasks/myapp.yml`，用 `copy`/`template` 把 `files/myapp/` 部署到 `$HOME` 下对应位置
