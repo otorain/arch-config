@@ -134,7 +134,6 @@
       - pnpm
       - go
       - mise
-      - jre-openjdk
       # === CLI tools ===
       - bat
       - btop
