@@ -37,6 +37,9 @@
       ansible.builtin.debug:
         msg: |
           install failed, handle manually: {{ pkg }}
+          rc: {{ aur_install.rc | default('?') }} {{ aur_install.msg | default('') }}
+          last stdout lines:
+          {{ (aur_install.stdout_lines | default([]))[-10:] | join('\n') }}
           last stderr lines:
           {{ (aur_install.stderr_lines | default([]))[-10:] | join('\n') }}
       # default(0): in --check mode the install command is skipped and has no rc

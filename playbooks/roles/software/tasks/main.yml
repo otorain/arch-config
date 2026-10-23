@@ -169,6 +169,13 @@
       tags: nvim
   tags: nvim
 
+- name: "App: obs"
+  ansible.builtin.include_tasks:
+    file: obs.yml
+    apply:
+      tags: obs
+  tags: obs
+
 - name: "App: pcmanfm"
   ansible.builtin.include_tasks:
     file: pcmanfm.yml

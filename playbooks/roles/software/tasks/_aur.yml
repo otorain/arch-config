@@ -26,6 +26,18 @@
     mode: "0440"
     validate: "visudo -cf %s"
 
+# cargo is a rustup shim whose default toolchain is per-$HOME; the builder
+# needs its own default or Rust package builds (obs-cmd, ...) fail
+- name: Set rustup default toolchain for aur_builder
+  become: true
+  become_user: aur_builder
+  environment:
+    HOME: /home/aur_builder
+  ansible.builtin.command: rustup default stable
+  register: aur_rustup_default
+  changed_when: "'info: using existing' not in (aur_rustup_default.stdout | default(''))"
+  failed_when: false
+
 - name: Install AUR packages
   ansible.builtin.include_tasks: _aur_one.yml
   loop:
@@ -66,6 +78,8 @@
     - catppuccin-cursors-mocha
     - catppuccin-sddm-theme-mocha
     - rofi-power-menu
+    # === Screen recording ===
+    - obs-cmd
     # === Misc ===
     - dropbox
     - virtualbox-ext-oracle

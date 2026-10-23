@@ -41,15 +41,15 @@ messages are in English.
     `include_tasks` + module-arg `apply: tags:` + outer `tags:` pattern
     (plain `tags:` on a dynamic include does not reach inner tasks).
     All official packages live in `_pacman.yml`, all AUR packages in
-    `_aur.yml` (warn-and-continue per package; failures print the stderr
-    tail). `_aur.yml` also creates the dedicated `aur_builder` build user
+    `_aur.yml` (warn-and-continue per package; failures print the stdout +
+    stderr tail — yay sends build output to stdout). `_aur.yml` also creates the dedicated `aur_builder` build user
     (see Gotchas). App files only deploy config, user services, and zsh
     fragments.
-    - `files/` has one directory **per software** (32 apps): atuin, deepseek,
+    - `files/` has one directory **per software** (33 apps): atuin, deepseek,
       dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
       hyprland, hyprlock, hyprpaper, kimi, k3s, kitty, mimeapps, mpv, nvim,
-      pcmanfm, pi, pyprland, rofi, satty, scratchpad, try-cli, waybar, wechat,
-      zathura, zed, zsh.
+      obs, pcmanfm, pi, pyprland, rofi, satty, scratchpad, try-cli, waybar,
+      wechat, zathura, zed, zsh.
       Each contains only files — no subdirectories mirroring destination
       paths, no hidden structural names; destinations appear only in task
       `dest:` (dev and hyprland have no files dir; wechat is template-only).
@@ -58,7 +58,8 @@ messages are in English.
       include line in `main.yml`.
     - `templates/<software>/` — hyprland/hyprland.lua.j2,
       waybar/config.jsonc.j2, wechat/wechat.desktop.j2,
-      gmail/gmail.desktop.j2 (Exec expands `{{ home }}`).
+      gmail/gmail.desktop.j2 (Exec expands `{{ home }}`),
+      obs/config.json.j2 (seeded only when the live file is missing).
   - `roles/settings` — layer 3: fcitx5 catppuccin theme, GTK/Qt/Kvantum/font
     config files, GTK4 Colloid symlinks, gsettings, SDDM theme + wallpaper.
     Its `files/` are flat with collision-avoiding prefixes:
@@ -91,6 +92,15 @@ messages are in English.
   must override the Colloid theme needs `Gtk.STYLE_PROVIDER_PRIORITY_USER`
   (theme loads at USER priority 800). Both popups anchor under their waybar
   module via AT-SPI geometry through `waybar_geom.py`.
+- OBS on Wayland: the PipeWire capture negotiates **physical** pixels under
+  fractional scaling (2560×1440, not the logical 2048×1152); a scene-item
+  transform fitted while the stream had another size crops the recording to
+  the top-left — re-run "Transform → Fit to Screen" after resolution changes.
+  OBS's own global hotkeys are X11-only (dead when a native Wayland window
+  has focus), so F9 is a Hyprland bind → `~/.local/bin/obs-toggle.sh` →
+  obs-cmd → obs-websocket (password read from the live OBS config, never in
+  the repo). OBS rewrites the websocket config from in-memory state on exit —
+  quit OBS before running `--tags obs`.
 - AUR installs run as the dedicated `aur_builder` system user (`system: true`,
   nologin shell, locked password — invisible to SDDM) with `HOME` set to
   `/home/aur_builder` explicitly, because Ansible's sudo become does not pass
@@ -99,6 +109,10 @@ messages are in English.
   without a tty (agent/CI). `/etc/sudoers.d/10-aur_builder` grants
   `aur_builder` NOPASSWD for `/usr/bin/pacman` only (kewlfft.aur pattern);
   the login user's own sudo stays fully password-protected.
+  `ansible_python_interpreter` is pinned to `/usr/bin/python3` (group_vars):
+  auto-discovery picks the login user's mise python, which aur_builder cannot
+  execute (rc 126, empty module output). `cargo` is a rustup shim whose
+  default toolchain is per-user, so `_aur.yml` sets one for aur_builder.
 - Machine differences live in `host_vars/` — monitor `DP-1` @ scale 1.25,
   waybar `network.interface = wlp6s0`. Don't
   hardcode them back into templates.

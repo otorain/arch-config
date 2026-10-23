@@ -218,6 +218,7 @@ systemctl --user restart dsh-web       # restart
 | `Super+P` | Region screenshot (satty annotation) |
 | `Print` | Fullscreen screenshot |
 | `Shift+Print` | Region screenshot (no annotation) |
+| `F9` | Toggle OBS recording (via obs-websocket) |
 | `Super+C` | Copy (terminal-aware) |
 | `Super+V` | Paste (terminal-aware) |
 | `Super+X` | Cut |

@@ -289,6 +289,17 @@ Gmail 网页应用 + 系统级 `mailto:` 处理器。
   - uosc 图标字体符号链接 → `~/.config/mpv/fonts/`
 - **要点**：uosc 的图标靠字体连字渲染，而 mpv 只扫描自己配置目录下的 `fonts/`，所以把包里的字体链接进来。
 
+### obs
+
+OBS Studio 录屏。
+
+- **包**：官方仓库 `obs-studio`；AUR `obs-cmd`（obs-websocket v5 CLI）
+- **部署**：
+  - `files/obs/obs-toggle.sh` → `~/.local/bin/obs-toggle.sh`（0755，`F9` 录制开关）
+  - `templates/obs/config.json.j2` → `~/.config/obs-studio/plugin_config/obs-websocket/config.json`（仅在文件不存在时播种，随机密码不落盘；文件已存在则就地启用 `server_enabled`）
+- **要点**：`F9` 开始/停止录制。OBS 自带的全局快捷键只走 X11——焦点在原生 Wayland 窗口时完全收不到，所以 `F9` 由 Hyprland 绑定，脚本经 obs-websocket 控制 OBS；密码运行时从 OBS 配置里读，不进仓库。
+- **注意**：OBS 退出时会用内存状态重写 websocket 配置，改配置前要先退出 OBS。分数缩放下 PipeWire 采集协商的是物理像素（2560×1440，而非逻辑的 2048×1152）；若曾在别的流分辨率下做过「变换 → 适配屏幕」，旧缩放会让录像只剩左上区域——改过分辨率后重新做一次「适配屏幕」。
+
 ### zathura
 
 PDF 阅读器（vim 键位）。

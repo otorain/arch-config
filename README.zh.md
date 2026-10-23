@@ -205,6 +205,7 @@ systemctl --user restart dsh-web       # 重启
 | `Super+P` | 区域截图（satty 标注） |
 | `Print` | 全屏截图 |
 | `Shift+Print` | 区域截图（无标注） |
+| `F9` | OBS 录制开关（obs-websocket） |
 | `Super+C` | 复制（终端感知） |
 | `Super+V` | 粘贴（终端感知） |
 | `Super+X` | 剪切 |

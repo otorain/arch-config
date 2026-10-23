@@ -1,6 +1,9 @@
 ---
 home: "{{ ansible_facts['env']['HOME'] }}"
 uid: "{{ ansible_facts['user_uid'] }}"
+# Pin the module interpreter: auto-discovery picks the login user's mise
+# python, which aur_builder (non-root become) cannot execute (rc 126)
+ansible_python_interpreter: /usr/bin/python3
 timezone: Asia/Shanghai
 gtk_theme: Colloid-Dark-Catppuccin
 icon_theme: Papirus-Dark

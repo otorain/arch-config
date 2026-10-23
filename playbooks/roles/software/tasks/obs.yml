@@ -1,0 +1,39 @@
+---
+- name: Deploy obs-toggle script (F9 → obs-websocket recording toggle)
+  ansible.builtin.copy:
+    src: obs/obs-toggle.sh
+    dest: "{{ home }}/.local/bin/obs-toggle.sh"
+    mode: "0755"
+
+- name: Check for existing obs-websocket config
+  ansible.builtin.stat:
+    path: "{{ home }}/.config/obs-studio/plugin_config/obs-websocket/config.json"
+  register: obs_ws_config
+
+- name: Seed obs-websocket config on fresh installs (random password, never stored)
+  ansible.builtin.template:
+    src: obs/config.json.j2
+    dest: "{{ home }}/.config/obs-studio/plugin_config/obs-websocket/config.json"
+    mode: "0600"
+  when: not obs_ws_config.stat.exists
+
+- name: Enable the obs-websocket server in an existing config
+  ansible.builtin.replace:
+    path: "{{ home }}/.config/obs-studio/plugin_config/obs-websocket/config.json"
+    regexp: '"server_enabled":\s*false'
+    replace: '"server_enabled": true'
+  when: obs_ws_config.stat.exists
+
+- name: Check whether OBS is running
+  ansible.builtin.command: pgrep -x obs
+  register: obs_running
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# obs-websocket persists its config from in-memory state when OBS exits,
+# reverting the enable above unless OBS is quit before it gets the chance
+- name: Warn that a running OBS reverts the websocket config on exit
+  ansible.builtin.debug:
+    msg: "OBS is running — quit it before it exits on its own (re-run --tags obs if that already happened), then start OBS to bring the websocket server up."
+  when: obs_running.rc == 0
