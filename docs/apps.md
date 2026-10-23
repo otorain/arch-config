@@ -28,7 +28,6 @@
 - **包**：官方仓库 `hypridle`
 - **部署**：`files/hypridle/hypridle.conf` → `~/.config/hypr/hypridle.conf`
 - **要点**：到时间先调 hyprlock 锁屏，再关显示器（dpms）。
-- **注意**：开关显示器的命令是 `hyprctl dispatch 'hl.dsp.dpms(...)'`——`hyprctl dispatch` 只是运载工具，载荷是 Lua DSL 表达式；0.55+ 拒绝的是 `hyprctl dispatch dpms off` 这种旧式写法。
 
 ### hyprlock
 
@@ -56,7 +55,6 @@
   - `files/waybar/style.css` → `~/.config/waybar/style.css`
   - `files/waybar/weather.py`、`calendar.py`、`waybar_geom.py` → `~/.local/bin/`
 - **要点**：模块用法与天气/日历弹层见[日常使用指南](usage.md)；弹层实现机制见[架构与原理](architecture.md)。配置、样式或脚本变更会通过 handler 自动 reload waybar。
-- **注意**：waybar 0.15.0 的工作区点击切换失效是已知上游问题（master 已修，0.16 发布解决），不要用配置绕过，也不要换 waybar-git。
 
 ### dunst
 
@@ -101,10 +99,6 @@ Hyprland scratchpad 守护进程，把 DeepSeek / Kimi / 微信管理成便签�
   - `files/pyprland/config.toml` → `~/.config/pypr/config.toml`
   - `files/pyprland/wechat-toggle.sh` → `~/.local/bin/wechat-toggle.sh`（0755）
 - **要点**：hyprland 启动时拉起 `pypr` 守护进程，呼出键实际调用 `pypr toggle <名字>`。窗口隐藏期间常驻不关闭，从 rofi 启动也会被按 class 接管。DeepSeek/Kimi 懒启动（首次呼出才拉起）；微信未运行时 `Alt+W` 直接启动（wechat-toggle.sh 只在窗口存在时才调 pypr）。
-- **注意**：
-  - DeepSeek/Kimi 的 `process_tracking = false` 不可改回——Chrome `--app` 窗口归属已运行的浏览器进程，PID 跟踪会失效。
-  - 微信的 `command = ""`、`pinned = false`、`size = ""` 是一组绑定约束：登录窗会被主窗替换、窗口由微信自行重建，pypr 只能按 class 匹配，不能 pin 也不能改尺寸。
-  - 不要给这三个窗口的 hyprland 规则加 `workspace = "special:..."`——pypr 是把窗口移到当前工作区显示的；special workspace 上 fcitx5 候选框不渲染。
 
 ## Shell 与终端
 
@@ -205,7 +199,6 @@ DeepSeek Harness 的浏览器 UI（`dsh web`，监听 127.0.0.1:3080），登录
 - **包**：npm 全局 `@deepseek-ai/dsh`（由 dev app 安装到 `~/.local/bin/dsh`）
 - **部署**：`files/dsh-web/dsh-web.service` → `~/.config/systemd/user/dsh-web.service`（由 services 角色 enable）
 - **要点**：`systemctl --user status dsh-web` 查状态；API key 放 `~/.dsh/.env`；改端口、升级、端口占用处理等详见 README 的 dsh web 一节。
-- **注意**：只跑 `--tags dsh-web` 时 unit 只部署不 enable，需要手动 `systemctl --user enable --now dsh-web` 一次。
 
 ## 开发工具
 
@@ -233,7 +226,6 @@ GitHub 网页应用（Chrome `--app` 模式）。
   - `rustup default stable`
   - 创建工作目录 `~/Projects`、`~/Pictures/mpv`、`~/src/tries`
   - `bat cache --build`（让 bat 识别 catppuccin 主题）
-- **注意**：`claude-code` 走 AUR 而不是 npm 全局（原生二进制需要 postinstall 下载）。
 
 ### nvim
 
@@ -241,7 +233,6 @@ GitHub 网页应用（Chrome `--app` 模式）。
 
 - **包**：官方仓库 `neovim`、`tree-sitter-cli`（LSP 服务器见 dev 一节，`_pacman.yml` 的 `LSP / Development` 组）
 - **部署**：`files/nvim/` 整棵树 → `~/.config/nvim/`（LazyVim starter；首次启动由 lazy.nvim 自动装插件、编译 tree-sitter 语法）
-- **注意**：`files/nvim/` 是唯一保留内部目录结构的 `files/` 目录（整体部署），其他 app 的 `files/` 都是扁平的。
 
 ### zed
 
