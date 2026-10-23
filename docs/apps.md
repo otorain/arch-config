@@ -150,7 +150,6 @@ shell 历史记录（SQLite 存储 + 模糊搜索）。
   - git clone `tobi/try` → `~/.local/share/try-cli`（不自动更新）
   - `files/try-cli/try`（wrapper，exec ruby 跑 clone 里的 `try.rb`）→ `~/.local/bin/try`
 - **要点**：`60-try.zsh` fragment 执行 `try init ~/src/tries`。
-- **注意**：AUR 里有个同名的 `try` 包，是另一个工具——不要安装它来替换。
 
 ## 输入法与中文环境
 
@@ -256,7 +255,6 @@ GitHub 网页应用（Chrome `--app` 模式）。
 - **包**：AUR `wechat-bin`
 - **部署**：`templates/wechat/wechat.desktop.j2` → `~/.local/share/applications/wechat.desktop`（用户级覆盖，掌握启动参数）
 - **要点**：`Alt+W` 呼出/隐藏（pyprland scratchpad）；微信未运行时 `Alt+W` 直接启动。
-- **注意**：wechat ≥ 4.1.13 原生支持 Wayland，分数缩放由 compositor 驱动——绝不能往桌面项里加 `QT_SCALE_FACTOR`，会双重缩放导致界面空白、点击错位。
 
 ### gmail
 

@@ -106,11 +106,6 @@ luac -p ~/.config/hypr/hyprland.lua        # 校验渲染后的 Lua 配置
 原因：makepkg 拒绝以 root 构建，而 yay 安装最后一步是内部调 `sudo pacman -U`——playbook 在无 tty（脚本/CI）下跑时无法询问密码，所以 AUR 安装走一个专用系统用户 `aur_builder`。
 怎么办：不用管。它的 sudoers 条目只对 `/usr/bin/pacman` 免密，其他命令一概不行；你自己用户的 sudo 仍然全程要密码。它用的是 nologin shell + 锁定密码，登录界面（SDDM）也看不到。
 
-**微信界面空白一块、点击位置对不上**
-现象：wechat 窗口部分区域空白，鼠标点击和实际响应位置错位。
-原因：有人（或某次编辑）往桌面项里加了 `QT_SCALE_FACTOR`。wechat ≥ 4.1.13 原生跑 Wayland，分数缩放由 compositor 驱动，再设环境变量会双重缩放。
-怎么办：确保 `~/.local/share/applications/wechat.desktop` 来自 playbook 部署（`ansible-playbook site.yml --tags wechat`），不要手加任何缩放变量。
-
 **waybar 上点工作区编号没反应**
 现象：点击状态栏的工作区数字不切换。
 原因：waybar 0.15.0 的 workspaces 模块内部写死了旧版 `dispatch workspace` IPC 调用，被 Hyprland 0.55+ 拒绝。上游 master 已修，随 0.16 发布解决。
