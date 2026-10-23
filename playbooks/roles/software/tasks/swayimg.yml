@@ -1,0 +1,10 @@
+---
+- name: Create swayimg config directory
+  ansible.builtin.file:
+    path: "{{ home }}/.config/swayimg"
+    state: directory
+
+- name: Deploy swayimg config
+  ansible.builtin.copy:
+    src: swayimg/init.lua
+    dest: "{{ home }}/.config/swayimg/init.lua"

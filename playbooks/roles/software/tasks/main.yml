@@ -218,6 +218,13 @@
       tags: scratchpad
   tags: scratchpad
 
+- name: "App: swayimg"
+  ansible.builtin.include_tasks:
+    file: swayimg.yml
+    apply:
+      tags: swayimg
+  tags: swayimg
+
 - name: "App: try-cli"
   ansible.builtin.include_tasks:
     file: try-cli.yml

@@ -45,11 +45,11 @@ messages are in English.
     stderr tail — yay sends build output to stdout). `_aur.yml` also creates the dedicated `aur_builder` build user
     (see Gotchas). App files only deploy config, user services, and zsh
     fragments.
-    - `files/` has one directory **per software** (33 apps): atuin, deepseek,
+    - `files/` has one directory **per software** (34 apps): atuin, deepseek,
       dev, direnv, dsh-web, dunst, fcitx5, git, github, gmail, hypridle,
       hyprland, hyprlock, hyprpaper, kimi, k3s, kitty, mimeapps, mpv, nvim,
-      obs, pcmanfm, pi, pyprland, rofi, satty, scratchpad, try-cli, waybar,
-      wechat, zathura, zed, zsh.
+      obs, pcmanfm, pi, pyprland, rofi, satty, scratchpad, swayimg, try-cli,
+      waybar, wechat, zathura, zed, zsh.
       Each contains only files — no subdirectories mirroring destination
       paths, no hidden structural names; destinations appear only in task
       `dest:` (dev and hyprland have no files dir; wechat is template-only).

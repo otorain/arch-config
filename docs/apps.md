@@ -314,6 +314,13 @@ PDF 阅读器（vim 键位）。
 - **包**：官方仓库 `pcmanfm`（`gvfs` 提供挂载/回收站支持）
 - **部署**：`files/pcmanfm/pcmanfm.conf` → `~/.config/pcmanfm/default/pcmanfm.conf`（`backup: true`：pcmanfm 退出时会写状态）
 
+### swayimg
+
+图片查看器（所有 `image/*` 类型的默认应用，关联见 mimeapps）。
+
+- **包**：官方仓库 `swayimg`
+- **部署**：`files/swayimg/init.lua` → `~/.config/swayimg/init.lua`
+
 ### mimeapps
 
 MIME 类型默认应用关联（不是软件，是一份配置）。
