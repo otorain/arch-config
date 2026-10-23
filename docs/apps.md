@@ -297,8 +297,6 @@ OBS Studio 录屏。
 - **部署**：
   - `files/obs/obs-toggle.sh` → `~/.local/bin/obs-toggle.sh`（0755，`F9` 录制开关）
   - `templates/obs/config.json.j2` → `~/.config/obs-studio/plugin_config/obs-websocket/config.json`（仅在文件不存在时播种，随机密码不落盘；文件已存在则就地启用 `server_enabled`）
-- **要点**：`F9` 开始/停止录制。OBS 自带的全局快捷键只走 X11——焦点在原生 Wayland 窗口时完全收不到，所以 `F9` 由 Hyprland 绑定，脚本经 obs-websocket 控制 OBS；密码运行时从 OBS 配置里读，不进仓库。
-- **注意**：OBS 退出时会用内存状态重写 websocket 配置，改配置前要先退出 OBS。分数缩放下 PipeWire 采集协商的是物理像素（2560×1440，而非逻辑的 2048×1152）；若曾在别的流分辨率下做过「变换 → 适配屏幕」，旧缩放会让录像只剩左上区域——改过分辨率后重新做一次「适配屏幕」。
 
 ### zathura
 
