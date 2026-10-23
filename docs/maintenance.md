@@ -115,8 +115,3 @@ luac -p ~/.config/hypr/hyprland.lua        # 校验渲染后的 Lua 配置
 现象：settings 角色的 gsettings 任务显示警告但不失败。
 原因：tty/无图形会话下 D-Bus session 地址是猜的，设置可能写不进去。
 怎么办：预期行为，忽略；下次在图形会话里重跑 `--tags settings` 即可。
-
-**`try` 命令和 AUR 的 `try` 包**
-现象：AUR 里搜到一个叫 `try` 的包，以为是这个项目装的。
-原因：本项目的 `try` 是 `~/.local/bin/try`——tobi/try 仓库（Ruby）的 git clone 加 wrapper（见[应用说明 · try-cli](apps.md#try-cli)）。AUR 那个是同名的另一个工具。
-怎么办：不要装 AUR 的 `try`；要更新本项目的 try 就到 `~/.local/share/try-cli` 里 `git pull`。

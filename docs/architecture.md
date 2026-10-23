@@ -49,7 +49,3 @@ waybar 的天气和日历弹层（见[应用说明 · waybar](apps.md#waybar)）
 - **AT-SPI 锚定**：waybar 自己不暴露模块位置，`waybar_geom.py` 通过 GTK3 atk-bridge 发布在 AT-SPI 总线上的控件树，按文本特征（天气找 "°C"，时钟找当天日期）拿到模块标签的屏幕坐标，弹层才能精确锚定在模块正下方；失败则退回屏幕居中。
 
 另外，弹层要盖过 Colloid 主题的样式时，CSS 必须以 `Gtk.STYLE_PROVIDER_PRIORITY_USER` 优先级注册，因为主题本身就加载在 USER 优先级（800）上。设计上明确不要 focus-out 自动关闭——关闭路径只有 Esc、点击卡片外、再点一次模块这三条。
-
-## 命名冲突：try
-
-`~/.local/bin/try` 是 tobi/try（Ruby 写的目录实验工具）的 git clone 加一层 wrapper（见[应用说明 · try-cli](apps.md#try-cli)），而 AUR 里有个同名 `try` 包是完全不同的另一个工具。playbook 刻意用 clone 安装（`tasks/try-cli.yml`）而不是 AUR 包——装上 AUR 的 `try` 会顶掉 PATH 里的 wrapper，shell 集成（`60-try.zsh` 的 `try init ~/src/tries`）随即失效。
